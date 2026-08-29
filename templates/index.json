@@ -119,23 +119,12 @@
         "p5",
         "p6"
       ]
-    },
-    "all_products": {
-      "type": "featured-collection",
-      "settings": {
-        "eyebrow": "Everything in stock",
-        "heading": "The full studio",
-        "collection": "all",
-        "products_to_show": 12,
-        "ghost_word": ""
-      }
     }
   },
   "order": [
     "hero",
     "materials",
     "studio",
-    "all_products",
     "instagram"
   ]
 }

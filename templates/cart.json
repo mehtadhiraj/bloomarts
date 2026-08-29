@@ -6,11 +6,9 @@
     "all_products": {
       "type": "featured-collection",
       "settings": {
-        "eyebrow": "Everything in stock",
         "heading": "The full studio",
         "collection": "all",
-        "products_to_show": 12,
-        "ghost_word": ""
+        "products_to_show": 12
       }
     }
   },
