@@ -33,7 +33,7 @@
         "concrete": {
           "type": "material",
           "settings": {
-            "image": "shopify://shop_images/art-work-assembly-flyer.png",
+            "image": "shopify://shop_images/art1.png",
             "image_alt": "",
             "title": "Concrete",
             "script_accent": "",
