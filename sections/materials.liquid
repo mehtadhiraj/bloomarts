@@ -1,4 +1,3 @@
-{{ 'component-materials.css' | asset_url | stylesheet_tag }}
 
 {%- comment -%}
   Materials showcase — a small number of editorial panels that move
@@ -19,6 +18,8 @@
   Where scroll-driven animations are unsupported, desktop falls back to the
   same swipeable row as mobile. Nothing is lost.
 {%- endcomment -%}
+
+{{ 'component-materials.css' | asset_url | stylesheet_tag }}
 
 {%- liquid
   assign panels = section.blocks
