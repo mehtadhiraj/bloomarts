@@ -59,6 +59,7 @@
         "resin": {
           "type": "material",
           "settings": {
+            "image": "shopify://shop_images/IMG_5070.png",
             "image_alt": "",
             "title": "Resin",
             "script_accent": "",
