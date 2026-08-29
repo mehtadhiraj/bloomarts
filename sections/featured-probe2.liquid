@@ -1,0 +1,46 @@
+{%- comment -%}
+  Diagnostic probe. Deleted once the fault is identified.
+{%- endcomment -%}
+
+<section class="probe-nocollection"><p>probe-nocollection rendered</p>
+  <span>{{ section.settings.eyebrow }}</span>
+  <span>{{ section.settings.ghost_word }}</span>
+  <span>{{ section.settings.heading }}</span>
+  <span>{{ section.settings.products_to_show }}</span>
+</section>
+
+{% schema %}
+{
+  "name": "Probe no collection",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Fresh from the studio"
+    },
+    {
+      "type": "text",
+      "id": "ghost_word",
+      "label": "Background word",
+      "info": "An oversized, very faint word behind the section. Decorative only \u2014 repeat a word from the heading. Leave blank to hide.",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "New this month"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "label": "Products to show",
+      "min": 4,
+      "max": 12,
+      "step": 1,
+      "default": 8
+    }
+  ]
+}
+{% endschema %}

@@ -49,14 +49,17 @@
     },
     "featured_probe": {
       "type": "featured-probe",
-      "settings": {
-        "heading": "Probe"
-      }
+      "settings": {}
+    },
+    "featured_probe2": {
+      "type": "featured-probe2",
+      "settings": {}
     }
   },
   "order": [
     "main",
     "materials",
-    "featured_probe"
+    "featured_probe",
+    "featured_probe2"
   ]
 }
