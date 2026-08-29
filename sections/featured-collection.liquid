@@ -5,7 +5,7 @@
 
 {%- liquid
   assign featured = collections[section.settings.collection]
-  assign limit = section.settings.products_to_show | default: 8
+  assign product_limit = section.settings.products_to_show | default: 8
 -%}
 
 <section class="section defer-render featured">
@@ -64,7 +64,7 @@
         tabindex="0"
       >
         <ul class="carousel__track" role="list" data-reveal-group>
-        {%- for product in featured.products limit: limit -%}
+        {%- for product in featured.products limit: product_limit -%}
           <li class="carousel__item" data-carousel-item data-reveal="rise-stagger">
             {%- liquid
               if forloop.index <= 2

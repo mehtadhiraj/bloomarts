@@ -46,10 +46,17 @@
         "clay",
         "resin"
       ]
+    },
+    "featured_probe": {
+      "type": "featured-probe",
+      "settings": {
+        "heading": "Probe"
+      }
     }
   },
   "order": [
     "main",
-    "materials"
+    "materials",
+    "featured_probe"
   ]
 }
