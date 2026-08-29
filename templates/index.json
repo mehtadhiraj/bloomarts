@@ -46,6 +46,7 @@
         "clay": {
           "type": "material",
           "settings": {
+            "image": "shopify://shop_images/IMG_5066.png",
             "image_alt": "",
             "title": "Clay",
             "script_accent": "thrown",
