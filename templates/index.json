@@ -12,6 +12,7 @@
     "hero": {
       "type": "hero",
       "settings": {
+        "image_desktop": "shopify://shop_images/art-work-assembly-flyer.png",
         "image_alt": "",
         "subheading": "Concrete · Clay · Resin",
         "heading": "Little creations,",
@@ -32,6 +33,7 @@
         "concrete": {
           "type": "material",
           "settings": {
+            "image": "shopify://shop_images/art-work-assembly-flyer.png",
             "image_alt": "",
             "title": "Concrete",
             "script_accent": "",
