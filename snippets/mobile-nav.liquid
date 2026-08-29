@@ -1,0 +1,134 @@
+{%- comment -%}
+  Mobile navigation sheet.
+
+  Second-level links expand in place inside a native <details> rather than
+  sliding to a child panel. That choice is deliberate: <details> works with
+  zero JavaScript, keeps the parent item visible so you never lose your place
+  in the hierarchy, and needs no focus restoration when a panel unwinds —
+  the class of bug sliding panels reliably produce on iOS VoiceOver. The
+  catalogue is two levels deep, which is where in-place expansion wins.
+
+  Accepts: menu {Object} linklist
+{%- endcomment -%}
+
+<bloom-drawer id="menu-drawer" class="drawer drawer--menu drawer--tall">
+  <div class="drawer__overlay" data-drawer-overlay></div>
+
+  <div
+    class="drawer__panel"
+    data-drawer-panel
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="menu-drawer-title"
+    tabindex="-1"
+  >
+    <div class="drawer__handle" data-drawer-handle aria-hidden="true"></div>
+
+    <div class="drawer__header">
+      <h2 class="drawer__title" id="menu-drawer-title">{{ 'general.accessibility.menu' | t }}</h2>
+      <button
+        class="drawer__close tap-target"
+        type="button"
+        data-drawer-close
+        data-drawer-initial-focus
+      >
+        {% render 'icon', icon: 'close' %}
+        <span class="visually-hidden">{{ 'general.accessibility.close_menu' | t }}</span>
+      </button>
+    </div>
+
+    <div class="drawer__body">
+      {%- if menu != blank -%}
+        <nav aria-label="{{ 'general.accessibility.menu' | t }}">
+          <ul class="mobile-nav" role="list">
+            {%- for link in menu.links -%}
+              <li class="mobile-nav__item">
+                {%- if link.links.size > 0 -%}
+                  <details class="mobile-nav__group"{% if link.child_active %} open{% endif %}>
+                    <summary class="mobile-nav__summary">
+                      <span>{{ link.title }}</span>
+                      {% render 'icon', icon: 'chevron-down', size: 20, class: 'mobile-nav__chevron' %}
+                    </summary>
+                    <ul class="mobile-nav__sublist" role="list">
+                      {%- comment -%}
+                        A direct link to the parent itself — expanding a
+                        group must not make the category page unreachable.
+                      {%- endcomment -%}
+                      <li>
+                        <a href="{{ link.url }}" class="mobile-nav__link mobile-nav__link--all">
+                          {{ 'collections.general.view_all' | t }} {{ link.title | downcase }}
+                        </a>
+                      </li>
+                      {%- for child in link.links -%}
+                        <li>
+                          <a
+                            href="{{ child.url }}"
+                            class="mobile-nav__link"
+                            {% if child.current %}aria-current="page"{% endif %}
+                          >{{ child.title }}</a>
+                        </li>
+                      {%- endfor -%}
+                    </ul>
+                  </details>
+                {%- else -%}
+                  <a
+                    href="{{ link.url }}"
+                    class="mobile-nav__link mobile-nav__link--top"
+                    {% if link.current %}aria-current="page"{% endif %}
+                  >{{ link.title }}</a>
+                {%- endif -%}
+              </li>
+            {%- endfor -%}
+          </ul>
+        </nav>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%}
+      Account and social pinned to the bottom of the sheet: the easiest
+      area to reach one-handed, and where secondary actions belong once the
+      browsing links have taken the top.
+    {%- endcomment -%}
+    <div class="drawer__footer mobile-nav__footer">
+      {%- if shop.customer_accounts_enabled -%}
+        <a href="{{ routes.account_url }}" class="btn btn--secondary btn--full">
+          {% render 'icon', icon: 'user', size: 20 %}
+          {%- if customer -%}
+            {{ 'customer.account.title' | t }}
+          {%- else -%}
+            {{ 'customer.account.log_in' | t }}
+          {%- endif -%}
+        </a>
+      {%- endif -%}
+
+      {%- if settings.social_instagram != blank or settings.social_facebook != blank or settings.social_pinterest != blank -%}
+        <ul class="mobile-nav__social" role="list">
+          {%- if settings.social_instagram != blank -%}
+            <li>
+              <a href="{{ settings.social_instagram }}" class="tap-target" rel="noopener" target="_blank">
+                {% render 'icon', icon: 'instagram', size: 20 %}
+                <span class="visually-hidden">{{ 'general.social.instagram' | t }}</span>
+              </a>
+            </li>
+          {%- endif -%}
+          {%- if settings.social_facebook != blank -%}
+            <li>
+              <a href="{{ settings.social_facebook }}" class="tap-target" rel="noopener" target="_blank">
+                {% render 'icon', icon: 'facebook', size: 20 %}
+                <span class="visually-hidden">{{ 'general.social.facebook' | t }}</span>
+              </a>
+            </li>
+          {%- endif -%}
+          {%- if settings.social_pinterest != blank -%}
+            <li>
+              <a href="{{ settings.social_pinterest }}" class="tap-target" rel="noopener" target="_blank">
+                {% render 'icon', icon: 'pinterest', size: 20 %}
+                <span class="visually-hidden">{{ 'general.social.pinterest' | t }}</span>
+              </a>
+            </li>
+          {%- endif -%}
+        </ul>
+      {%- endif -%}
+    </div>
+  </div>
+</bloom-drawer>

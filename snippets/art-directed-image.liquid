@@ -1,0 +1,92 @@
+{%- comment -%}
+  Renders a <picture> with genuinely different mobile and desktop sources.
+
+  Use this — not responsive-image — wherever a desktop crop would be wrong
+  on a phone. A wide hero letterboxed down to 390px leaves the subject tiny
+  and the text unreadable, so the merchant supplies a taller mobile crop and
+  we switch on a media query rather than scaling one file down.
+
+  Accepts:
+    image_desktop  {Object}  Wide crop (required)
+    image_mobile   {Object}  Tall crop. Falls back to image_desktop.
+    breakpoint     {String}  Where desktop takes over. Default '768px'.
+    ratio_mobile   {Number}  height / width below the breakpoint. Default 1.25.
+    ratio_desktop  {Number}  height / width above it. Default 0.5625 (16:9).
+    class, alt, loading, fetchpriority — as responsive-image.
+{%- endcomment -%}
+
+{%- liquid
+  assign desktop_image = image_desktop
+  assign mobile_image = image_mobile | default: image_desktop
+  assign bp = breakpoint | default: '768px'
+  assign r_mobile = ratio_mobile | default: 1.25
+  assign r_desktop = ratio_desktop | default: 0.5625
+  assign img_loading = loading | default: 'lazy'
+  assign img_priority = fetchpriority | default: 'auto'
+  assign img_class = class | default: ''
+
+  if alt != blank
+    assign img_alt = alt
+  else
+    assign img_alt = desktop_image.alt
+  endif
+
+  assign mobile_widths = '360,414,480,640,828,1080' | split: ','
+  assign desktop_widths = '768,1024,1280,1600,1920,2400' | split: ','
+-%}
+
+{%- if desktop_image != blank -%}
+  {%- comment -%}
+    Each srcset ends on the native width rather than relying on forloop.last,
+    which would leave a trailing comma whenever a candidate is skipped for
+    exceeding the source resolution.
+  {%- endcomment -%}
+  {%- capture desktop_srcset -%}
+    {%- for w in desktop_widths -%}
+      {%- assign cw = w | plus: 0 -%}
+      {%- if cw < desktop_image.width -%}
+        {%- assign ch = cw | times: r_desktop | round -%}
+        {{ desktop_image | image_url: width: cw, height: ch, crop: 'center' }} {{ cw }}w,
+      {%- endif -%}
+    {%- endfor -%}
+    {%- assign dw = desktop_image.width -%}
+    {%- assign dh = dw | times: r_desktop | round -%}
+    {{ desktop_image | image_url: width: dw, height: dh, crop: 'center' }} {{ dw }}w
+  {%- endcapture -%}
+
+  {%- capture mobile_srcset -%}
+    {%- for w in mobile_widths -%}
+      {%- assign cw = w | plus: 0 -%}
+      {%- if cw < mobile_image.width -%}
+        {%- assign ch = cw | times: r_mobile | round -%}
+        {{ mobile_image | image_url: width: cw, height: ch, crop: 'center' }} {{ cw }}w,
+      {%- endif -%}
+    {%- endfor -%}
+    {%- assign mw = mobile_image.width -%}
+    {%- assign mh = mw | times: r_mobile | round -%}
+    {{ mobile_image | image_url: width: mw, height: mh, crop: 'center' }} {{ mw }}w
+  {%- endcapture -%}
+
+  <picture>
+    {%- comment -%} Desktop source first: <picture> takes the first match. {%- endcomment -%}
+    <source media="(min-width: {{ bp }})" sizes="100vw" srcset="{{ desktop_srcset | strip }}">
+    <source sizes="100vw" srcset="{{ mobile_srcset | strip }}">
+    {%- comment -%}
+      The <img> carries the MOBILE intrinsic ratio, because mobile is the
+      default case. The desktop ratio is applied in CSS at the same
+      breakpoint, so the reserved box is correct on both sides of it.
+    {%- endcomment -%}
+    {%- assign fallback_height = 828 | times: r_mobile | round -%}
+    <img
+      src="{{ mobile_image | image_url: width: 828, height: fallback_height, crop: 'center' }}"
+      alt="{{ img_alt | escape }}"
+      width="1000"
+      height="{{ 1000 | times: r_mobile | round }}"
+      loading="{{ img_loading }}"
+      decoding="async"
+      fetchpriority="{{ img_priority }}"
+      class="{{ img_class }}"
+      style="--ratio-mobile: {{ r_mobile }}; --ratio-desktop: {{ r_desktop }};"
+    >
+  </picture>
+{%- endif -%}

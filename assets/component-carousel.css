@@ -1,0 +1,79 @@
+/* ==========================================================================
+   Horizontal product carousel
+
+   Native scroll-snap. No JavaScript drives the gesture, so it works before
+   hydration and keeps the browser's own momentum and rubber-banding.
+   ========================================================================== */
+
+.carousel {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  /* Padding on the scroll container, not the track — this is what lets the
+     first card align to the page gutter while the last can still scroll
+     fully into view. */
+  padding-inline: calc(var(--gutter) + var(--safe-left)) calc(var(--gutter) + var(--safe-right));
+  scroll-padding-inline-start: calc(var(--gutter) + var(--safe-left));
+}
+
+.carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel__track {
+  display: flex;
+  gap: var(--space-2xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.carousel__item {
+  /* Just over half the viewport, so the next card always peeks — the visual
+     cue that the row scrolls. */
+  flex: 0 0 62%;
+  scroll-snap-align: start;
+  min-width: 0;
+}
+
+@media (min-width: 480px) {
+  .carousel__item {
+    flex-basis: 45%;
+  }
+}
+
+@media (min-width: 768px) {
+  .carousel__track {
+    gap: var(--space-sm);
+  }
+
+  .carousel__item {
+    flex-basis: 32%;
+  }
+
+}
+
+/* From desktop it stops being a carousel: everything fits, and a scroll
+   region a mouse has to drag is worse than a grid. */
+@media (min-width: 1024px) {
+  .carousel {
+    overflow: visible;
+    scroll-snap-type: none;
+    padding-inline: 0;
+    max-width: var(--page-width);
+    margin-inline: auto;
+    padding-inline: calc(var(--gutter) + var(--safe-left)) calc(var(--gutter) + var(--safe-right));
+  }
+
+  .carousel__track {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-lg) var(--space-md);
+  }
+
+  .carousel__item {
+    flex: initial;
+  }
+}

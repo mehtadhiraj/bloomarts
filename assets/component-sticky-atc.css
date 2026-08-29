@@ -1,0 +1,113 @@
+/* ==========================================================================
+   Sticky add to cart
+
+   Reveal on scroll. It occupies no layout space — it is fixed and starts
+   translated fully off-screen, so at first paint it costs nothing on a
+   viewport that has none to spare.
+   ========================================================================== */
+
+.sticky-atc {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: var(--z-sticky-atc);
+  background-color: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  box-shadow: var(--shadow-lg);
+  /* Clears the home indicator on gesture-navigation phones. */
+  padding-bottom: var(--safe-bottom);
+  /* transform + opacity only: both are compositor properties, so the reveal
+     never triggers layout or paint mid-scroll. */
+  transform: translateY(100%);
+  opacity: 0;
+  visibility: hidden;
+  transition: transform var(--dur-slow) var(--ease-out),
+              opacity var(--dur-base) var(--ease),
+              visibility 0s linear var(--dur-slow);
+}
+
+.sticky-atc.is-visible {
+  transform: translateY(0);
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+.sticky-atc__inner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  padding: var(--space-2xs) calc(var(--gutter) + var(--safe-right)) var(--space-2xs)
+    calc(var(--gutter) + var(--safe-left));
+}
+
+.sticky-atc__info {
+  display: flex;
+  flex-direction: column;
+  /* min-width:0 lets the title truncate instead of shoving the button off
+     the edge at 320px. */
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.sticky-atc__title {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sticky-atc__price {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3xs);
+  font-size: var(--text-base);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.sticky-atc__compare {
+  font-size: var(--text-xs);
+  font-weight: 400;
+  color: var(--color-text-muted);
+}
+
+.sticky-atc__compare[hidden] {
+  display: none;
+}
+
+.sticky-atc__button {
+  flex: 0 0 auto;
+  /* Taller than the 44px floor: this is the primary action of the page and
+     it sits in the easiest place on the screen to reach. */
+  min-height: 48px;
+  /* Caps the button so a long "Add to cart" translation cannot squeeze the
+     product title out of existence. */
+  max-width: 55%;
+}
+
+/* On desktop the product info column is sticky in its own right, so a
+   bottom bar would be redundant chrome. */
+@media (min-width: 1024px) {
+  .sticky-atc {
+    display: none;
+  }
+}
+
+/* Motion simplified: appear, do not slide.
+
+   The .is-visible rule must reset transition-delay as well as transform.
+   Without it the shorthand above keeps the 140ms visibility delay on the
+   way IN, so the bar spent its whole fade-in still visibility:hidden and
+   then popped into place. */
+.reduce-motion .sticky-atc {
+  transition: opacity var(--dur-fast) linear, visibility 0s linear var(--dur-fast);
+  transform: none;
+}
+
+.reduce-motion .sticky-atc.is-visible {
+  transform: none;
+  visibility: visible;
+  transition-delay: 0s;
+}

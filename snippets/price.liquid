@@ -1,0 +1,52 @@
+{%- comment -%}
+  Price display.
+
+  Accepts:
+    product        {Object}  Product (for range pricing)
+    variant        {Object}  Specific variant — takes precedence
+    price          {Number}  Raw cents — takes precedence over both
+    show_from      {Boolean} Prefix "From" when a product has a price range
+    class          {String}
+{%- endcomment -%}
+
+{%- liquid
+  if price != blank
+    assign target_price = price
+    assign compare_price = compare_at | default: 0
+  elsif variant != blank
+    assign target_price = variant.price
+    assign compare_price = variant.compare_at_price | default: 0
+  else
+    assign target_price = product.price
+    assign compare_price = product.compare_at_price | default: 0
+  endif
+
+  assign on_sale = false
+  if compare_price > target_price
+    assign on_sale = true
+  endif
+
+  assign is_range = false
+  if variant == blank and price == blank and product.price_varies
+    assign is_range = true
+  endif
+-%}
+
+<span class="price{% if on_sale %} price--on-sale{% endif %} {{ class }}">
+  {%- comment -%}
+    The trailing space is inside the span deliberately: Liquid's whitespace
+    control strips the gap between tags, which rendered as "From₹2,450".
+  {%- endcomment -%}
+  {%- if is_range and show_from -%}
+    <span class="price__from">{{ 'products.product.from_price' | t }}&nbsp;</span>
+  {%- endif -%}
+
+  {%- if on_sale -%}
+    <span class="visually-hidden">{{ 'products.product.sale_price' | t }}</span>
+    <span class="price__current">{{ target_price | money }}</span>
+    <span class="visually-hidden">{{ 'products.product.regular_price' | t }}</span>
+    <s class="price__compare">{{ compare_price | money }}</s>
+  {%- else -%}
+    <span class="price__current">{{ target_price | money }}</span>
+  {%- endif -%}
+</span>

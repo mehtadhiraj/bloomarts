@@ -1,0 +1,305 @@
+/* ==========================================================================
+   Filters and sort
+
+   One component, two presentations. Below 1024px it is the shared bottom
+   sheet; at 1024px and up the same DOM is unpinned into a static sidebar.
+   Rendering it once and repositioning it means there is never a second copy
+   of the controls to keep in sync.
+   ========================================================================== */
+
+.facets__form {
+  display: contents;
+}
+
+.facets__body {
+  padding-block: 0;
+}
+
+.facets__group {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.facets__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  min-height: 52px;
+  font-weight: 500;
+  list-style: none;
+}
+
+.facets__summary::-webkit-details-marker {
+  display: none;
+}
+
+.facets__chevron {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+  transition: transform var(--dur-base) var(--ease);
+}
+
+.facets__group[open] .facets__chevron {
+  transform: rotate(180deg);
+}
+
+.facets__fieldset {
+  border: none;
+  margin: 0;
+  padding: 0 0 var(--space-2xs);
+  min-width: 0;
+}
+
+.facets__row {
+  position: relative;
+}
+
+/* The native control is hidden but still focusable and still the thing the
+   label toggles — only its appearance is replaced. */
+.facets__control {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.facets__label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  /* Full-width 44px rows: on a phone the whole line is the target, not a
+     20px box you have to hit precisely. */
+  min-height: var(--tap-min);
+  padding-inline: var(--space-3xs);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: var(--text-base);
+}
+
+.facets__marker {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+  color: transparent;
+  transition: background-color var(--dur-fast) var(--ease),
+              border-color var(--dur-fast) var(--ease);
+}
+
+.facets__marker--radio {
+  border-radius: 50%;
+}
+
+.facets__control:checked + .facets__label .facets__marker {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-accent-contrast);
+}
+
+/* A radio has no check glyph, so the selected state is an inset dot. */
+.facets__control:checked + .facets__label .facets__marker--radio {
+  box-shadow: inset 0 0 0 4px var(--color-surface);
+}
+
+.facets__control:focus-visible + .facets__label {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.facets__control:disabled + .facets__label {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.facets__text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.facets__count {
+  flex-shrink: 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.facets__price-row {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-2xs);
+  padding-bottom: var(--space-2xs);
+}
+
+.facets__price-row .field {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.facets__price-dash {
+  padding-bottom: var(--space-xs);
+  color: var(--color-text-muted);
+}
+
+.facets__footer {
+  display: flex;
+  gap: var(--space-2xs);
+}
+
+.facets__clear {
+  flex: 0 0 auto;
+}
+
+.facets__apply {
+  flex: 1 1 auto;
+  min-height: 48px;
+}
+
+/* --------------------------------------------------------------------------
+   Collection toolbar (mobile entry point)
+   -------------------------------------------------------------------------- */
+
+.collection-toolbar {
+  position: sticky;
+  /* Sits directly under the sticky header rather than over it. */
+  top: var(--header-height);
+  z-index: var(--z-raised);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2xs);
+  padding-block: var(--space-2xs);
+  background-color: var(--color-background);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.collection-toolbar__button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3xs);
+  min-height: var(--tap-min);
+  padding-inline: var(--space-xs);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background-color: var(--color-surface);
+  font-size: var(--text-sm);
+}
+
+.collection-toolbar__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding-inline: 5px;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-accent);
+  color: var(--color-accent-contrast);
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.collection-toolbar__count {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* Active filter chips, so what is applied stays visible after the sheet
+   closes — otherwise a filtered grid looks like an empty catalogue. */
+.active-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3xs);
+  margin: 0;
+  padding: var(--space-2xs) 0 0;
+  list-style: none;
+}
+
+.active-filters__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3xs);
+  min-height: 36px;
+  padding-inline: var(--space-2xs);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background-color: var(--color-surface);
+  font-size: var(--text-sm);
+  text-decoration: none;
+}
+
+/* 36px visual height with the hit area expanded to 44px — a chip row any
+   taller would push the grid below the fold. */
+.active-filters__chip::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+}
+
+.active-filters__item {
+  position: relative;
+}
+
+/* --------------------------------------------------------------------------
+   Desktop — the sheet becomes a sidebar
+   -------------------------------------------------------------------------- */
+
+@media (min-width: 1024px) {
+  .facets {
+    position: static;
+    visibility: visible;
+    transition: none;
+  }
+
+  .facets .drawer__overlay,
+  .facets .drawer__handle,
+  .facets__header {
+    display: none;
+  }
+
+  .facets__panel {
+    position: static;
+    max-height: none;
+    height: auto;
+    transform: none;
+    box-shadow: none;
+    border-radius: 0;
+    background: none;
+    padding-bottom: 0;
+    display: block;
+  }
+
+  .facets__body {
+    overflow: visible;
+    padding-inline: 0;
+  }
+
+  .facets__footer {
+    position: sticky;
+    bottom: 0;
+    padding-inline: 0;
+    background-color: var(--color-background);
+    border-top: none;
+  }
+
+  .collection-toolbar {
+    position: static;
+    border-bottom: none;
+  }
+
+  /* The sheet trigger has nothing to open once the sidebar is visible. */
+  .collection-toolbar__button--filter {
+    display: none;
+  }
+}
+
+.reduce-motion .facets__chevron,
+.reduce-motion .facets__marker {
+  transition: none;
+}

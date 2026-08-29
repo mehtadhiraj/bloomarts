@@ -1,0 +1,163 @@
+{
+  "general": {
+    "accessibility": {
+      "skip_to_content": "Skip to content",
+      "close": "Close",
+      "menu": "Menu",
+      "open_menu": "Open menu",
+      "close_menu": "Close menu",
+      "back": "Back",
+      "image_placeholder": "Product image placeholder",
+      "previous": "Previous",
+      "next": "Next",
+      "loading": "Loading"
+    },
+    "search": {
+      "title": "Search",
+      "placeholder": "Search concrete, clay, resin…",
+      "submit": "Search",
+      "clear": "Clear search",
+      "results_for": "Results for \"{{ terms }}\"",
+      "no_results": "No results for \"{{ terms }}\". Try a different spelling or a broader term.",
+      "results_count": {
+        "one": "{{ count }} result",
+        "other": "{{ count }} results"
+      },
+      "view_all": "View all results",
+      "no_results_short": "No matching products."
+    },
+    "pagination": {
+      "label": "Pagination",
+      "previous": "Previous page",
+      "next": "Next page",
+      "page": "Page {{ number }}"
+    },
+    "newsletter": {
+      "label": "Email address",
+      "placeholder": "you@example.com",
+      "submit": "Subscribe",
+      "success": "Thanks — you're on the list.",
+      "error": "Please enter a valid email address."
+    },
+    "social": {
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "pinterest": "Pinterest"
+    }
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Add to cart",
+      "adding": "Adding…",
+      "added_to_cart": "Added to cart",
+      "add_error": "Sorry, we couldn't add that. Please try again.",
+      "sold_out": "Sold out",
+      "unavailable": "Unavailable",
+      "quantity": "Quantity",
+      "decrease_quantity": "Decrease quantity",
+      "increase_quantity": "Increase quantity",
+      "view_cart": "View cart",
+      "vendor": "Vendor",
+      "sku": "SKU",
+      "on_sale": "Sale",
+      "regular_price": "Regular price",
+      "sale_price": "Sale price",
+      "from_price": "From",
+      "description": "Description",
+      "materials": "Materials & care",
+      "shipping": "Shipping & returns",
+      "choose_options": "Choose options"
+    },
+    "gallery": {
+      "label": "Product gallery",
+      "slide_of": "Image {{ current }} of {{ total }}",
+      "go_to_image": "Go to image {{ number }}",
+      "thumbnail_label": "Show image {{ number }}"
+    },
+    "customization": {
+      "title": "Make it yours",
+      "colour": "Colour",
+      "finish": "Finish",
+      "size": "Size",
+      "engraving": "Engraving text",
+      "engraving_hint": "Up to {{ max }} characters. Leave blank for no engraving.",
+      "characters_remaining": "{{ count }} characters remaining",
+      "gift_message": "Gift message",
+      "upload": "Reference image",
+      "upload_hint": "JPG, PNG or PDF. Maximum {{ size }} MB.",
+      "upload_choose": "Choose file",
+      "upload_replace": "Replace file",
+      "upload_remove": "Remove file",
+      "no_file": "No file chosen",
+      "required": "This field is required.",
+      "file_too_large": "That file is larger than {{ size }} MB. Please choose a smaller one.",
+      "file_wrong_type": "That file type isn't supported. Use JPG, PNG or PDF.",
+      "errors_heading": "Please fix the following before adding to cart:"
+    },
+    "facets": {
+      "title": "Filter",
+      "filter_and_sort": "Filter and sort",
+      "apply": "Apply filters",
+      "clear": "Clear",
+      "clear_all": "Clear all",
+      "sort_by": "Sort by",
+      "active_filters": "Active filters",
+      "remove_filter": "Remove filter {{ name }}",
+      "price_from": "From",
+      "price_to": "To",
+      "no_results": "No products match these filters.",
+      "showing": "Showing {{ count }} of {{ total }}",
+      "filter_count": "{{ count }} active",
+      "sort_label": "Sort"
+    }
+  },
+  "collections": {
+    "general": {
+      "products_count": {
+        "one": "{{ count }} product",
+        "other": "{{ count }} products"
+      },
+      "empty": "There's nothing here yet.",
+      "view_all": "View all"
+    }
+  },
+  "cart": {
+    "general": {
+      "title": "Cart",
+      "open": "Open cart",
+      "empty": "Your cart is empty.",
+      "empty_action": "Continue shopping",
+      "subtotal": "Subtotal",
+      "taxes_note": "Taxes and shipping calculated at checkout.",
+      "checkout": "Checkout",
+      "view_cart": "View cart",
+      "remove": "Remove {{ title }}",
+      "updated": "Cart updated",
+      "item_removed": "Item removed from cart",
+      "item_count": {
+        "one": "{{ count }} item",
+        "other": "{{ count }} items"
+      },
+      "note": "Order note",
+      "note_placeholder": "Delivery instructions, gift notes…",
+      "continue_shopping": "Continue shopping"
+    }
+  },
+  "customer": {
+    "account": {
+      "title": "Account",
+      "orders": "Orders",
+      "addresses": "Addresses",
+      "log_out": "Log out",
+      "log_in": "Log in",
+      "register": "Create account"
+    }
+  },
+  "templates": {
+    "404": {
+      "title": "Page not found",
+      "body": "The page you're looking for doesn't exist or has moved.",
+      "action": "Back to home"
+    }
+  }
+}

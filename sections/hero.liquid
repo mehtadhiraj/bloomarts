@@ -1,0 +1,176 @@
+{{ 'component-hero.css' | asset_url | stylesheet_tag }}
+
+{%- comment -%}
+  Hero with genuinely separate mobile and desktop crops.
+
+  A 16:9 desktop banner scaled to 390px leaves the subject a thumbnail and
+  the overlay text unreadable, so the merchant supplies a portrait crop for
+  mobile and the two are switched with a <picture> source rather than by
+  scaling one file.
+{%- endcomment -%}
+
+<section
+  class="hero hero--{{ section.settings.height }}"
+  style="--hero-overlay: {{ section.settings.overlay_opacity }};"
+>
+  <div class="hero__media">
+    {%- if section.settings.image_desktop != blank -%}
+      {% render 'art-directed-image',
+         image_desktop: section.settings.image_desktop,
+         image_mobile: section.settings.image_mobile,
+         ratio_mobile: 1.2,
+         ratio_desktop: 0.48,
+         breakpoint: '768px',
+         loading: 'eager',
+         fetchpriority: 'high',
+         alt: section.settings.heading,
+         class: 'hero__image' %}
+    {%- else -%}
+      <div class="hero__image hero__image--placeholder" aria-hidden="true"></div>
+    {%- endif -%}
+  </div>
+
+  {%- comment -%}
+    Content sits below the image on mobile and over it from 768px. Overlaid
+    text on a phone means either an unreadable contrast ratio or a scrim
+    heavy enough to hide the photograph — stacking avoids the choice
+    entirely.
+  {%- endcomment -%}
+  <div class="hero__content">
+    <div class="page-width hero__content-inner" data-reveal-group>
+      {%- if section.settings.subheading != blank -%}
+        <p class="eyebrow hero__subheading" data-reveal="rise">{{ section.settings.subheading }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.heading != blank -%}
+        <h1 class="hero__heading" data-reveal="rise">
+          {{ section.settings.heading }}
+          {%- comment -%}
+            The script accent is decorative emphasis on a word the heading
+            already contains — it is never the only place a word appears, so
+            losing the font changes nothing semantically.
+          {%- endcomment -%}
+          {%- if section.settings.script_accent != blank -%}
+            <span class="script hero__script">{{ section.settings.script_accent }}</span>
+          {%- endif -%}
+        </h1>
+      {%- endif -%}
+
+      {%- if section.settings.text != blank -%}
+        <p class="hero__text" data-reveal="rise">{{ section.settings.text }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.button_label != blank -%}
+        <div class="hero__actions" data-reveal="rise">
+          <a
+            href="{{ section.settings.button_link | default: routes.all_products_collection_url }}"
+            class="btn btn--primary hero__button"
+          >
+            {{ section.settings.button_label }}
+          </a>
+          {%- if section.settings.button_2_label != blank -%}
+            <a href="{{ section.settings.button_2_link }}" class="btn btn--secondary hero__button">
+              {{ section.settings.button_2_label }}
+            </a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+
+  {%- comment -%}
+    Identity motifs as quiet page furniture. Decorative only, aria-hidden,
+    and hidden outright below 768px where the viewport cannot spare the
+    room and the GPU cannot spare the work.
+  {%- endcomment -%}
+  {%- if section.settings.show_motifs -%}
+    <div class="hero__motifs hide-mobile" aria-hidden="true">
+      {%- comment -%}
+        Positioned along the outer edges only. The text column occupies the
+        left half from 768px up, so anything placed there ends up sitting on
+        top of the copy.
+      {%- endcomment -%}
+      {% render 'brand-motif', motif: 'sprig', size: 96, class: 'motif--float', style: 'top: 7%; left: 2%;' %}
+      {% render 'brand-motif', motif: 'bee', size: 64, class: 'motif--float-slow', style: 'top: 14%; right: 6%;' %}
+      {% render 'brand-motif', motif: 'heart', size: 28, class: 'motif--float', style: 'bottom: 26%; right: 16%;' %}
+      {% render 'brand-motif', motif: 'sprig', size: 72, class: 'motif--float-slow', style: 'bottom: 8%; right: 3%; transform: scaleX(-1);' %}
+    </div>
+  {%- endif -%}
+</section>
+
+{% schema %}
+{
+  "name": "Hero",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image_desktop",
+      "label": "Desktop image",
+      "info": "Wide crop, at least 2400px across."
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "Mobile image",
+      "info": "Portrait crop. Falls back to the desktop image, but a dedicated crop reads far better on a phone."
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Concrete · Clay · Resin"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Objects with weight to them"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text",
+      "default": "Cast, thrown and poured in small batches. No two pieces come out quite the same."
+    },
+    {
+      "type": "text",
+      "id": "script_accent",
+      "label": "Script accent",
+      "info": "A short word set in Great Vibes. Decorative only — keep it under three words."
+    },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop the collection" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    { "type": "text", "id": "button_2_label", "label": "Secondary button label" },
+    { "type": "url", "id": "button_2_link", "label": "Secondary button link" },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Image overlay",
+      "info": "Darkens the photograph behind the text on tablet and desktop. Below about 70% the text can fail contrast over a light image.",
+      "min": 40,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "default": 72
+    },
+    {
+      "type": "checkbox",
+      "id": "show_motifs",
+      "label": "Show decorative bee and leaf motifs",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "height",
+      "label": "Height",
+      "options": [
+        { "value": "compact", "label": "Compact" },
+        { "value": "standard", "label": "Standard" },
+        { "value": "tall", "label": "Tall" }
+      ],
+      "default": "standard"
+    }
+  ],
+  "presets": [{ "name": "Hero" }]
+}
+{% endschema %}

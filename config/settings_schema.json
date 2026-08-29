@@ -1,0 +1,345 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Bloom Arts",
+    "theme_version": "1.0.0",
+    "theme_author": "Bloom Arts",
+    "theme_documentation_url": "https://github.com/mehtadhiraj/bloomarts",
+    "theme_support_url": "https://github.com/mehtadhiraj/bloomarts/issues"
+  },
+  {
+    "name": "Brand",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo",
+        "info": "Transparent SVG or high-resolution transparent PNG."
+      },
+      {
+        "type": "image_picker",
+        "id": "logo_mobile",
+        "label": "Mobile logo",
+        "info": "Optional. A compact mark for narrow screens. Falls back to the main logo."
+      },
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon",
+        "info": "Square, at least 32 x 32 px."
+      },
+      {
+        "type": "image_picker",
+        "id": "share_image",
+        "label": "Social sharing image",
+        "info": "Used when a page without its own image is shared."
+      },
+      {
+        "type": "text",
+        "id": "tagline",
+        "label": "Tagline",
+        "default": "Little Creations, Big Smiles"
+      }
+    ]
+  },
+  {
+    "name": "Colours",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "The six Bloom Arts brand colours. Roles below are assigned so every text and control combination meets WCAG 2.2 AA contrast — see docs/DESIGN-SYSTEM.md for the measured ratios."
+      },
+      { "type": "header", "content": "Brand palette" },
+      { "type": "color", "id": "color_brown", "label": "Dark brown", "default": "#2E241B" },
+      { "type": "color", "id": "color_amber", "label": "Amber yellow", "default": "#F6B028" },
+      { "type": "color", "id": "color_coral", "label": "Coral", "default": "#E66D5B" },
+      { "type": "color", "id": "color_olive", "label": "Olive green", "default": "#7A8F5A" },
+      { "type": "color", "id": "color_sage", "label": "Sage green", "default": "#9BAF7E" },
+      { "type": "color", "id": "color_cream", "label": "Cream", "default": "#FBF6EE" },
+      {
+        "type": "header",
+        "content": "Derived text shades",
+        "info": "Darkened brand tones used where the pure colour would fail contrast as small text."
+      },
+      {
+        "type": "color",
+        "id": "color_text_muted",
+        "label": "Muted text",
+        "info": "Dark brown lightened toward cream. 5.47:1 on cream.",
+        "default": "#6C635A"
+      },
+      {
+        "type": "color",
+        "id": "color_error",
+        "label": "Error",
+        "info": "Deepened coral. 4.51:1 on cream — pure coral is only 2.91:1.",
+        "default": "#B45547"
+      },
+      {
+        "type": "color",
+        "id": "color_success",
+        "label": "Success",
+        "info": "Deepened olive. 4.53:1 on cream — pure olive is only 3.31:1.",
+        "default": "#66774B"
+      },
+      { "type": "header", "content": "Surfaces" },
+      {
+        "type": "color",
+        "id": "color_surface",
+        "label": "Card and panel surface",
+        "default": "#FFFDF9"
+      },
+      {
+        "type": "color",
+        "id": "color_border",
+        "label": "Borders and rules",
+        "default": "#E4DACA"
+      }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Lora for headings, Poppins for body — matching the Bloom Arts type guide. Great Vibes is reserved for the script accent and is self-hosted; see docs/FONTS.md."
+      },
+      {
+        "type": "font_picker",
+        "id": "font_heading",
+        "label": "Headings",
+        "default": "lora_n4"
+      },
+      {
+        "type": "font_picker",
+        "id": "font_body",
+        "label": "Body",
+        "default": "poppins_n4"
+      },
+      {
+        "type": "checkbox",
+        "id": "use_script_accent",
+        "label": "Use the Great Vibes script accent",
+        "info": "Applied to short decorative phrases only, never body text. Requires great-vibes-regular.woff2 in assets.",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "font_size_base",
+        "label": "Base body size",
+        "info": "16px minimum stops iOS Safari zooming when a field is focused.",
+        "min": 16,
+        "max": 20,
+        "step": 1,
+        "unit": "px",
+        "default": 16
+      },
+      {
+        "type": "range",
+        "id": "heading_weight",
+        "label": "Heading weight",
+        "min": 400,
+        "max": 700,
+        "step": 100,
+        "default": 600
+      },
+      {
+        "type": "range",
+        "id": "heading_scale",
+        "label": "Heading scale",
+        "info": "Percentage applied to every heading size.",
+        "min": 90,
+        "max": 130,
+        "step": 5,
+        "unit": "%",
+        "default": 100
+      }
+    ]
+  },
+  {
+    "name": "Layout",
+    "settings": [
+      {
+        "type": "range",
+        "id": "page_width",
+        "label": "Maximum page width",
+        "min": 1200,
+        "max": 1800,
+        "step": 40,
+        "unit": "px",
+        "default": 1400
+      },
+      {
+        "type": "select",
+        "id": "corner_style",
+        "label": "Corner style",
+        "options": [
+          { "value": "sharp", "label": "Sharp" },
+          { "value": "soft", "label": "Soft" },
+          { "value": "rounded", "label": "Rounded" }
+        ],
+        "default": "soft"
+      },
+      {
+        "type": "range",
+        "id": "section_spacing",
+        "label": "Space between sections",
+        "min": 80,
+        "max": 160,
+        "step": 10,
+        "unit": "%",
+        "default": 100
+      },
+      {
+        "type": "checkbox",
+        "id": "show_texture",
+        "label": "Show paper texture on cream backgrounds",
+        "info": "A very subtle grain, drawn in CSS. No image request.",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Buttons",
+    "settings": [
+      {
+        "type": "select",
+        "id": "button_style",
+        "label": "Button shape",
+        "options": [
+          { "value": "pill", "label": "Pill" },
+          { "value": "soft", "label": "Soft" },
+          { "value": "square", "label": "Square" }
+        ],
+        "default": "pill"
+      },
+      {
+        "type": "checkbox",
+        "id": "button_shadow",
+        "label": "Lift primary buttons",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Product cards",
+    "settings": [
+      {
+        "type": "select",
+        "id": "card_image_ratio",
+        "label": "Image ratio",
+        "options": [
+          { "value": "square", "label": "Square (1:1)" },
+          { "value": "portrait", "label": "Portrait (4:5)" },
+          { "value": "landscape", "label": "Landscape (4:3)" }
+        ],
+        "default": "portrait"
+      },
+      {
+        "type": "select",
+        "id": "card_hover",
+        "label": "Hover effect",
+        "info": "Pointer devices only. Touch devices never see a hover state, so nothing here costs a phone anything.",
+        "options": [
+          { "value": "none", "label": "None" },
+          { "value": "lift", "label": "Lift" },
+          { "value": "zoom", "label": "Zoom image" },
+          { "value": "swap", "label": "Swap to second image" },
+          { "value": "lift-zoom", "label": "Lift and zoom" }
+        ],
+        "default": "lift-zoom"
+      },
+      { "type": "checkbox", "id": "card_show_vendor", "label": "Show vendor", "default": false },
+      { "type": "checkbox", "id": "card_show_swatches", "label": "Show colour swatches", "default": true }
+    ]
+  },
+  {
+    "name": "Animation",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Decorative motion is automatically simplified for prefers-reduced-motion, Save-Data, slow connections and low-powered devices. These settings control the ceiling, not the floor."
+      },
+      {
+        "type": "checkbox",
+        "id": "animations_enabled",
+        "label": "Enable animations",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "animation_intensity",
+        "label": "Intensity",
+        "options": [
+          { "value": "subtle", "label": "Subtle" },
+          { "value": "balanced", "label": "Balanced" },
+          { "value": "expressive", "label": "Expressive" }
+        ],
+        "default": "balanced"
+      },
+      {
+        "type": "select",
+        "id": "reveal_style",
+        "label": "Section reveal",
+        "options": [
+          { "value": "none", "label": "None" },
+          { "value": "fade", "label": "Fade" },
+          { "value": "rise", "label": "Fade and rise" },
+          { "value": "rise-stagger", "label": "Fade and rise, staggered" }
+        ],
+        "default": "rise-stagger"
+      },
+      {
+        "type": "range",
+        "id": "animation_speed",
+        "label": "Speed",
+        "info": "Percentage of the base duration. Lower is faster.",
+        "min": 60,
+        "max": 160,
+        "step": 10,
+        "unit": "%",
+        "default": 100
+      },
+      {
+        "type": "checkbox",
+        "id": "hero_motion",
+        "label": "Slow zoom on hero images",
+        "info": "Disabled below 768px and on low-powered devices regardless of this setting.",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "reduce_motion_on_mobile",
+        "label": "Simplify motion on small or low-powered devices",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Mobile",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "sticky_atc_enabled",
+        "label": "Sticky add to cart",
+        "info": "Reveals a compact bar once the main button scrolls out of view.",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_drawer_enabled",
+        "label": "Open cart in a drawer",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Social",
+    "settings": [
+      { "type": "text", "id": "social_instagram_handle", "label": "Instagram handle", "default": "bloom.artss" },
+      { "type": "text", "id": "social_instagram", "label": "Instagram URL", "default": "https://www.instagram.com/bloom.artss/" },
+      { "type": "text", "id": "social_facebook", "label": "Facebook URL" },
+      { "type": "text", "id": "social_pinterest", "label": "Pinterest URL" }
+    ]
+  }
+]

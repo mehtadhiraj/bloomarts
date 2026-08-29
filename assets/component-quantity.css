@@ -1,0 +1,58 @@
+/* ==========================================================================
+   Quantity stepper
+   ========================================================================== */
+
+.qty {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background-color: var(--color-surface);
+  /* Prevents the stepper collapsing below usable width in a tight flex row. */
+  flex-shrink: 0;
+}
+
+.qty__btn {
+  color: var(--color-text);
+  /* Both steppers are full 44px targets even though the glyph is 18px. */
+  min-width: var(--tap-min);
+  min-height: var(--tap-min);
+}
+
+.qty__btn:disabled {
+  opacity: 0.4;
+}
+
+.qty__input {
+  /* The steppers are the primary control, but the field is still tappable
+     and focusable, so it has to clear the same 44px minimum rather than
+     being a 30px sliver between two proper targets. */
+  width: 3ch;
+  min-width: var(--tap-min);
+  min-height: var(--tap-min);
+  padding: 0;
+  border: none;
+  background: none;
+  text-align: center;
+  font-size: max(16px, var(--text-base));
+  font-variant-numeric: tabular-nums;
+  /* The native spinners are unusable at touch size and duplicate our
+     buttons. */
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.qty__input::-webkit-outer-spin-button,
+.qty__input::-webkit-inner-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
+.qty__input:focus-visible {
+  outline-offset: -2px;
+}
+
+.qty.is-busy {
+  opacity: 0.6;
+  pointer-events: none;
+}

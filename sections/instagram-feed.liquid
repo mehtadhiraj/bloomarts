@@ -1,0 +1,106 @@
+{{ 'component-instagram.css' | asset_url | stylesheet_tag }}
+
+{%- comment -%}
+  Instagram / social grid.
+
+  The tiles are fixed-ratio boxes that exist before any content arrives.
+  That is the whole point of this section: an Instagram embed or app block
+  that injects its own markup is the classic cause of a late layout shift on
+  a phone, because it lands after paint and pushes the footer down. Reserving
+  the grid up front means whatever fills it — merchant images now, an app
+  embed later — drops into space that was already accounted for.
+{%- endcomment -%}
+
+<section class="section defer-render instagram">
+  <div class="page-width">
+    <div class="instagram__header">
+      <h2 class="instagram__heading">{{ section.settings.heading }}</h2>
+      {%- if settings.social_instagram != blank -%}
+        <a href="{{ settings.social_instagram }}" class="instagram__handle" rel="noopener" target="_blank">
+          {% render 'icon', icon: 'instagram', size: 18 %}
+          <span>@{{ settings.social_instagram_handle }}</span>
+        </a>
+      {%- endif -%}
+    </div>
+
+    <ul class="instagram__grid" role="list" data-instagram-grid data-reveal-group>
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'post' -%}
+            <li class="instagram__tile" data-reveal="scale" {{ block.shopify_attributes }}>
+              {%- if block.settings.link != blank -%}
+                <a href="{{ block.settings.link }}" class="instagram__link" rel="noopener" target="_blank">
+              {%- endif -%}
+
+              {% render 'responsive-image',
+                 image: block.settings.image,
+                 ratio: 1,
+                 sizes: '(min-width: 1024px) 16vw, (min-width: 768px) 25vw, 50vw',
+                 widths: '200,300,400,600,800',
+                 alt: block.settings.alt,
+                 class: 'instagram__image' %}
+
+              {%- if block.settings.link != blank -%}
+                  <span class="visually-hidden">{{ block.settings.alt | default: 'View on Instagram' }}</span>
+                </a>
+              {%- endif -%}
+            </li>
+
+          {%- comment -%}
+            An app block drops into a tile that is already the right size, so
+            it cannot shift the page when it renders.
+          {%- endcomment -%}
+          {%- when '@app' -%}
+            <li class="instagram__tile instagram__tile--app" {{ block.shopify_attributes }}>
+              {% render block %}
+            </li>
+        {%- endcase -%}
+      {%- endfor -%}
+
+      {%- comment -%}
+        With nothing configured, the grid still occupies its final height.
+        An empty section that later fills in is the shift we are avoiding.
+      {%- endcomment -%}
+      {%- if section.blocks.size == 0 -%}
+        {%- for i in (1..6) -%}
+          <li class="instagram__tile instagram__tile--empty" aria-hidden="true"></li>
+        {%- endfor -%}
+      {%- endif -%}
+    </ul>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Instagram",
+  "max_blocks": 12,
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "From the studio" }
+  ],
+  "blocks": [
+    {
+      "type": "post",
+      "name": "Post",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "url", "id": "link", "label": "Link" },
+        { "type": "text", "id": "alt", "label": "Alt text", "info": "Describe the image for screen readers." }
+      ]
+    },
+    { "type": "@app" }
+  ],
+  "presets": [
+    {
+      "name": "Instagram",
+      "blocks": [
+        { "type": "post" },
+        { "type": "post" },
+        { "type": "post" },
+        { "type": "post" },
+        { "type": "post" },
+        { "type": "post" }
+      ]
+    }
+  ]
+}
+{% endschema %}

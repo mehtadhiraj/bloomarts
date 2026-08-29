@@ -1,0 +1,146 @@
+{%- comment -%}
+  Product gallery.
+
+  The swipe itself is CSS scroll-snap, not JavaScript. That gives native
+  momentum, native rubber-banding and native accessibility on touch, and it
+  keeps working if the script never loads — the track is simply a scrollable
+  row of images.
+
+  JavaScript adds only what CSS cannot: position reporting, the dot and
+  thumbnail controls, and keyboard support.
+
+  Accepts: product {Object}
+{%- endcomment -%}
+
+{%- liquid
+  assign media_items = product.media | default: product.images
+  assign media_count = media_items.size
+-%}
+
+<product-gallery
+  class="gallery"
+  data-gallery
+  data-media-count="{{ media_count }}"
+>
+  <div class="gallery__stage">
+    {%- comment -%}
+      tabindex="0" makes the scroll container focusable so a keyboard user
+      can reach it and arrow through the images, which a plain overflow
+      container does not allow.
+    {%- endcomment -%}
+    <div
+      class="gallery__viewport"
+      data-gallery-track
+      role="group"
+      aria-roledescription="carousel"
+      aria-label="{{ 'products.gallery.label' | t }}"
+      tabindex="0"
+    >
+      {%- for media in media_items -%}
+        <div
+          class="gallery__slide"
+          data-gallery-slide
+          data-index="{{ forloop.index0 }}"
+          id="gallery-slide-{{ forloop.index0 }}"
+          role="group"
+          aria-roledescription="slide"
+          aria-label="{{ 'products.gallery.slide_of' | t: current: forloop.index, total: media_count }}"
+        >
+          {%- comment -%}
+            The first image is the LCP element on a product page: eager,
+            high priority, and sized so nothing shifts when it lands.
+            Everything after it is lazy.
+          {%- endcomment -%}
+          {%- liquid
+            if forloop.first
+              assign media_loading = 'eager'
+              assign media_priority = 'high'
+            else
+              assign media_loading = 'lazy'
+              assign media_priority = 'auto'
+            endif
+          -%}
+          {% render 'responsive-image',
+             image: media,
+             ratio: 1.25,
+             sizes: '(min-width: 1024px) 45vw, (min-width: 768px) 50vw, 100vw',
+             loading: media_loading,
+             fetchpriority: media_priority,
+             alt: product.title,
+             class: 'gallery__image' %}
+        </div>
+      {%- endfor -%}
+    </div>
+
+    {%- if media_count > 1 -%}
+      {%- comment -%}
+        Arrows are for pointer devices. On touch the swipe is the gesture
+        people reach for, and the dots below already provide an accessible
+        non-gesture route to any image.
+      {%- endcomment -%}
+      <button
+        type="button"
+        class="gallery__arrow gallery__arrow--prev tap-target"
+        data-gallery-prev
+        aria-controls="gallery-slide-0"
+      >
+        {% render 'icon', icon: 'chevron-left' %}
+        <span class="visually-hidden">{{ 'general.accessibility.previous' | t }}</span>
+      </button>
+      <button
+        type="button"
+        class="gallery__arrow gallery__arrow--next tap-target"
+        data-gallery-next
+      >
+        {% render 'icon', icon: 'chevron-right' %}
+        <span class="visually-hidden">{{ 'general.accessibility.next' | t }}</span>
+      </button>
+    {%- endif -%}
+  </div>
+
+  {%- if media_count > 1 -%}
+    {%- comment -%}
+      Dots are real buttons, each with a 44px hit area around a 8px visual
+      dot. They are the accessible control the swipe gesture cannot be.
+    {%- endcomment -%}
+    <ul class="gallery__dots" role="list" data-gallery-dots>
+      {%- for media in media_items -%}
+        <li>
+          <button
+            type="button"
+            class="gallery__dot tap-target tap-target--expand"
+            data-gallery-goto="{{ forloop.index0 }}"
+            aria-label="{{ 'products.gallery.go_to_image' | t: number: forloop.index }}"
+            {% if forloop.first %}aria-current="true"{% endif %}
+          >
+            <span class="gallery__dot-mark" aria-hidden="true"></span>
+          </button>
+        </li>
+      {%- endfor -%}
+    </ul>
+
+    {%- comment -%} Thumbnails are a desktop affordance; on mobile they would
+      cost a row of vertical space to duplicate what the dots already do. {%- endcomment -%}
+    <ul class="gallery__thumbs" role="list" data-gallery-thumbs>
+      {%- for media in media_items -%}
+        <li>
+          <button
+            type="button"
+            class="gallery__thumb"
+            data-gallery-goto="{{ forloop.index0 }}"
+            aria-label="{{ 'products.gallery.thumbnail_label' | t: number: forloop.index }}"
+            {% if forloop.first %}aria-current="true"{% endif %}
+          >
+            {% render 'responsive-image',
+               image: media,
+               ratio: 1,
+               sizes: '80px',
+               widths: '80,120,160,240',
+               alt: '',
+               class: 'gallery__thumb-image' %}
+          </button>
+        </li>
+      {%- endfor -%}
+    </ul>
+  {%- endif -%}
+</product-gallery>

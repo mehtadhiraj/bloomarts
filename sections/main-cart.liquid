@@ -1,0 +1,84 @@
+{{ 'component-cart.css' | asset_url | stylesheet_tag }}
+{{ 'component-quantity.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'quantity-input.js' | asset_url }}" defer></script>
+<script src="{{ 'cart-page.js' | asset_url }}" defer></script>
+
+<div class="cart-page page-width">
+  <h1 class="cart-page__title">{{ 'cart.general.title' | t }}</h1>
+
+  {%- if cart.item_count > 0 -%}
+    <cart-page class="cart-page__layout" data-cart-page>
+      <form action="{{ routes.cart_url }}" method="post" id="cart-form" class="cart-page__items">
+        <ul class="cart-items" role="list" data-cart-items>
+          {%- for item in cart.items -%}
+            {% render 'cart-line-item', item: item %}
+          {%- endfor -%}
+        </ul>
+
+        <div class="field cart-page__note">
+          <label class="field__label" for="cart-note">{{ 'cart.general.note' | t }}</label>
+          <textarea
+            class="textarea"
+            id="cart-note"
+            name="note"
+            rows="2"
+            placeholder="{{ 'cart.general.note_placeholder' | t }}"
+          >{{ cart.note }}</textarea>
+        </div>
+      </form>
+
+      {%- comment -%}
+        The summary is a sticky sidebar on desktop and a normal block on
+        mobile — where it sits after the items, which is the order the
+        decision is actually made in.
+      {%- endcomment -%}
+      <aside class="cart-page__summary" aria-label="{{ 'cart.general.subtotal' | t }}">
+        {%- if cart.cart_level_discount_applications.size > 0 -%}
+          <ul class="cart-discounts" role="list">
+            {%- for discount in cart.cart_level_discount_applications -%}
+              <li class="text-sm">{{ discount.title }} (&minus;{{ discount.total_allocated_amount | money }})</li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+
+        <div class="cart-summary">
+          <span class="cart-summary__label">{{ 'cart.general.subtotal' | t }}</span>
+          <span class="cart-summary__value" data-cart-subtotal>{{ cart.total_price | money }}</span>
+        </div>
+
+        <p class="text-xs text-muted">{{ 'cart.general.taxes_note' | t }}</p>
+
+        {%- comment -%}
+          Checkout submits the cart form natively. No JavaScript stands
+          between the customer and Shopify's hosted checkout.
+        {%- endcomment -%}
+        <button
+          type="submit"
+          name="checkout"
+          form="cart-form"
+          class="btn btn--primary btn--full cart-page__checkout"
+        >
+          {{ 'cart.general.checkout' | t }}
+        </button>
+
+        <a href="{{ routes.all_products_collection_url }}" class="cart-page__continue">
+          {{ 'cart.general.continue_shopping' | t }}
+        </a>
+      </aside>
+    </cart-page>
+  {%- else -%}
+    <div class="cart-page__empty">
+      <p>{{ 'cart.general.empty' | t }}</p>
+      <a href="{{ routes.all_products_collection_url }}" class="btn btn--primary">
+        {{ 'cart.general.empty_action' | t }}
+      </a>
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Cart",
+  "settings": []
+}
+{% endschema %}

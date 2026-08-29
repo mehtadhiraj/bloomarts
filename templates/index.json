@@ -1,0 +1,56 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero",
+      "settings": {
+        "subheading": "Concrete · Clay · Resin",
+        "heading": "Little creations,",
+        "text": "Cast, thrown and poured by hand in small batches. No two pieces come out quite the same.",
+        "script_accent": "big smiles",
+        "button_label": "Shop the collection",
+        "button_link": "/collections/all",
+        "height": "standard"
+      }
+    },
+    "featured": {
+      "type": "featured-collection",
+      "settings": {
+        "heading": "New this month",
+        "collection": "concrete",
+        "products_to_show": 8
+      }
+    },
+    "image-text": {
+      "type": "image-with-text",
+      "settings": {
+        "heading": "Made slowly, on purpose",
+        "text": "<p>Concrete cures for seven days before it is sealed. Stoneware is fired twice. Resin is poured in layers over three. None of it can be rushed, which is why batches are small and why colour shifts a little between pieces.</p>",
+        "button_label": "About the studio",
+        "button_link": "/pages/about",
+        "layout": "image-first"
+      }
+    },
+    "featured-resin": {
+      "type": "featured-collection",
+      "settings": {
+        "heading": "Resin, poured to order",
+        "collection": "resin",
+        "products_to_show": 6
+      }
+    },
+    "instagram": {
+      "type": "instagram-feed",
+      "settings": { "heading": "From the studio", "handle": "@bloomarts" },
+      "blocks": {
+        "p1": { "type": "post", "settings": { "alt": "A charcoal planter drying on the bench" } },
+        "p2": { "type": "post", "settings": { "alt": "Stoneware vases before glazing" } },
+        "p3": { "type": "post", "settings": { "alt": "Resin poured in amber layers" } },
+        "p4": { "type": "post", "settings": { "alt": "Tealight holders lined up" } },
+        "p5": { "type": "post", "settings": { "alt": "A tray being sanded" } },
+        "p6": { "type": "post", "settings": { "alt": "The studio shelf" } }
+      },
+      "block_order": ["p1", "p2", "p3", "p4", "p5", "p6"]
+    }
+  },
+  "order": ["hero", "featured", "image-text", "featured-resin", "instagram"]
+}

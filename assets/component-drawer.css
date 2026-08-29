@@ -1,0 +1,180 @@
+/* ==========================================================================
+   Drawer / bottom sheet
+   Shared by the mobile menu, cart and filter panels.
+
+   On mobile every drawer is a BOTTOM SHEET. That is the one-handed choice:
+   the close control, the grab handle and the primary action all sit within
+   thumb reach, where a top-anchored panel puts them at the far corner of a
+   6-inch screen. Larger viewports promote some of these to side panels,
+   which is a progressive change, not a different component.
+   ========================================================================== */
+
+.drawer {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-drawer);
+  visibility: hidden;
+  /* Delay the visibility flip until the exit transition finishes, so the
+     panel animates out instead of disappearing. */
+  transition: visibility 0s linear var(--dur-slow);
+}
+
+.drawer[open] {
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+.drawer__overlay {
+  position: absolute;
+  inset: 0;
+  background-color: var(--color-overlay);
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease);
+}
+
+.drawer[open] .drawer__overlay {
+  opacity: 1;
+}
+
+.drawer__panel {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  /* svh, not vh: with dynamic viewport units the sheet would resize as the
+     mobile URL bar collapses, which looks like a glitch mid-scroll. */
+  max-height: 88svh;
+  background-color: var(--color-surface);
+  border-start-start-radius: calc(var(--radius) * 2);
+  border-start-end-radius: calc(var(--radius) * 2);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(100%);
+  transition: transform var(--dur-slow) var(--ease-out);
+  /* Clears the home indicator on gesture-navigation phones. */
+  padding-bottom: var(--safe-bottom);
+}
+
+.drawer[open] .drawer__panel {
+  transform: translateY(0);
+}
+
+/* The menu needs the height; capping it lower would put a long nav behind
+   an inner scroll for no reason. */
+.drawer--tall .drawer__panel {
+  height: 92svh;
+  max-height: 92svh;
+}
+
+.drawer__handle {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* A full 44px drag surface — the visible pill is only 4px tall, but the
+     grabbable area must not be. */
+  min-height: var(--tap-min);
+  cursor: grab;
+  touch-action: none;
+}
+
+.drawer__handle::before {
+  content: "";
+  width: 40px;
+  height: 4px;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-border);
+}
+
+.drawer__header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding-inline: var(--gutter);
+  padding-block-end: var(--space-xs);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.drawer__title {
+  font-size: var(--text-lg);
+  margin: 0;
+}
+
+.drawer__close {
+  flex-shrink: 0;
+  color: var(--color-text);
+}
+
+.drawer__body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  /* Stops the page behind from scrolling once the sheet hits its end —
+     the "scroll chaining" that makes sheets feel broken on iOS. */
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: var(--space-sm) var(--gutter);
+}
+
+.drawer__footer {
+  flex-shrink: 0;
+  padding: var(--space-sm) var(--gutter);
+  border-top: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+}
+
+/* --------------------------------------------------------------------------
+   Promotion to a side panel
+   -------------------------------------------------------------------------- */
+
+@media (min-width: 768px) {
+  .drawer--side .drawer__panel {
+    inset-block: 0;
+    inset-inline-start: auto;
+    inset-inline-end: 0;
+    width: min(420px, 100%);
+    max-height: none;
+    height: 100dvh;
+    border-radius: 0;
+    transform: translateX(100%);
+    padding-bottom: 0;
+    padding-top: var(--safe-top);
+  }
+
+  .drawer--side[open] .drawer__panel {
+    transform: translateX(0);
+  }
+
+  /* The grab handle is a touch affordance; it means nothing with a mouse. */
+  .drawer--side .drawer__handle {
+    display: none;
+  }
+
+  .drawer--side .drawer__header {
+    padding-top: var(--space-sm);
+  }
+}
+
+/* The menu drawer stops existing once the nav is inline. */
+@media (min-width: 1024px) {
+  .drawer--menu {
+    display: none;
+  }
+}
+
+/* Under the motion policy the sheet appears without sliding. It must still
+   become visible immediately rather than waiting on a transition. */
+.reduce-motion .drawer,
+.reduce-motion .drawer__panel,
+.reduce-motion .drawer__overlay {
+  transition: none;
+}
+
+.reduce-motion .drawer__panel {
+  transform: none;
+}
+
+.reduce-motion .drawer:not([open]) .drawer__panel {
+  display: none;
+}

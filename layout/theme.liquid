@@ -1,0 +1,266 @@
+<!doctype html>
+<html
+  lang="{{ request.locale.iso_code }}"
+  dir="{{ request.locale.direction | default: 'ltr' }}"
+  class="no-js"
+  {%- comment -%}
+    Animation policy is published as data attributes rather than classes so
+    global.js can read the merchant's ceiling and CSS can select on it,
+    without either needing to know the other's naming.
+  {%- endcomment -%}
+  data-animations="{{ settings.animations_enabled }}"
+  data-animation-intensity="{{ settings.animation_intensity }}"
+  data-reveal-style="{{ settings.reveal_style }}"
+  data-hero-motion="{{ settings.hero_motion }}"
+  data-card-hover="{{ settings.card_hover }}"
+  data-reduce-motion-mobile="{{ settings.reduce_motion_on_mobile }}"
+>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    {%- comment -%}
+      viewport-fit=cover lets content reach under the notch and home
+      indicator; the env(safe-area-inset-*) padding in base.css is what keeps
+      it legible there. interactive-widget=resizes-content makes the virtual
+      keyboard shrink the viewport instead of floating over it, so a focused
+      field is never hidden behind the keyboard on Android.
+      No maximum-scale / user-scalable=no — pinch zoom stays available.
+    {%- endcomment -%}
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content"
+    >
+
+    <meta name="theme-color" content="{{ settings.color_cream }}">
+    <link rel="canonical" href="{{ canonical_url }}">
+
+    {%- if settings.favicon != blank -%}
+      <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+    {%- endif -%}
+
+    {%- comment -%} Warm the image CDN before the hero srcset resolves. {%- endcomment -%}
+    <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+
+    {%- render 'meta-tags' -%}
+
+    {%- comment -%}
+      Swap the no-js class immediately so CSS can style enhanced components
+      without waiting for a deferred script — avoids a flash of unstyled
+      controls. This is the only inline script in <head>.
+    {%- endcomment -%}
+    <script>
+      document.documentElement.classList.remove('no-js');
+      document.documentElement.classList.add('js');
+    </script>
+
+    {%- liquid
+      assign body_font = settings.font_body
+      assign heading_font = settings.font_heading
+      assign body_font_medium = body_font | font_modify: 'weight', '500'
+      assign body_font_bold = body_font | font_modify: 'weight', 'bold'
+      assign body_font_italic = body_font | font_modify: 'style', 'italic'
+      assign heading_font_semibold = heading_font | font_modify: 'weight', '600'
+
+      assign corner = 8
+      case settings.corner_style
+        when 'sharp'
+          assign corner = 0
+        when 'rounded'
+          assign corner = 18
+      endcase
+
+      assign button_radius = corner
+      case settings.button_style
+        when 'pill'
+          assign button_radius = 999
+        when 'square'
+          assign button_radius = 0
+      endcase
+    -%}
+
+    {%- comment -%}
+      font_display: swap keeps text visible during load, and the
+      metric-adjusted fallback below means the swap does not reflow the page.
+
+      font_modify returns nil when a weight is not published for the family,
+      so each variant is guarded — an unguarded nil would emit a broken
+      @font-face rule.
+    {%- endcomment -%}
+    {{ body_font | font_face: font_display: 'swap' }}
+    {%- if body_font_medium %}{{ body_font_medium | font_face: font_display: 'swap' }}{% endif -%}
+    {%- if body_font_bold %}{{ body_font_bold | font_face: font_display: 'swap' }}{% endif -%}
+    {%- if body_font_italic %}{{ body_font_italic | font_face: font_display: 'swap' }}{% endif -%}
+    {{ heading_font | font_face: font_display: 'swap' }}
+    {%- if heading_font_semibold %}{{ heading_font_semibold | font_face: font_display: 'swap' }}{% endif -%}
+
+    {%- comment -%}
+      Settings-derived tokens are inlined rather than written to a stylesheet,
+      so first paint already has the right colours and the cached base.css
+      stays byte-identical across stores.
+    {%- endcomment -%}
+    <style>
+      {%- if settings.use_script_accent -%}
+      {%- comment -%}
+        Great Vibes is not in Shopify's font library, so it is self-hosted.
+        If the file has not been uploaded this request 404s and the cursive
+        fallback is used — the script accent is decorative, never body text,
+        so nothing is lost functionally.
+      {%- endcomment -%}
+      @font-face {
+        font-family: "Great Vibes";
+        src: url("{{ 'great-vibes-regular.woff2' | asset_url }}") format("woff2");
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+      }
+      {%- endif -%}
+
+      /* Metric-adjusted fallback: the swap from this to the real face does
+         not change line box height, which is where font-driven CLS comes
+         from. */
+      @font-face {
+        font-family: "bloom-fallback";
+        src: local("Helvetica Neue"), local("Arial"), local("Roboto");
+        size-adjust: 100%;
+        ascent-override: 92%;
+        descent-override: 24%;
+        line-gap-override: 0%;
+      }
+
+      :root {
+        /* --- Bloom Arts palette --- */
+        --brand-brown: {{ settings.color_brown }};
+        --brand-amber: {{ settings.color_amber }};
+        --brand-coral: {{ settings.color_coral }};
+        --brand-olive: {{ settings.color_olive }};
+        --brand-sage: {{ settings.color_sage }};
+        --brand-cream: {{ settings.color_cream }};
+
+        /* --- Roles ---
+           Assignments are contrast-checked; see docs/DESIGN-SYSTEM.md. */
+        --color-background: var(--brand-cream);
+        --color-surface: {{ settings.color_surface }};
+        --color-text: var(--brand-brown);
+        --color-text-muted: {{ settings.color_text_muted }};
+        --color-border: {{ settings.color_border }};
+
+        /* Amber carries the primary action, labelled in dark brown (8.06:1).
+           White on amber is 1.88:1 and is never used. */
+        --color-accent: var(--brand-amber);
+        --color-accent-contrast: var(--brand-brown);
+
+        /* Brown is the secondary/solid surface, labelled in cream (14.10:1). */
+        --color-contrast-surface: var(--brand-brown);
+        --color-contrast-text: var(--brand-cream);
+
+        /* Coral is a badge fill with brown text (4.84:1), never small text
+           on cream (2.91:1). */
+        --color-sale: var(--brand-coral);
+        --color-sale-text: var(--brand-brown);
+
+        /* Sage is a tinted surface with brown text (6.38:1). */
+        --color-tint: var(--brand-sage);
+        --color-tint-text: var(--brand-brown);
+
+        --color-error: {{ settings.color_error }};
+        --color-success: {{ settings.color_success }};
+        --color-overlay: {{ settings.color_brown | color_modify: 'alpha', 0.55 }};
+        --color-scrim-strong: {{ settings.color_brown | color_modify: 'alpha', 0.72 }};
+
+        /* --- Type --- */
+        --font-body: {{ body_font.family }}, "bloom-fallback", {{ body_font.fallback_families }};
+        --font-heading: {{ heading_font.family }}, "bloom-fallback", {{ heading_font.fallback_families }};
+        --font-script: "Great Vibes", "Snell Roundhand", "Apple Chancery", cursive;
+        --font-size-base: {{ settings.font_size_base | divided_by: 16.0 }}rem;
+        --heading-weight: {{ settings.heading_weight }};
+        --heading-scale: {{ settings.heading_scale | divided_by: 100.0 }};
+
+        /* --- Layout --- */
+        --page-width: {{ settings.page_width }}px;
+        --radius: {{ corner }}px;
+        --radius-button: {{ button_radius }}px;
+        --section-spacing-scale: {{ settings.section_spacing | divided_by: 100.0 }};
+
+        /* --- Motion ---
+           One multiplier drives every duration in the theme, so the speed
+           setting cannot fall out of step with individual components. */
+        --motion-scale: {{ settings.animation_speed | divided_by: 100.0 }};
+      }
+    </style>
+
+    {{ 'base.css' | asset_url | stylesheet_tag }}
+    {{ 'animations.css' | asset_url | stylesheet_tag }}
+
+    {%- comment -%}
+      Registers custom elements and sets the device-capability classes that
+      gate decorative motion. Deferred: nothing above the fold needs it.
+    {%- endcomment -%}
+    <script src="{{ 'global.js' | asset_url }}" defer></script>
+
+    {{ content_for_header }}
+  </head>
+
+  <body class="template-{{ template.name | handle }}{% if settings.show_texture %} has-texture{% endif %}{% if settings.button_shadow %} button-lift{% endif %}">
+    <a class="skip-link" href="#main-content">
+      {{ 'general.accessibility.skip_to_content' | t }}
+    </a>
+
+    {%- comment -%}
+      Announcements live in the layout, not a template, so they persist
+      across navigation without re-rendering the page shell.
+    {%- endcomment -%}
+    {% section 'announcement-bar' %}
+    {% section 'header' %}
+
+    <main id="main-content" tabindex="-1">
+      {{ content_for_layout }}
+    </main>
+
+    {% section 'footer' %}
+
+    {%- if settings.cart_drawer_enabled -%}
+      {% section 'cart-drawer' %}
+    {%- endif -%}
+
+    {%- comment -%}
+      Single polite live region shared by cart, gallery and form components.
+      One region avoids competing announcements on a screen reader.
+    {%- endcomment -%}
+    <div
+      id="live-region"
+      class="visually-hidden"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+    ></div>
+
+    <script>
+      window.BloomartsMoneyFormat = {{ shop.money_format | json }};
+      window.BloomartsRoutes = {
+        cart_add: "{{ routes.cart_add_url }}",
+        cart_change: "{{ routes.cart_change_url }}",
+        cart_update: "{{ routes.cart_update_url }}",
+        cart: "{{ routes.cart_url }}",
+        predictive_search: "{{ routes.predictive_search_url }}"
+      };
+      window.BloomartsStrings = {
+        addedToCart: {{ 'products.product.added_to_cart' | t | json }},
+        addToCartError: {{ 'products.product.add_error' | t | json }},
+        soldOut: {{ 'products.product.sold_out' | t | json }},
+        unavailable: {{ 'products.product.unavailable' | t | json }},
+        required: {{ 'products.customization.required' | t | json }},
+        fileTooLarge: {{ 'products.customization.file_too_large' | t | json }},
+        fileWrongType: {{ 'products.customization.file_wrong_type' | t | json }},
+        slideOf: {{ 'products.gallery.slide_of' | t | json }},
+        noResults: {{ 'general.search.no_results_short' | t | json }},
+        cartUpdated: {{ 'cart.general.updated' | t | json }},
+        itemRemoved: {{ 'cart.general.item_removed' | t | json }},
+        charactersRemaining: {{ 'products.customization.characters_remaining' | t | json }},
+        noFile: {{ 'products.customization.no_file' | t | json }},
+        uploadChoose: {{ 'products.customization.upload_choose' | t | json }},
+        uploadReplace: {{ 'products.customization.upload_replace' | t | json }}
+      };
+    </script>
+  </body>
+</html>

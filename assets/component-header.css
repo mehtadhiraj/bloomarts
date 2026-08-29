@@ -1,0 +1,249 @@
+/* ==========================================================================
+   Header
+
+   Mobile is a three-slot bar: menu / brand / utilities. The inline nav does
+   not exist below 1024px — it is not hidden with display:none, it simply
+   isn't laid out, and its content lives in the mobile sheet instead. That
+   avoids shipping two copies of the same nav to a phone.
+   ========================================================================== */
+
+.header {
+  position: relative;
+  z-index: var(--z-header);
+  background-color: var(--color-background);
+  border-bottom: 1px solid var(--color-border);
+  /* Content clears the notch in landscape. */
+  padding-top: var(--safe-top);
+}
+
+.header--sticky {
+  position: sticky;
+  top: 0;
+}
+
+.header__inner {
+  display: grid;
+  /* Fixed side columns keep the brand optically centred no matter how many
+     utility icons are present — a flex row would shift it as the cart count
+     changes width. */
+  grid-template-columns: var(--tap-min) 1fr auto;
+  align-items: center;
+  gap: var(--space-2xs);
+  min-height: 56px;
+}
+
+.header__action {
+  color: var(--color-text);
+  background: none;
+  border: none;
+  text-decoration: none;
+}
+
+.header__brand {
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+}
+
+.header__logo {
+  /* Constrained on BOTH axes. Sizing by width alone means a square logo
+     renders as tall as it is wide — a 180px-wide square logo made the
+     header 180px tall and pushed every sticky offset with it. max-height
+     is what keeps the header a header whatever aspect ratio the merchant
+     uploads. */
+  width: auto;
+  height: auto;
+  max-width: min(var(--logo-width-mobile), 100%);
+  max-height: 36px;
+  object-fit: contain;
+}
+
+.header__logo-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Both axes: a tall narrow logo (or a square one capped by max-height)
+     otherwise leaves the home link only ~36px wide. */
+  min-height: var(--tap-min);
+  min-width: var(--tap-min);
+}
+
+.header__logo-text {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  /* A long shop name must truncate rather than push the utilities off the
+     320px viewport. */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  min-height: var(--tap-min);
+}
+
+.header__utils {
+  display: flex;
+  align-items: center;
+  /* Adjacent icon buttons need separation or they read as one target. */
+  gap: var(--space-3xs);
+  justify-self: end;
+}
+
+/* Account is a low-frequency action on mobile; it lives in the menu sheet
+   instead, keeping the top bar to three thumb-sized targets. */
+.header__action--account {
+  display: none;
+}
+
+.header__cart {
+  position: relative;
+}
+
+.header__cart-count {
+  position: absolute;
+  top: 2px;
+  inset-inline-end: 2px;
+  min-width: 18px;
+  height: 18px;
+  padding-inline: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-accent);
+  color: var(--color-accent-contrast);
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.header__cart-count.is-empty {
+  display: none;
+}
+
+/* The inline nav is absent, not hidden, below the desktop breakpoint. */
+.header__nav {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   Tablet
+   -------------------------------------------------------------------------- */
+
+@media (min-width: 768px) {
+  .header__inner {
+    min-height: 72px;
+    gap: var(--space-sm);
+  }
+
+  .header__logo {
+    max-width: min(var(--logo-width-desktop), 100%);
+    max-height: 48px;
+  }
+
+  .header__logo-text {
+    font-size: var(--text-xl);
+  }
+
+  .header__utils {
+    gap: var(--space-2xs);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Desktop — nav comes inline, menu button retires
+   -------------------------------------------------------------------------- */
+
+@media (min-width: 1024px) {
+  .header__inner {
+    grid-template-columns: auto 1fr auto;
+    gap: var(--space-lg);
+  }
+
+  .header__action--menu {
+    display: none;
+  }
+
+  .header__action--account {
+    display: inline-flex;
+  }
+
+  .header__brand {
+    justify-content: flex-start;
+    order: -1;
+  }
+
+  .header__nav {
+    display: block;
+    min-width: 0;
+  }
+
+  .header__nav-list {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .header__nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3xs);
+    padding-inline: var(--space-3xs);
+    font-size: var(--text-sm);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .header__nav-link:hover,
+  .header__nav-link[aria-current="page"] {
+    text-decoration: underline;
+  }
+
+  .header__dropdown {
+    position: relative;
+  }
+
+  .header__dropdown[open] > .header__nav-link .icon--chevron-down {
+    transform: rotate(180deg);
+  }
+
+  .header__dropdown-list {
+    position: absolute;
+    top: 100%;
+    inset-inline-start: 0;
+    min-width: 220px;
+    margin: 0;
+    padding: var(--space-2xs);
+    list-style: none;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    z-index: var(--z-raised);
+  }
+
+  .header__dropdown-link {
+    display: block;
+    /* Even on desktop, hybrid touch laptops make a 44px row worthwhile. */
+    min-height: var(--tap-min);
+    display: flex;
+    align-items: center;
+    padding: var(--space-2xs) var(--space-xs);
+    font-size: var(--text-sm);
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+  }
+
+  .header__dropdown-link:hover {
+    background-color: var(--color-background);
+  }
+}

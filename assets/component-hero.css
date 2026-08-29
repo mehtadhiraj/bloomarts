@@ -1,0 +1,188 @@
+/* ==========================================================================
+   Hero
+
+   Mobile stacks image over text. Text is overlaid only from 768px, where
+   there is room for a readable measure and a scrim that does not swallow
+   the photograph.
+   ========================================================================== */
+
+.hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.hero__media {
+  position: relative;
+}
+
+.hero__image {
+  width: 100%;
+  height: auto;
+  /* Matches ratio_mobile in the section so the box is reserved before the
+     image decodes. */
+  aspect-ratio: 1 / 1.2;
+  object-fit: cover;
+  display: block;
+}
+
+.hero__image--placeholder {
+  background: linear-gradient(160deg, var(--color-border), var(--color-background));
+}
+
+.hero--compact .hero__image { aspect-ratio: 1 / 0.9; }
+.hero--tall .hero__image { aspect-ratio: 1 / 1.45; }
+
+.hero__content {
+  padding-block: var(--space-md);
+  background-color: var(--color-background);
+}
+
+.hero__content-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2xs);
+}
+
+.hero__subheading {
+  margin: 0;
+}
+
+.hero__heading {
+  margin: 0;
+  font-size: var(--text-3xl);
+  line-height: var(--leading-tight);
+}
+
+.hero__text {
+  margin: 0;
+  max-width: 46ch;
+  color: var(--color-text-muted);
+}
+
+.hero__button {
+  margin-top: var(--space-2xs);
+  /* Full width on the narrowest phones; auto once there is room beside it. */
+  width: 100%;
+}
+
+@media (min-width: 480px) {
+  .hero__button {
+    width: auto;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   From tablet — overlay
+   -------------------------------------------------------------------------- */
+
+@media (min-width: 768px) {
+  .hero__image {
+    aspect-ratio: 1 / 0.48;
+  }
+
+  .hero--compact .hero__image { aspect-ratio: 1 / 0.38; }
+  .hero--tall .hero__image { aspect-ratio: 1 / 0.62; }
+
+  .hero__content {
+    position: absolute;
+    inset: 0;
+    /* Above .hero__motifs — see the z-index note there. */
+    z-index: 1;
+    display: flex;
+    align-items: flex-end;
+    padding-block: var(--space-xl);
+    color: var(--brand-cream);
+
+    /* The scrim exists to make the text legible over an image nobody has
+       seen yet.
+
+       The strongest stop sits where the text is (the bottom) and defaults
+       to 0.72. That number is not arbitrary: composited over a WORST-CASE
+       pure white photograph, brown at 0.72 yields a background luminance
+       that still gives cream text about 5.4:1. A lighter scrim (0.62 was
+       the first attempt) drops to roughly 4.4:1 over white and fails.
+       Merchants can raise it further but not below the floor. */
+    background: linear-gradient(
+      to top,
+      color-mix(in srgb, var(--brand-brown) calc(var(--hero-overlay, 72) * 1%), transparent) 0%,
+      color-mix(in srgb, var(--brand-brown) calc(var(--hero-overlay, 72) * 0.55%), transparent) 42%,
+      transparent 78%
+    );
+  }
+
+  .hero__content-inner {
+    gap: var(--space-xs);
+  }
+
+  .hero__subheading,
+  .hero__text {
+    /* Muted brown would vanish against the scrim; cream at 88% keeps the
+       hierarchy without dropping below AA. */
+    color: color-mix(in srgb, var(--brand-cream) 88%, transparent);
+  }
+
+  .hero__heading {
+    font-size: var(--text-4xl);
+    max-width: 18ch;
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   Script accent, actions and motifs
+   -------------------------------------------------------------------------- */
+
+.hero__script {
+  /* Sits on its own line so the descenders of Great Vibes never collide
+     with the Lora line above. */
+  display: block;
+  margin-top: -0.1em;
+}
+
+.hero__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  width: 100%;
+  margin-top: var(--space-2xs);
+}
+
+.hero__motifs {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  /* Behind the copy. The motif layer comes after .hero__content in the DOM,
+     so without this it paints on top and a heart lands in the middle of a
+     sentence. */
+  z-index: 0;
+}
+
+.hero__motifs .motif {
+  /* Slightly stronger than the global default: over the dark scrim the
+     motifs otherwise wash out to nearly nothing. */
+  opacity: 0.62;
+}
+
+@media (min-width: 480px) {
+  .hero__actions {
+    flex-direction: row;
+    align-items: center;
+    width: auto;
+  }
+}
+
+@media (min-width: 768px) {
+  /* Olive is far too dark against the scrim, and mid-tone sage only reaches
+     about 2.6:1 — under the 3:1 large-text floor. A pale sage-cream keeps
+     the accent in the brand family and clears it comfortably. */
+  .hero__content .hero__script {
+    color: color-mix(in srgb, var(--brand-sage) 40%, var(--brand-cream));
+  }
+
+  .hero__actions {
+    margin-top: var(--space-sm);
+  }
+}

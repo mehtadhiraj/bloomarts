@@ -1,0 +1,205 @@
+{{ 'component-header.css' | asset_url | stylesheet_tag }}
+{{ 'component-drawer.css' | asset_url | stylesheet_tag }}
+{{ 'component-mobile-nav.css' | asset_url | stylesheet_tag }}
+{{ 'component-search.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'predictive-search.js' | asset_url }}" defer></script>
+
+{%- liquid
+  assign menu = linklists[section.settings.menu]
+  assign logo_width_mobile = section.settings.logo_width_mobile | default: 120
+  assign logo_width_desktop = section.settings.logo_width_desktop | default: 180
+-%}
+
+<header
+  class="header{% if section.settings.sticky %} header--sticky{% endif %}"
+  data-header
+  style="--logo-width-mobile: {{ logo_width_mobile }}px; --logo-width-desktop: {{ logo_width_desktop }}px;"
+>
+  <div class="header__inner page-width">
+    {%- comment -%}
+      Order in the DOM is menu / logo / utilities, which is also the visual
+      order on mobile and the reading order for assistive tech. Nothing is
+      reordered visually against the source.
+    {%- endcomment -%}
+    <button
+      class="header__action header__action--menu tap-target"
+      type="button"
+      data-drawer-open="menu-drawer"
+      aria-expanded="false"
+      aria-controls="menu-drawer"
+    >
+      {% render 'icon', icon: 'menu' %}
+      <span class="visually-hidden">{{ 'general.accessibility.open_menu' | t }}</span>
+    </button>
+
+    <div class="header__brand">
+      {%- if section.settings.logo != blank -%}
+        <a href="{{ routes.root_url }}" class="header__logo-link">
+          {%- comment -%}
+            The logo is the LCP element on most pages, so it loads eagerly at
+            high priority with fixed dimensions — a late logo would push the
+            whole header down.
+          {%- endcomment -%}
+          {% render 'responsive-image',
+             image: section.settings.logo,
+             sizes: '(min-width: 1024px) 180px, 120px',
+             widths: '120,180,240,360,480',
+             loading: 'eager',
+             fetchpriority: 'high',
+             alt: shop.name,
+             class: 'header__logo' %}
+        </a>
+      {%- else -%}
+        <a href="{{ routes.root_url }}" class="header__logo-text">{{ shop.name }}</a>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} Inline navigation — only rendered as a bar from 1024px up. {%- endcomment -%}
+    {%- if menu != blank -%}
+      <nav class="header__nav" aria-label="{{ 'general.accessibility.menu' | t }}">
+        <ul class="header__nav-list" role="list">
+          {%- for link in menu.links -%}
+            <li class="header__nav-item">
+              {%- if link.links.size > 0 -%}
+                <details class="header__dropdown">
+                  <summary class="header__nav-link tap-target">
+                    {{ link.title }}
+                    {% render 'icon', icon: 'chevron-down', size: 16 %}
+                  </summary>
+                  <ul class="header__dropdown-list" role="list">
+                    {%- for child in link.links -%}
+                      <li>
+                        <a
+                          href="{{ child.url }}"
+                          class="header__dropdown-link"
+                          {% if child.current %}aria-current="page"{% endif %}
+                        >{{ child.title }}</a>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                </details>
+              {%- else -%}
+                <a
+                  href="{{ link.url }}"
+                  class="header__nav-link tap-target"
+                  {% if link.current %}aria-current="page"{% endif %}
+                >{{ link.title }}</a>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+      </nav>
+    {%- endif -%}
+
+    <div class="header__utils">
+      {%- if section.settings.show_search -%}
+        <button
+          class="header__action tap-target"
+          type="button"
+          data-drawer-open="search-drawer"
+          aria-expanded="false"
+          aria-controls="search-drawer"
+        >
+          {% render 'icon', icon: 'search' %}
+          <span class="visually-hidden">{{ 'general.search.title' | t }}</span>
+        </button>
+      {%- endif -%}
+
+      {%- if shop.customer_accounts_enabled -%}
+        <a
+          href="{{ routes.account_url }}"
+          class="header__action header__action--account tap-target"
+        >
+          {% render 'icon', icon: 'user' %}
+          <span class="visually-hidden">{{ 'customer.account.title' | t }}</span>
+        </a>
+      {%- endif -%}
+
+      {%- comment -%}
+        With the cart drawer enabled this is a button that opens the drawer;
+        without it, a plain link to /cart. Either way it works before JS runs,
+        because the button falls back to the link when the drawer is absent.
+      {%- endcomment -%}
+      <a
+        href="{{ routes.cart_url }}"
+        class="header__action header__cart tap-target"
+        {% if settings.cart_drawer_enabled %}data-drawer-open="cart-drawer" aria-controls="cart-drawer" aria-expanded="false"{% endif %}
+        data-cart-link
+      >
+        {% render 'icon', icon: 'cart' %}
+        <span class="visually-hidden">{{ 'cart.general.open' | t }}</span>
+        <span
+          class="header__cart-count{% if cart.item_count == 0 %} is-empty{% endif %}"
+          data-cart-count
+          aria-hidden="true"
+        >{{ cart.item_count }}</span>
+        <span class="visually-hidden" data-cart-count-text>
+          {{ 'cart.general.item_count' | t: count: cart.item_count }}
+        </span>
+      </a>
+    </div>
+  </div>
+</header>
+
+{%- comment -%}
+  Mobile navigation. A bottom sheet rather than a side panel: on a phone the
+  links, the search field and the account actions all need to sit inside
+  thumb reach, and a full-height side drawer puts the close control in the
+  hardest corner to reach one-handed.
+{%- endcomment -%}
+{% render 'mobile-nav', menu: menu %}
+
+{%- if section.settings.show_search -%}
+  {% render 'search-drawer' %}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    },
+    {
+      "type": "range",
+      "id": "logo_width_mobile",
+      "label": "Logo width (mobile)",
+      "min": 80,
+      "max": 180,
+      "step": 10,
+      "unit": "px",
+      "default": 120
+    },
+    {
+      "type": "range",
+      "id": "logo_width_desktop",
+      "label": "Logo width (desktop)",
+      "min": 100,
+      "max": 320,
+      "step": 10,
+      "unit": "px",
+      "default": 180
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu",
+      "default": "main-menu"
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky",
+      "label": "Keep header visible on scroll",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "Show search",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

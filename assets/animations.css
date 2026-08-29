@@ -1,0 +1,335 @@
+/* ==========================================================================
+   Bloom Arts — motion system
+
+   Three independent brakes, any one of which simplifies motion:
+
+     1. [data-animations="false"]  — merchant switched animation off
+     2. .reduce-motion             — set by global.js for prefers-reduced-motion,
+                                     Save-Data, 2G, low core/memory devices, and
+                                     small screens when the mobile setting is on
+     3. @media (prefers-reduced-motion: reduce) — OS level, belt and braces
+
+   Everything animated here uses transform and opacity only. Both are
+   compositor properties, so nothing in this file triggers layout or paint
+   during a scroll — which is what keeps a mid-range Android at 60fps.
+
+   Nothing here is load-bearing: every animated element is fully visible and
+   fully usable in its final state before any animation runs.
+   ========================================================================== */
+
+:root {
+  /* Intensity drives distance and duration together. Overridden below by
+     the merchant's intensity setting. */
+  --reveal-distance: 16px;
+  --reveal-duration: var(--dur-slower);
+  --reveal-stagger: 60ms;
+  --hover-lift: 4px;
+  --hover-zoom: 1.05;
+}
+
+[data-animation-intensity="subtle"] {
+  --reveal-distance: 8px;
+  --reveal-duration: calc(420ms * var(--motion-scale));
+  --reveal-stagger: 40ms;
+  --hover-lift: 2px;
+  --hover-zoom: 1.025;
+}
+
+[data-animation-intensity="expressive"] {
+  --reveal-distance: 28px;
+  --reveal-duration: calc(760ms * var(--motion-scale));
+  --reveal-stagger: 85ms;
+  --hover-lift: 7px;
+  --hover-zoom: 1.08;
+}
+
+/* --------------------------------------------------------------------------
+   Scroll reveal
+
+   Elements start in their revealed state. The .reveal-ready class is added
+   by global.js ONLY after it has confirmed motion is allowed and an
+   IntersectionObserver exists — so if the script fails, never runs, or the
+   observer is unsupported, content is simply visible. Nothing can be left
+   stranded at opacity 0.
+   -------------------------------------------------------------------------- */
+
+.reveal-ready [data-reveal] {
+  opacity: 0;
+  will-change: opacity, transform;
+  transition:
+    opacity var(--reveal-duration) var(--ease-out),
+    transform var(--reveal-duration) var(--ease-out);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.reveal-ready [data-reveal="rise"],
+.reveal-ready [data-reveal="rise-stagger"] {
+  transform: translate3d(0, var(--reveal-distance), 0);
+}
+
+.reveal-ready [data-reveal="scale"] {
+  transform: scale(0.96);
+}
+
+.reveal-ready [data-reveal].is-revealed {
+  opacity: 1;
+  transform: none;
+  /* Released once the animation is done so the compositor layer is not
+     retained for the life of the page. */
+  will-change: auto;
+}
+
+/* --------------------------------------------------------------------------
+   Hero
+
+   A very slow scale on the hero image. Gated to pointer-fine + wide screens
+   in addition to the global motion policy: a continuously animating
+   full-bleed image is the single most expensive thing on a phone GPU.
+   -------------------------------------------------------------------------- */
+
+@media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+  [data-hero-motion="true"] .hero__image {
+    animation: hero-drift 24s var(--ease) infinite alternate;
+  }
+}
+
+@keyframes hero-drift {
+  from { transform: scale(1); }
+  to { transform: scale(1.06); }
+}
+
+/* --------------------------------------------------------------------------
+   Product cards
+
+   Every hover effect is wrapped in (hover: hover) and (pointer: fine).
+   A touch device has no hover state, so none of this is ever evaluated on
+   a phone — and the second image is never decoded there either.
+   -------------------------------------------------------------------------- */
+
+.card__media,
+.card__image,
+.card__image-alt {
+  transition:
+    transform var(--dur-slow) var(--ease-out),
+    opacity var(--dur-slow) var(--ease),
+    box-shadow var(--dur-slow) var(--ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  [data-card-hover="lift"] .card:hover,
+  [data-card-hover="lift-zoom"] .card:hover {
+    transform: translate3d(0, calc(var(--hover-lift) * -1), 0);
+  }
+
+  [data-card-hover="lift"] .card,
+  [data-card-hover="lift-zoom"] .card {
+    transition: transform var(--dur-slow) var(--ease-out);
+  }
+
+  [data-card-hover="lift"] .card:hover .card__media,
+  [data-card-hover="lift-zoom"] .card:hover .card__media {
+    box-shadow: var(--shadow-md);
+  }
+
+  [data-card-hover="zoom"] .card:hover .card__image,
+  [data-card-hover="lift-zoom"] .card:hover .card__image {
+    transform: scale(var(--hover-zoom));
+  }
+
+  [data-card-hover="swap"] .card:hover .card__image-alt {
+    opacity: 1;
+  }
+
+  [data-card-hover="swap"] .card:hover .card__image {
+    opacity: 0;
+  }
+
+  /* The card title underline draws in from the left rather than simply
+     appearing — a small signal that the whole card is the target. */
+  .card__link {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0% 1px;
+    transition: background-size var(--dur-base) var(--ease-out);
+  }
+
+  .card:hover .card__link {
+    background-size: 100% 1px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Buttons and links
+   -------------------------------------------------------------------------- */
+
+@media (hover: hover) and (pointer: fine) {
+  .btn--primary:hover {
+    background-color: color-mix(in srgb, var(--brand-amber) 88%, var(--brand-brown));
+    transform: translateY(-1px);
+  }
+
+  body.button-lift .btn--primary:hover {
+    box-shadow: 0 4px 0 color-mix(in srgb, var(--brand-brown) 22%, transparent);
+  }
+
+  .btn--contrast:hover {
+    background-color: color-mix(in srgb, var(--brand-brown) 88%, var(--brand-cream));
+  }
+
+  .btn--secondary:hover,
+  .btn--ghost:hover {
+    background-color: color-mix(in srgb, var(--brand-sage) 26%, transparent);
+    border-color: var(--brand-brown);
+  }
+
+  .section-head__link {
+    /* Only the arrow moves, so the link text stays a stable read. */
+    transition: gap var(--dur-base) var(--ease-out);
+  }
+
+  .section-head__link:hover {
+    gap: var(--space-2xs);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Add-to-cart confirmation
+
+   A single 520ms pulse on the cart badge. It is a confirmation, not an
+   attention loop: it plays once per add and never repeats on its own.
+   -------------------------------------------------------------------------- */
+
+.header__cart-count.is-bumped {
+  animation: cart-bump 520ms var(--ease-spring);
+}
+
+@keyframes cart-bump {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.45); }
+  100% { transform: scale(1); }
+}
+
+/* --------------------------------------------------------------------------
+   Loading states
+   -------------------------------------------------------------------------- */
+
+.is-skeleton {
+  position: relative;
+  overflow: hidden;
+  background-color: color-mix(in srgb, var(--brand-sage) 22%, var(--color-border));
+}
+
+.is-skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--brand-cream) 60%, transparent),
+    transparent
+  );
+  animation: shimmer 1.4s infinite;
+}
+
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+
+/* --------------------------------------------------------------------------
+   Decorative brand motifs
+
+   The bee, hearts and leaf sprigs from the identity, used as quiet page
+   furniture. They are aria-hidden, never carry meaning, and drift only on
+   capable pointer devices.
+   -------------------------------------------------------------------------- */
+
+.motif {
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+  opacity: 0.5;
+}
+
+@media (prefers-reduced-motion: no-preference) and (min-width: 768px) {
+  .motif--float {
+    animation: motif-float 9s var(--ease) infinite alternate;
+  }
+
+  .motif--float-slow {
+    animation: motif-float 14s var(--ease) infinite alternate-reverse;
+  }
+}
+
+@keyframes motif-float {
+  from { transform: translate3d(0, 0, 0) rotate(0deg); }
+  to   { transform: translate3d(0, -12px, 0) rotate(3deg); }
+}
+
+/* --------------------------------------------------------------------------
+   Brakes
+
+   Order matters: these come last so they win regardless of source order in
+   the cascade above.
+   -------------------------------------------------------------------------- */
+
+/* Merchant switched animation off entirely. */
+[data-animations="false"] [data-reveal],
+[data-animations="false"] .reveal-ready [data-reveal] {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+[data-animations="false"] .hero__image,
+[data-animations="false"] .motif {
+  animation: none !important;
+}
+
+/* Reveal switched off, but other motion still allowed. */
+[data-reveal-style="none"] [data-reveal] {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+/* Device-capability brake, set by global.js. Content must end up visible,
+   not frozen mid-reveal. */
+.reduce-motion [data-reveal] {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+.reduce-motion .hero__image,
+.reduce-motion .motif,
+.reduce-motion .is-skeleton::after {
+  animation: none !important;
+}
+
+.reduce-motion .card,
+.reduce-motion .card__media,
+.reduce-motion .card__image,
+.reduce-motion .card__image-alt,
+.reduce-motion .btn {
+  transition: none !important;
+}
+
+/* OS-level preference. The strongest brake and the last word. */
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .hero__image,
+  .motif,
+  .header__cart-count.is-bumped,
+  .is-skeleton::after {
+    animation: none !important;
+  }
+}

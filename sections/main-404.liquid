@@ -1,0 +1,25 @@
+<div class="section page-width page-width--narrow not-found">
+  <h1>{{ 'templates.404.title' | t }}</h1>
+  <p class="text-muted">{{ 'templates.404.body' | t }}</p>
+  <a href="{{ routes.root_url }}" class="btn btn--primary">{{ 'templates.404.action' | t }}</a>
+</div>
+
+<style>
+  .not-found {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    text-align: center;
+    /* svh keeps this centred when the mobile URL bar collapses. */
+    min-height: 50svh;
+    justify-content: center;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "404",
+  "settings": []
+}
+{% endschema %}

@@ -1,0 +1,112 @@
+{%- comment -%}
+  Variant picker.
+
+  Colour-like options render as labelled swatches; everything else renders
+  as a segmented list. Both are real radio groups inside a fieldset, so
+  keyboard and screen-reader behaviour comes from the platform rather than
+  being reimplemented.
+
+  Accepts: product {Object}, block {Object}
+{%- endcomment -%}
+
+{%- liquid
+  assign selected = product.selected_or_first_available_variant
+  assign colour_options = 'colour,color,finish,glaze,colourway,colorway'
+-%}
+
+<variant-picker
+  class="variant-picker"
+  data-variant-picker
+  data-url="{{ product.url }}"
+  {{ block.shopify_attributes }}
+>
+  {%- for option in product.options_with_values -%}
+    {%- liquid
+      assign option_handle = option.name | downcase
+      assign is_colour = false
+      if colour_options contains option_handle
+        assign is_colour = true
+      endif
+      assign option_index = forloop.index
+      assign selected_value = selected.options[forloop.index0]
+    -%}
+
+    <fieldset class="variant-picker__option custom-field__group">
+      <legend class="field__label">
+        {%- comment -%}
+          &nbsp; after the colon: Liquid whitespace control strips the gap
+          between the label and the value span, rendering "Size:Ø22 cm".
+        {%- endcomment -%}
+        {{ option.name }}:&nbsp;
+        {%- comment -%}
+          The chosen value is echoed in the legend. On a phone the selected
+          swatch can easily be scrolled out of view; the label keeps the
+          answer to "what did I pick" on screen.
+        {%- endcomment -%}
+        <span class="variant-picker__value" data-option-value="{{ option_index }}">{{ selected_value }}</span>
+      </legend>
+
+      <div class="{% if is_colour %}swatch-list{% else %}option-list{% endif %}">
+        {%- for value in option.values -%}
+          {%- assign input_id = 'option-' | append: option_index | append: '-' | append: forloop.index -%}
+          <div class="{% if is_colour %}swatch-list__item{% else %}option-list__item{% endif %}">
+            <input
+              type="radio"
+              class="{% if is_colour %}swatch-list__input{% else %}option-list__input{% endif %} visually-hidden"
+              id="{{ input_id }}"
+              name="option-{{ option_index }}"
+              value="{{ value | escape }}"
+              data-option-index="{{ option_index }}"
+              data-variant-option
+              {% if value == selected_value %}checked{% endif %}
+            >
+            <label
+              class="{% if is_colour %}swatch-list__label{% else %}option-list__label{% endif %}"
+              for="{{ input_id }}"
+            >
+              {%- if is_colour -%}
+                <span class="swatch-list__chip swatch-chip" data-swatch="{{ value | handle }}" aria-hidden="true"></span>
+                <span class="swatch-list__name">{{ value }}</span>
+              {%- else -%}
+                {{ value }}
+              {%- endif -%}
+            </label>
+          </div>
+        {%- endfor -%}
+      </div>
+    </fieldset>
+  {%- endfor -%}
+
+  {%- comment -%}
+    The variant id posted with the form. It carries no name attribute until
+    the script adds one, so with JavaScript disabled it is not submitted and
+    the <noscript> select below takes over as the real control.
+  {%- endcomment -%}
+  <input type="hidden" value="{{ selected.id }}" data-variant-id>
+
+  <noscript>
+    <div class="field variant-picker__fallback">
+      <label class="field__label" for="variant-fallback">{{ 'products.product.choose_options' | t }}</label>
+      <select class="select" id="variant-fallback" name="id">
+        {%- for variant in product.variants -%}
+          <option
+            value="{{ variant.id }}"
+            {% if variant == selected %}selected{% endif %}
+            {% unless variant.available %}disabled{% endunless %}
+          >
+            {{ variant.title }} &mdash; {{ variant.price | money }}
+            {%- unless variant.available %} ({{ 'products.product.sold_out' | t }}){% endunless -%}
+          </option>
+        {%- endfor -%}
+      </select>
+    </div>
+  </noscript>
+
+  {%- comment -%}
+    Variant data as JSON rather than a data attribute per variant: one parse
+    on interaction, and no multi-kilobyte attribute in the markup.
+  {%- endcomment -%}
+  <script type="application/json" data-variant-data>
+    {{ product.variants | json }}
+  </script>
+</variant-picker>

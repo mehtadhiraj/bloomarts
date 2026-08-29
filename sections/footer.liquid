@@ -1,0 +1,197 @@
+{{ 'component-footer.css' | asset_url | stylesheet_tag }}
+
+<footer class="footer defer-render">
+  <div class="page-width">
+    {%- if section.settings.show_newsletter -%}
+      <div class="footer__newsletter">
+        <h2 class="footer__heading">{{ section.settings.newsletter_heading }}</h2>
+        {%- if section.settings.newsletter_text != blank -%}
+          <p class="text-sm text-muted">{{ section.settings.newsletter_text }}</p>
+        {%- endif -%}
+
+        {%- form 'customer', class: 'newsletter-form' -%}
+          <input type="hidden" name="contact[tags]" value="newsletter">
+
+          {%- if form.posted_successfully? -%}
+            <p class="newsletter-form__success" role="status">
+              {% render 'icon', icon: 'check', size: 18 %}
+              {{ 'general.newsletter.success' | t }}
+            </p>
+          {%- else -%}
+            <div class="newsletter-form__row">
+              <div class="field">
+                <label class="visually-hidden" for="newsletter-email">
+                  {{ 'general.newsletter.label' | t }}
+                </label>
+                <input
+                  id="newsletter-email"
+                  class="input"
+                  type="email"
+                  name="contact[email]"
+                  placeholder="{{ 'general.newsletter.placeholder' | t }}"
+                  {%- comment -%}
+                    Email keyboard, no autocapitalise, and a Go key instead
+                    of a newline — the difference between two taps and five.
+                  {%- endcomment -%}
+                  inputmode="email"
+                  autocomplete="email"
+                  autocapitalize="off"
+                  autocorrect="off"
+                  spellcheck="false"
+                  enterkeyhint="go"
+                  required
+                  {% if form.errors %}aria-invalid="true" aria-describedby="newsletter-error"{% endif %}
+                >
+              </div>
+              <button type="submit" class="btn btn--primary newsletter-form__submit">
+                {{ 'general.newsletter.submit' | t }}
+              </button>
+            </div>
+
+            {%- if form.errors -%}
+              <p class="field__error" id="newsletter-error" role="alert">
+                {% render 'icon', icon: 'alert', size: 16 %}
+                {{ 'general.newsletter.error' | t }}
+              </p>
+            {%- endif -%}
+          {%- endif -%}
+        {%- endform -%}
+      </div>
+    {%- endif -%}
+
+    {%- comment -%}
+      Link columns collapse into accordions on mobile.
+
+      They render OPEN and are collapsed by script below 768px, never the
+      other way round. CSS cannot force a <details> open, so shipping them
+      closed would hide footer navigation from anyone whose JavaScript fails
+      -- exactly the "do not hide essential content on mobile" failure.
+      Open-by-default degrades to a long but complete footer instead.
+    {%- endcomment -%}
+    <div class="footer__columns">
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'menu' -%}
+            {%- assign block_menu = linklists[block.settings.menu] -%}
+            {%- if block_menu != blank -%}
+              <details class="footer__column" open data-collapse-mobile {{ block.shopify_attributes }}>
+                <summary class="footer__column-summary">
+                  <span class="footer__heading">{{ block.settings.heading | default: block_menu.title }}</span>
+                  {% render 'icon', icon: 'chevron-down', size: 20, class: 'footer__chevron' %}
+                </summary>
+                <ul class="footer__list" role="list">
+                  {%- for link in block_menu.links -%}
+                    <li>
+                      <a href="{{ link.url }}" class="footer__link">{{ link.title }}</a>
+                    </li>
+                  {%- endfor -%}
+                </ul>
+              </details>
+            {%- endif -%}
+
+          {%- when 'text' -%}
+            <details class="footer__column" open data-collapse-mobile {{ block.shopify_attributes }}>
+              <summary class="footer__column-summary">
+                <span class="footer__heading">{{ block.settings.heading }}</span>
+                {% render 'icon', icon: 'chevron-down', size: 20, class: 'footer__chevron' %}
+              </summary>
+              <div class="footer__text rte">{{ block.settings.text }}</div>
+            </details>
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+
+    <div class="footer__bottom">
+      {%- if settings.social_instagram != blank or settings.social_facebook != blank or settings.social_pinterest != blank -%}
+        <ul class="footer__social" role="list">
+          {%- if settings.social_instagram != blank -%}
+            <li>
+              <a href="{{ settings.social_instagram }}" class="tap-target" rel="noopener" target="_blank">
+                {% render 'icon', icon: 'instagram', size: 20 %}
+                <span class="visually-hidden">{{ 'general.social.instagram' | t }}</span>
+              </a>
+            </li>
+          {%- endif -%}
+          {%- if settings.social_facebook != blank -%}
+            <li>
+              <a href="{{ settings.social_facebook }}" class="tap-target" rel="noopener" target="_blank">
+                {% render 'icon', icon: 'facebook', size: 20 %}
+                <span class="visually-hidden">{{ 'general.social.facebook' | t }}</span>
+              </a>
+            </li>
+          {%- endif -%}
+          {%- if settings.social_pinterest != blank -%}
+            <li>
+              <a href="{{ settings.social_pinterest }}" class="tap-target" rel="noopener" target="_blank">
+                {% render 'icon', icon: 'pinterest', size: 20 %}
+                <span class="visually-hidden">{{ 'general.social.pinterest' | t }}</span>
+              </a>
+            </li>
+          {%- endif -%}
+        </ul>
+      {%- endif -%}
+
+      {%- if section.settings.show_payment_icons and shop.enabled_payment_types.size > 0 -%}
+        <ul class="footer__payment" role="list">
+          {%- for type in shop.enabled_payment_types -%}
+            <li>{{ type | payment_type_svg_tag: class: 'footer__payment-icon' }}</li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+
+      <p class="footer__copyright text-xs text-muted">
+        &copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. {{ powered_by_link }}
+      </p>
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_newsletter",
+      "label": "Show newsletter signup",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "newsletter_heading",
+      "label": "Newsletter heading",
+      "default": "New pieces, first"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_text",
+      "label": "Newsletter text",
+      "default": "Small-batch drops sell out fast. Hear about them before they go live."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_icons",
+      "label": "Show payment icons",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "menu",
+      "name": "Menu column",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading" },
+        { "type": "link_list", "id": "menu", "label": "Menu" }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Text column",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "About" },
+        { "type": "richtext", "id": "text", "label": "Text" }
+      ]
+    }
+  ]
+}
+{% endschema %}

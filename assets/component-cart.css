@@ -1,0 +1,285 @@
+/* ==========================================================================
+   Cart — shared by the drawer and the cart page
+   ========================================================================== */
+
+.cart-drawer__contents {
+  display: contents;
+}
+
+.cart-items {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cart-item {
+  display: grid;
+  /* minmax(0, 1fr) rather than 1fr: a grid item's default min-width is auto,
+     so a long unbroken product title would otherwise widen the column and
+     push the row past the viewport at 320px. */
+  grid-template-columns: 72px minmax(0, 1fr) var(--tap-min);
+  gap: var(--space-xs);
+  align-items: start;
+  padding-block: var(--space-sm);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.cart-item.is-busy {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.cart-item__media {
+  display: block;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background-color: var(--color-border);
+}
+
+.cart-item__image {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+.cart-item__details {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3xs);
+}
+
+.cart-item__title {
+  /* The product name is the line item's primary link, so it has to be a
+     real target. A single-line title is only ~21px tall on its own. */
+  display: flex;
+  align-items: center;
+  min-height: var(--tap-min);
+  font-size: var(--text-base);
+  font-weight: 500;
+  line-height: var(--leading-snug);
+  text-decoration: none;
+}
+
+.cart-item__variant {
+  margin: 0;
+}
+
+/* Customization properties. Shown in full on every screen size — this is
+   what the customer personalised and the detail they most need to check
+   before paying. */
+.cart-item__properties {
+  /* Stacked, not two columns.
+
+     A label/value grid puts "Reference image" in an auto-width column,
+     which inside an already narrow cart line at 320px squeezed the value
+     column to about 8px — the filename then wrapped one character per line
+     into a 576px-tall link. Stacking gives every value the full width. */
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: var(--space-3xs) 0 0;
+  padding: var(--space-2xs);
+  background-color: var(--color-background);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  min-width: 0;
+}
+
+.cart-item__properties dt {
+  color: var(--color-text-muted);
+}
+
+.cart-item__properties dt:not(:first-child) {
+  margin-top: var(--space-3xs);
+}
+
+/* A filename or engraving line has to be tappable and legible without
+   stretching the line item. */
+.cart-item__properties dd a {
+  display: inline-block;
+  min-height: var(--tap-min);
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.cart-item__properties dd {
+  margin: 0;
+  /* Engraving text can be long and unbroken. */
+  overflow-wrap: anywhere;
+}
+
+.cart-item__controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* Wraps to two lines at 320px rather than compressing the stepper below
+     a usable width. */
+  flex-wrap: wrap;
+  gap: var(--space-2xs);
+  margin-top: var(--space-3xs);
+}
+
+.cart-item__price {
+  font-variant-numeric: tabular-nums;
+}
+
+.cart-item__remove {
+  color: var(--color-text-muted);
+  align-self: start;
+}
+
+.cart-item__discounts {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--color-success);
+}
+
+/* --------------------------------------------------------------------------
+   Summary and footer
+   -------------------------------------------------------------------------- */
+
+.cart-summary {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  font-size: var(--text-lg);
+  font-weight: 500;
+}
+
+.cart-summary__value {
+  font-variant-numeric: tabular-nums;
+}
+
+.cart-drawer__footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+}
+
+.cart-drawer__note {
+  margin: 0;
+}
+
+.cart-drawer__checkout {
+  /* Slightly taller than the 44px minimum: this is the single most
+     important action in the drawer and it sits nearest the thumb. */
+  min-height: 52px;
+  font-size: var(--text-lg);
+}
+
+.cart-drawer__view-cart {
+  text-align: center;
+  min-height: var(--tap-min);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-sm);
+}
+
+.cart-drawer__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  text-align: center;
+  padding-block: var(--space-xl);
+}
+
+.cart-discounts {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--color-success);
+}
+
+/* --------------------------------------------------------------------------
+   Larger screens
+   -------------------------------------------------------------------------- */
+
+@media (min-width: 480px) {
+  .cart-item {
+    grid-template-columns: 88px minmax(0, 1fr) var(--tap-min);
+    gap: var(--space-sm);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Cart page
+   -------------------------------------------------------------------------- */
+
+.cart-page__layout {
+  display: grid;
+  gap: var(--space-lg);
+}
+
+.cart-page__summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+@media (min-width: 1024px) {
+  .cart-page__layout {
+    grid-template-columns: minmax(0, 1fr) 360px;
+    gap: var(--space-xl);
+    align-items: start;
+  }
+
+  .cart-page__summary {
+    position: sticky;
+    top: calc(var(--header-height) + var(--space-sm));
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Cart page specifics
+   -------------------------------------------------------------------------- */
+
+.cart-page {
+  padding-block: var(--space-md) var(--space-xl);
+}
+
+.cart-page__title {
+  margin: 0 0 var(--space-md);
+  font-size: var(--text-2xl);
+}
+
+.cart-page__items {
+  min-width: 0;
+}
+
+.cart-page__note {
+  margin-top: var(--space-md);
+}
+
+.cart-page__checkout {
+  min-height: 52px;
+  font-size: var(--text-lg);
+}
+
+.cart-page__continue {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tap-min);
+  font-size: var(--text-sm);
+}
+
+.cart-page__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  padding-block: var(--space-xl);
+  text-align: center;
+}

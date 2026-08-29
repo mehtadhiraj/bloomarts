@@ -1,0 +1,59 @@
+{%- comment -%}
+  Sticky add to cart (mobile and tablet).
+
+  Approved behaviour: hidden at first paint, slides up only once the inline
+  Add to cart has scrolled out of view, and slides away again when it comes
+  back or when the footer is reached. Nothing is reserved for it in the
+  layout, so it costs no vertical space until it is earned.
+
+  The button carries a form="" attribute pointing at the real product form,
+  so it submits that form natively — it is not a second form, and it does
+  not need a click handler to work.
+
+  Accepts: product {Object}, form_id {String}
+{%- endcomment -%}
+
+{%- liquid
+  assign selected = product.selected_or_first_available_variant
+-%}
+
+<sticky-atc
+  class="sticky-atc"
+  data-sticky-atc
+  aria-hidden="true"
+>
+  <div class="sticky-atc__inner">
+    <div class="sticky-atc__info">
+      <span class="sticky-atc__title">{{ product.title }}</span>
+      <span class="sticky-atc__price">
+        <span data-product-price>{{ selected.price | money }}</span>
+        <s
+          class="sticky-atc__compare"
+          data-product-compare
+          {% unless selected.compare_at_price > selected.price %}hidden{% endunless %}
+        >
+          {%- if selected.compare_at_price > selected.price -%}
+            {{ selected.compare_at_price | money }}
+          {%- endif -%}
+        </s>
+      </span>
+    </div>
+
+    <button
+      type="submit"
+      form="{{ form_id }}"
+      class="btn btn--primary sticky-atc__button"
+      data-add-to-cart
+      data-default-text="{{ 'products.product.add_to_cart' | t }}"
+      {% unless selected.available %}disabled{% endunless %}
+    >
+      <span data-add-to-cart-text>
+        {%- if selected.available -%}
+          {{ 'products.product.add_to_cart' | t }}
+        {%- else -%}
+          {{ 'products.product.sold_out' | t }}
+        {%- endif -%}
+      </span>
+    </button>
+  </div>
+</sticky-atc>

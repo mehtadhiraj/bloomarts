@@ -1,0 +1,54 @@
+/* ==========================================================================
+   Swatch palette
+
+   Shared by product cards and the variant picker so a colour never renders
+   differently in the grid than on the product page.
+
+   Values are keyed by the handleised option value. A value with no entry
+   falls back to a neutral chip rather than rendering invisible — an unnamed
+   colour should still be a visible, countable option.
+   ========================================================================== */
+
+[data-swatch] {
+  --swatch-color: var(--color-border);
+  --swatch-color-2: var(--swatch-color);
+}
+
+/* Concrete */
+[data-swatch="charcoal"] { --swatch-color: #3f3c38; }
+[data-swatch="bone"]     { --swatch-color: #e6e0d5; }
+[data-swatch="sage"]     { --swatch-color: #9aa88f; }
+
+/* Stoneware and terracotta glazes */
+[data-swatch="oatmeal"]  { --swatch-color: #d8c9ae; }
+[data-swatch="ash"]      { --swatch-color: #9a958d; }
+[data-swatch="rust"]     { --swatch-color: #a55a37; }
+[data-swatch="milk"]     { --swatch-color: #f2ece1; }
+[data-swatch="raw"]      { --swatch-color: #b6704f; }
+
+/* Resin colourways — poured in layers, so these read as two-tone. */
+[data-swatch="sea-glass"] { --swatch-color: #7fa8a4; --swatch-color-2: #b9d3cf; }
+[data-swatch="amber"]     { --swatch-color: #c98a33; --swatch-color-2: #e8b96a; }
+[data-swatch="ink"]       { --swatch-color: #22314a; --swatch-color-2: #47597a; }
+[data-swatch="canyon"]    { --swatch-color: #a3785f; --swatch-color-2: #d8b9a0; }
+[data-swatch="dune"]      { --swatch-color: #d2bb9a; --swatch-color-2: #efe1c9; }
+[data-swatch="basalt"]    { --swatch-color: #4a4744; --swatch-color-2: #6f6b66; }
+[data-swatch="slate"]     { --swatch-color: #6b7186; --swatch-color-2: #9aa0b3; }
+[data-swatch="mist"]      { --swatch-color: #c3c9d6; --swatch-color-2: #e3e7ee; }
+[data-swatch="midnight"]  { --swatch-color: #232838; --swatch-color-2: #3c445c; }
+[data-swatch="blush"]     { --swatch-color: #d8a2ab; --swatch-color-2: #efc9cf; }
+
+/* The chip itself. A 135° split renders single-tone swatches as flat colour
+   because both stops resolve to the same value. */
+.swatch-chip {
+  background-image: linear-gradient(
+    135deg,
+    var(--swatch-color) 0%,
+    var(--swatch-color) 50%,
+    var(--swatch-color-2) 50%,
+    var(--swatch-color-2) 100%
+  );
+  /* A hairline border keeps pale chips (bone, milk, mist) visible against
+     a light surface — otherwise they read as an empty slot. */
+  border: 1px solid rgb(31 27 22 / 0.18);
+}

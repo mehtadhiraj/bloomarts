@@ -1,0 +1,59 @@
+{{ 'component-image-text.css' | asset_url | stylesheet_tag }}
+
+<section class="section defer-render image-text">
+  <div class="page-width">
+    <div class="image-text__inner image-text__inner--{{ section.settings.layout }}" data-reveal-group>
+      <div class="image-text__media" data-reveal="scale">
+        {% render 'responsive-image',
+           image: section.settings.image,
+           ratio: 1,
+           sizes: '(min-width: 768px) 45vw, 100vw',
+           alt: section.settings.heading,
+           class: 'image-text__image' %}
+      </div>
+
+      <div class="image-text__content" data-reveal="rise">
+        {%- if section.settings.heading != blank -%}
+          <h2 class="image-text__heading">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+        {%- if section.settings.text != blank -%}
+          <div class="rte text-muted">{{ section.settings.text }}</div>
+        {%- endif -%}
+        {%- if section.settings.button_label != blank -%}
+          <a href="{{ section.settings.button_link }}" class="btn btn--secondary image-text__button">
+            {{ section.settings.button_label }}
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Image with text",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Made slowly, on purpose" },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Concrete cures for seven days before it is sealed. Stoneware is fired twice. Resin is poured in layers over three. None of it can be rushed, which is why batches are small and why colour shifts a little between pieces.</p>"
+    },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "About the studio" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Image position (desktop)",
+      "options": [
+        { "value": "image-first", "label": "Image first" },
+        { "value": "text-first", "label": "Text first" }
+      ],
+      "default": "image-first"
+    }
+  ],
+  "presets": [{ "name": "Image with text" }]
+}
+{% endschema %}

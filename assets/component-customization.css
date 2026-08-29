@@ -1,0 +1,216 @@
+/* ==========================================================================
+   Product customization
+   ========================================================================== */
+
+.custom-field + .custom-field {
+  margin-top: var(--space-sm);
+}
+
+.custom-field__group {
+  border: none;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+.custom-field__required {
+  color: var(--color-error);
+}
+
+.custom-field__counter {
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------------------
+   Swatches
+   -------------------------------------------------------------------------- */
+
+.swatch-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs);
+  margin-top: var(--space-2xs);
+}
+
+.swatch-list__item {
+  position: relative;
+}
+
+.swatch-list__label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3xs);
+  /* Chip plus name in a pill, so the whole thing is comfortably over the
+     44px minimum and the colour is never a bare unlabelled dot. */
+  min-height: var(--tap-min);
+  padding: var(--space-3xs) var(--space-xs) var(--space-3xs) var(--space-3xs);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background-color: var(--color-surface);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease),
+              background-color var(--dur-fast) var(--ease);
+}
+
+.swatch-list__chip {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.swatch-list__name {
+  white-space: nowrap;
+}
+
+.swatch-list__input:checked + .swatch-list__label {
+  border-color: var(--color-accent);
+  /* Two-signal selection: the ring AND the inner shadow. Colour alone would
+     fail for anyone who cannot distinguish the accent from the border. */
+  box-shadow: inset 0 0 0 1px var(--color-accent);
+  background-color: var(--color-background);
+}
+
+/* The input is visually hidden, so the focus ring has to be forwarded to
+   the label or keyboard focus would be invisible. */
+.swatch-list__input:focus-visible + .swatch-list__label {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.swatch-list__input:disabled + .swatch-list__label,
+.swatch-list__input[data-unavailable="true"] + .swatch-list__label {
+  opacity: 0.4;
+  text-decoration: line-through;
+}
+
+/* --------------------------------------------------------------------------
+   Segmented option picker (sizes, non-colour options)
+   -------------------------------------------------------------------------- */
+
+.option-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs);
+  margin-top: var(--space-2xs);
+}
+
+.option-list__label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tap-min);
+  min-width: var(--tap-min);
+  padding-inline: var(--space-xs);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background-color: var(--color-surface);
+  font-size: var(--text-sm);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease),
+              background-color var(--dur-fast) var(--ease);
+}
+
+.option-list__input:checked + .option-list__label {
+  border-color: var(--color-accent);
+  background-color: var(--color-accent);
+  color: var(--color-accent-contrast);
+}
+
+.option-list__input:focus-visible + .option-list__label {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.option-list__input[data-unavailable="true"] + .option-list__label {
+  opacity: 0.4;
+  text-decoration: line-through;
+}
+
+/* --------------------------------------------------------------------------
+   File upload
+   -------------------------------------------------------------------------- */
+
+.file-field__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  margin-top: var(--space-2xs);
+}
+
+.file-field__button {
+  /* The label IS the button. Cursor and touch-action have to be set here
+     because it is a <label>, not a <button>. */
+  cursor: pointer;
+  touch-action: manipulation;
+  flex: 1 1 auto;
+}
+
+.file-field__input:focus-visible + .file-field__row .file-field__button,
+.file-field__input:focus + .file-field__row .file-field__button {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.file-field__remove {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.file-field__status {
+  margin-top: var(--space-3xs);
+  /* A long filename must wrap, not stretch the form. */
+  overflow-wrap: anywhere;
+}
+
+.file-field__status.is-set {
+  color: var(--color-text);
+}
+
+/* --------------------------------------------------------------------------
+   Error summary
+   -------------------------------------------------------------------------- */
+
+.form-errors {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3xs);
+  padding: var(--space-xs);
+  margin-bottom: var(--space-sm);
+  border: 1px solid var(--color-error);
+  border-radius: var(--radius);
+  background-color: var(--color-surface);
+}
+
+.form-errors[hidden] {
+  display: none;
+}
+
+.form-errors__title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3xs);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-error);
+  margin: 0;
+}
+
+.form-errors__list {
+  margin: 0;
+  padding-inline-start: var(--space-md);
+  font-size: var(--text-sm);
+}
+
+.form-errors__list a {
+  color: var(--color-error);
+}
+
+.reduce-motion .swatch-list__label,
+.reduce-motion .option-list__label {
+  transition: none;
+}

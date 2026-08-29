@@ -1,0 +1,8 @@
+dev/
+scripts/
+docs/
+node_modules/
+package.json
+package-lock.json
+*.zip
+.gitignore

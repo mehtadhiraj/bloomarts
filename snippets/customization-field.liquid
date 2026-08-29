@@ -1,0 +1,259 @@
+{%- comment -%}
+  A single customization input, rendered from a product-template block.
+
+  Every field posts as a Shopify line item property, so whatever the
+  customer chooses travels with the line through the cart and into the
+  order — no app, no metafield plumbing.
+
+  All five input types are built for touch first: 44px minimum targets,
+  16px text so iOS never zooms on focus, the right virtual keyboard via
+  inputmode, and inline validation wired with aria-describedby rather than
+  a blocking alert.
+
+  Accepts: block {Object}, product {Object}
+{%- endcomment -%}
+
+{%- liquid
+  assign field_id = 'custom-' | append: block.id
+  assign label = block.settings.label | default: 'Option'
+  assign property_name = block.settings.property_name | default: label
+  assign is_required = block.settings.required
+  assign error_id = field_id | append: '-error'
+  assign hint_id = field_id | append: '-hint'
+-%}
+
+<div
+  class="custom-field"
+  data-custom-field
+  data-field-type="{{ block.type }}"
+  {{ block.shopify_attributes }}
+>
+  {%- case block.type -%}
+
+    {%- comment -%} ---------- Colour / finish swatches ---------- {%- endcomment -%}
+    {%- when 'swatch_property' -%}
+      {%- assign values = block.settings.values | split: ',' -%}
+      <fieldset class="custom-field__group">
+        <legend class="field__label">
+          {{ label }}
+          {%- if is_required %} <span class="custom-field__required" aria-hidden="true">*</span>{% endif -%}
+        </legend>
+
+        {%- if block.settings.hint != blank -%}
+          <p class="field__hint" id="{{ hint_id }}">{{ block.settings.hint }}</p>
+        {%- endif -%}
+
+        {%- comment -%}
+          Real radio inputs under a visual label. A div-with-role swatch
+          would need every keyboard and screen-reader behaviour rebuilt by
+          hand; radios arrive with all of it.
+        {%- endcomment -%}
+        <div class="swatch-list">
+          {%- for value in values -%}
+            {%- assign value_clean = value | strip -%}
+            {%- assign value_id = field_id | append: '-' | append: forloop.index -%}
+            <div class="swatch-list__item">
+              <input
+                type="radio"
+                class="swatch-list__input visually-hidden"
+                id="{{ value_id }}"
+                name="properties[{{ property_name }}]"
+                value="{{ value_clean | escape }}"
+                {% if forloop.first and is_required %}required{% endif %}
+                {% if block.settings.hint != blank %}aria-describedby="{{ hint_id }}"{% endif %}
+                data-custom-input
+              >
+              <label class="swatch-list__label" for="{{ value_id }}">
+                <span
+                  class="swatch-list__chip swatch-chip"
+                  data-swatch="{{ value_clean | handle }}"
+                  aria-hidden="true"
+                ></span>
+                <span class="swatch-list__name">{{ value_clean }}</span>
+              </label>
+            </div>
+          {%- endfor -%}
+        </div>
+
+        <p class="field__error" id="{{ error_id }}" data-field-error role="alert"></p>
+      </fieldset>
+
+    {%- comment -%} ---------- Engraving / short text ---------- {%- endcomment -%}
+    {%- when 'text_property' -%}
+      {%- assign max_length = block.settings.max_length | default: 30 -%}
+      <div class="field">
+        <label class="field__label" for="{{ field_id }}">
+          {{ label }}
+          {%- if is_required %} <span class="custom-field__required" aria-hidden="true">*</span>{% endif -%}
+        </label>
+
+        <p class="field__hint" id="{{ hint_id }}">
+          {%- comment -%}
+            A merchant hint replaces the default outright. Chaining default
+            into t would try to translate the merchant string and emit
+            "translation missing".
+          {%- endcomment -%}
+          {%- if block.settings.hint != blank -%}
+            {{ block.settings.hint }}
+          {%- else -%}
+            {{ 'products.customization.engraving_hint' | t: max: max_length }}
+          {%- endif -%}
+        </p>
+
+        <input
+          type="text"
+          class="input"
+          id="{{ field_id }}"
+          name="properties[{{ property_name }}]"
+          maxlength="{{ max_length }}"
+          {% if is_required %}required{% endif %}
+          {%- comment -%}
+            Engraving is a proper noun as often as not — autocapitalise on,
+            autocorrect off so a name is never "corrected" into a word.
+          {%- endcomment -%}
+          autocapitalize="words"
+          autocorrect="off"
+          spellcheck="false"
+          enterkeyhint="next"
+          aria-describedby="{{ hint_id }} {{ field_id }}-count {{ error_id }}"
+          data-custom-input
+          data-max-length="{{ max_length }}"
+        >
+
+        {%- comment -%}
+          A live counter, announced politely so it does not interrupt typing
+          on a screen reader.
+        {%- endcomment -%}
+        <p class="field__hint custom-field__counter" id="{{ field_id }}-count" aria-live="polite">
+          {{ 'products.customization.characters_remaining' | t: count: max_length }}
+        </p>
+
+        <p class="field__error" id="{{ error_id }}" data-field-error role="alert"></p>
+      </div>
+
+    {%- comment -%} ---------- Gift message / long text ---------- {%- endcomment -%}
+    {%- when 'textarea_property' -%}
+      {%- assign max_length = block.settings.max_length | default: 200 -%}
+      <div class="field">
+        <label class="field__label" for="{{ field_id }}">
+          {{ label }}
+          {%- if is_required %} <span class="custom-field__required" aria-hidden="true">*</span>{% endif -%}
+        </label>
+
+        {%- if block.settings.hint != blank -%}
+          <p class="field__hint" id="{{ hint_id }}">{{ block.settings.hint }}</p>
+        {%- endif -%}
+
+        <textarea
+          class="textarea"
+          id="{{ field_id }}"
+          name="properties[{{ property_name }}]"
+          rows="3"
+          maxlength="{{ max_length }}"
+          {% if is_required %}required{% endif %}
+          enterkeyhint="enter"
+          aria-describedby="{{ hint_id }} {{ field_id }}-count {{ error_id }}"
+          data-custom-input
+          data-max-length="{{ max_length }}"
+        ></textarea>
+
+        <p class="field__hint custom-field__counter" id="{{ field_id }}-count" aria-live="polite">
+          {{ 'products.customization.characters_remaining' | t: count: max_length }}
+        </p>
+
+        <p class="field__error" id="{{ error_id }}" data-field-error role="alert"></p>
+      </div>
+
+    {%- comment -%} ---------- Dropdown ---------- {%- endcomment -%}
+    {%- when 'select_property' -%}
+      {%- assign values = block.settings.values | split: ',' -%}
+      <div class="field">
+        <label class="field__label" for="{{ field_id }}">
+          {{ label }}
+          {%- if is_required %} <span class="custom-field__required" aria-hidden="true">*</span>{% endif -%}
+        </label>
+
+        {%- if block.settings.hint != blank -%}
+          <p class="field__hint" id="{{ hint_id }}">{{ block.settings.hint }}</p>
+        {%- endif -%}
+
+        {%- comment -%}
+          A native <select>. Mobile browsers render it as a full-screen
+          wheel or list that is already thumb-friendly and screen-reader
+          correct; a custom dropdown would be a downgrade on both counts.
+        {%- endcomment -%}
+        <select
+          class="select"
+          id="{{ field_id }}"
+          name="properties[{{ property_name }}]"
+          {% if is_required %}required{% endif %}
+          aria-describedby="{{ hint_id }} {{ error_id }}"
+          data-custom-input
+        >
+          <option value="">{{ block.settings.placeholder | default: 'Choose an option' }}</option>
+          {%- for value in values -%}
+            {%- assign value_clean = value | strip -%}
+            <option value="{{ value_clean | escape }}">{{ value_clean }}</option>
+          {%- endfor -%}
+        </select>
+
+        <p class="field__error" id="{{ error_id }}" data-field-error role="alert"></p>
+      </div>
+
+    {%- comment -%} ---------- File upload ---------- {%- endcomment -%}
+    {%- when 'file_property' -%}
+      {%- assign max_mb = block.settings.max_size_mb | default: 5 -%}
+      <div class="field file-field">
+        <span class="field__label" id="{{ field_id }}-label">
+          {{ label }}
+          {%- if is_required %} <span class="custom-field__required" aria-hidden="true">*</span>{% endif -%}
+        </span>
+
+        <p class="field__hint" id="{{ hint_id }}">
+          {{ 'products.customization.upload_hint' | t: size: max_mb }}
+        </p>
+
+        {%- comment -%}
+          The native control is visually hidden and driven by its own label,
+          which is styled as a proper 44px button. The native widget cannot
+          be sized or labelled reliably across mobile browsers, but keeping
+          the real input means the OS file/camera picker still opens.
+        {%- endcomment -%}
+        <input
+          type="file"
+          class="file-field__input visually-hidden"
+          id="{{ field_id }}"
+          name="properties[{{ property_name }}]"
+          accept="{{ block.settings.accept | default: 'image/jpeg,image/png,application/pdf' }}"
+          {% if is_required %}required{% endif %}
+          aria-describedby="{{ hint_id }} {{ field_id }}-status {{ error_id }}"
+          data-custom-input
+          data-max-size-mb="{{ max_mb }}"
+        >
+
+        <div class="file-field__row">
+          <label class="btn btn--secondary file-field__button" for="{{ field_id }}">
+            {% render 'icon', icon: 'upload', size: 18 %}
+            <span data-file-button-text>{{ 'products.customization.upload_choose' | t }}</span>
+          </label>
+
+          <button
+            type="button"
+            class="file-field__remove tap-target"
+            data-file-remove
+            hidden
+          >
+            {% render 'icon', icon: 'close', size: 18 %}
+            <span class="visually-hidden">{{ 'products.customization.upload_remove' | t }}</span>
+          </button>
+        </div>
+
+        <p class="field__hint file-field__status" id="{{ field_id }}-status" data-file-status aria-live="polite">
+          {{ 'products.customization.no_file' | t }}
+        </p>
+
+        <p class="field__error" id="{{ error_id }}" data-field-error role="alert"></p>
+      </div>
+
+  {%- endcase -%}
+</div>

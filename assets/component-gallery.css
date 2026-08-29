@@ -1,0 +1,163 @@
+/* ==========================================================================
+   Product gallery
+   ========================================================================== */
+
+.gallery {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+}
+
+.gallery__stage {
+  position: relative;
+}
+
+.gallery__viewport {
+  display: flex;
+  /* The swipe is native scrolling, not a JS-driven transform. */
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  /* Keeps a rubber-banded swipe from scrolling the page behind it. */
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  gap: 0;
+}
+
+.gallery__viewport::-webkit-scrollbar {
+  display: none;
+}
+
+.gallery__slide {
+  flex: 0 0 100%;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+  min-width: 0;
+}
+
+.gallery__image {
+  width: 100%;
+  height: auto;
+  /* Fixed box: the page cannot reflow as each image decodes. */
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: var(--radius);
+  background-color: var(--color-border);
+}
+
+/* --------------------------------------------------------------------------
+   Arrows — pointer devices only
+   -------------------------------------------------------------------------- */
+
+.gallery__arrow {
+  display: none;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: var(--color-surface);
+  border-radius: 50%;
+  box-shadow: var(--shadow-sm);
+  color: var(--color-text);
+  z-index: var(--z-raised);
+}
+
+.gallery__arrow--prev { inset-inline-start: var(--space-2xs); }
+.gallery__arrow--next { inset-inline-end: var(--space-2xs); }
+
+.gallery__arrow:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .gallery__arrow {
+    display: inline-flex;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Dots — the accessible route to any image on touch
+   -------------------------------------------------------------------------- */
+
+.gallery__dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* No gap: each dot already carries a 44px hit area, and adding spacing on
+     top would push a long gallery's dots off a 320px screen. */
+  gap: 0;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gallery__dot {
+  /* Hit area is 44px; the visible mark is 8px. */
+  width: var(--tap-min);
+  height: var(--tap-min);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gallery__dot-mark {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--color-border);
+  transition: background-color var(--dur-fast) var(--ease),
+              transform var(--dur-fast) var(--ease);
+}
+
+.gallery__dot[aria-current="true"] .gallery__dot-mark {
+  background-color: var(--color-accent);
+  transform: scale(1.4);
+}
+
+/* --------------------------------------------------------------------------
+   Thumbnails — from tablet up
+   -------------------------------------------------------------------------- */
+
+.gallery__thumbs {
+  display: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gallery__thumb {
+  display: block;
+  width: 72px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 2px solid transparent;
+}
+
+.gallery__thumb[aria-current="true"] {
+  border-color: var(--color-accent);
+}
+
+.gallery__thumb-image {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+}
+
+@media (min-width: 768px) {
+  .gallery__dots {
+    display: none;
+  }
+
+  .gallery__thumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+  }
+}
+
+.reduce-motion .gallery__dot-mark {
+  transition: none;
+}

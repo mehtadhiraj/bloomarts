@@ -1,0 +1,151 @@
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-swatches.css' | asset_url | stylesheet_tag }}
+{{ 'component-facets.css' | asset_url | stylesheet_tag }}
+{{ 'component-drawer.css' | asset_url | stylesheet_tag }}
+{{ 'component-collection.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign products_per_page = section.settings.products_per_page | default: 16
+
+  assign active_count = 0
+  for filter in collection.filters
+    assign active_count = active_count | plus: filter.active_values.size
+  endfor
+-%}
+
+<div class="collection page-width">
+  {%- if section.settings.show_banner -%}
+    <header class="collection__header">
+      <h1 class="collection__title">{{ collection.title }}</h1>
+      {%- if collection.description != blank -%}
+        <div class="rte collection__description text-muted">{{ collection.description }}</div>
+      {%- endif -%}
+    </header>
+  {%- endif -%}
+
+  {%- comment -%}
+    Toolbar. On mobile it is the only way into filtering, so it is sticky —
+    scrolling twelve rows of products should not mean scrolling back to the
+    top to change the sort.
+  {%- endcomment -%}
+  <div class="collection-toolbar">
+    <button
+      type="button"
+      class="collection-toolbar__button collection-toolbar__button--filter"
+      data-drawer-open="facets-drawer"
+      aria-expanded="false"
+      aria-controls="facets-drawer"
+    >
+      {% render 'icon', icon: 'filter', size: 18 %}
+      <span>{{ 'products.facets.filter_and_sort' | t }}</span>
+      {%- if active_count > 0 -%}
+        <span class="collection-toolbar__badge">{{ active_count }}</span>
+        <span class="visually-hidden">{{ 'products.facets.filter_count' | t: count: active_count }}</span>
+      {%- endif -%}
+    </button>
+
+    <p class="collection-toolbar__count" aria-live="polite">
+      {{ 'collections.general.products_count' | t: count: collection.products_count }}
+    </p>
+  </div>
+
+  {%- comment -%}
+    Active filters as removable chips. Without these, a filtered grid on a
+    phone is indistinguishable from a nearly empty catalogue once the sheet
+    is closed.
+  {%- endcomment -%}
+  {%- if active_count > 0 -%}
+    <ul class="active-filters" role="list">
+      {%- for filter in collection.filters -%}
+        {%- for value in filter.active_values -%}
+          <li class="active-filters__item">
+            <a
+              href="{{ value.url_to_remove }}"
+              class="active-filters__chip"
+            >
+              <span>{{ filter.label }}: {{ value.label }}</span>
+              {% render 'icon', icon: 'close', size: 14 %}
+              <span class="visually-hidden">
+                {{ 'products.facets.remove_filter' | t: name: value.label }}
+              </span>
+            </a>
+          </li>
+        {%- endfor -%}
+      {%- endfor -%}
+    </ul>
+  {%- endif -%}
+
+  <div class="collection__layout">
+    <aside class="collection__sidebar">
+      {% render 'facets', collection: collection %}
+    </aside>
+
+    <div class="collection__results" id="collection-results">
+      {%- paginate collection.products by products_per_page -%}
+        {%- if collection.products.size > 0 -%}
+          <ul class="product-grid" role="list" data-reveal-group>
+            {%- for product in collection.products -%}
+              <li data-reveal="rise-stagger">
+                {%- comment -%}
+                  The first four cards are above the fold on most phones and
+                  tablets, so their images load eagerly; everything after is
+                  lazy.
+                {%- endcomment -%}
+                {%- liquid
+                  if forloop.index <= 4
+                    assign card_loading = 'eager'
+                  else
+                    assign card_loading = 'lazy'
+                  endif
+
+                  if forloop.first
+                    assign card_priority = 'high'
+                  else
+                    assign card_priority = 'auto'
+                  endif
+                -%}
+                {% render 'product-card',
+                   product: product,
+                   loading: card_loading,
+                   priority: card_priority,
+                   index: forloop.index %}
+              </li>
+            {%- endfor -%}
+          </ul>
+
+          {% render 'pagination', paginate: paginate %}
+        {%- else -%}
+          <div class="collection__empty">
+            <p>{{ 'products.facets.no_results' | t }}</p>
+            <a href="{{ collection.url }}" class="btn btn--secondary">
+              {{ 'products.facets.clear_all' | t }}
+            </a>
+          </div>
+        {%- endif -%}
+      {%- endpaginate -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Collection",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_banner",
+      "label": "Show collection title and description",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "Products per page",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "default": 16
+    }
+  ]
+}
+{% endschema %}

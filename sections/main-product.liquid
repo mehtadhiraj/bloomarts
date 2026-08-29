@@ -1,0 +1,260 @@
+{{ 'component-gallery.css' | asset_url | stylesheet_tag }}
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-swatches.css' | asset_url | stylesheet_tag }}
+{{ 'component-customization.css' | asset_url | stylesheet_tag }}
+{{ 'component-quantity.css' | asset_url | stylesheet_tag }}
+{{ 'component-product.css' | asset_url | stylesheet_tag }}
+{{ 'component-sticky-atc.css' | asset_url | stylesheet_tag }}
+
+<script src="{{ 'product-gallery.js' | asset_url }}" defer></script>
+<script src="{{ 'quantity-input.js' | asset_url }}" defer></script>
+<script src="{{ 'product-form.js' | asset_url }}" defer></script>
+{%- if settings.sticky_atc_enabled -%}
+  <script src="{{ 'sticky-atc.js' | asset_url }}" defer></script>
+{%- endif -%}
+
+{%- liquid
+  assign selected = product.selected_or_first_available_variant
+  assign form_id = 'product-form-' | append: section.id
+
+  # Customization blocks render as one merged panel under a single heading.
+  # This flag marks the first of them so the heading is emitted once,
+  # wherever the merchant has ordered them.
+  assign customization_types = 'swatch_property,text_property,textarea_property,select_property,file_property'
+  assign customization_seen = false
+-%}
+
+<div class="product page-width">
+  {%- comment -%}
+    Gallery first in the DOM as well as visually. On mobile the image is
+    what orients you; on desktop CSS grid places it in the left column
+    without reordering the source.
+  {%- endcomment -%}
+  <div class="product__gallery">
+    {% render 'product-gallery', product: product %}
+  </div>
+
+  <div class="product__info">
+    <product-form class="product-form">
+      {%- form 'product', product, id: form_id, class: 'product-form__form', novalidate: 'novalidate' -%}
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+
+            {%- when 'title' -%}
+              <div class="product__block" {{ block.shopify_attributes }}>
+                {%- if block.settings.show_vendor and product.vendor != blank -%}
+                  <p class="product__vendor text-sm text-muted">{{ product.vendor }}</p>
+                {%- endif -%}
+                <h1 class="product__title">{{ product.title }}</h1>
+              </div>
+
+            {%- when 'price' -%}
+              <div class="product__block product__price-block" {{ block.shopify_attributes }}>
+                {%- comment -%}
+                  data-product-price / data-product-compare are updated in
+                  place by the variant picker, and the same hooks appear in
+                  the sticky bar so both stay in step.
+                {%- endcomment -%}
+                <span class="price price--large">
+                  <span class="price__current" data-product-price>{{ selected.price | money }}</span>
+                  <s
+                    class="price__compare"
+                    data-product-compare
+                    {% unless selected.compare_at_price > selected.price %}hidden{% endunless %}
+                  >
+                    {%- if selected.compare_at_price > selected.price -%}
+                      {{ selected.compare_at_price | money }}
+                    {%- endif -%}
+                  </s>
+                </span>
+                <p class="text-xs text-muted">{{ 'cart.general.taxes_note' | t }}</p>
+              </div>
+
+            {%- when 'variant_picker' -%}
+              {%- unless product.has_only_default_variant -%}
+                <div class="product__block" {{ block.shopify_attributes }}>
+                  {% render 'variant-picker', product: product, block: block %}
+                </div>
+              {%- endunless -%}
+
+            {%- when 'swatch_property', 'text_property', 'textarea_property', 'select_property', 'file_property' -%}
+              {%- comment -%}
+                Customization blocks read as one panel under a single
+                heading, so personalising is visibly a distinct step rather
+                than more variant controls.
+              {%- endcomment -%}
+              {%- unless customization_seen -%}
+                {%- assign customization_seen = true -%}
+                <h2 class="product__customization-title">
+                  {% render 'brand-motif', motif: 'heart', size: 16, class: 'motif--inline' %}
+                  {{ 'products.customization.title' | t }}
+                </h2>
+              {%- endunless -%}
+              <div class="product__block product__customization" {{ block.shopify_attributes }}>
+                {% render 'customization-field', block: block, product: product %}
+              </div>
+
+            {%- when 'quantity' -%}
+              <div class="product__block product__quantity" {{ block.shopify_attributes }}>
+                <span class="field__label" id="quantity-label-{{ section.id }}">
+                  {{ 'products.product.quantity' | t }}
+                </span>
+                {% render 'quantity-input',
+                   value: 1,
+                   min: 1,
+                   label: product.title,
+                   id_suffix: section.id %}
+              </div>
+
+            {%- when 'buy_buttons' -%}
+              <div class="product__block product__buy" {{ block.shopify_attributes }}>
+                {%- comment -%}
+                  Error summary sits immediately above the button, where the
+                  eye already is when the tap fails. Hidden until it has
+                  something to say.
+                {%- endcomment -%}
+                <div class="form-errors" data-error-summary role="alert" hidden>
+                  <p class="form-errors__title">
+                    {% render 'icon', icon: 'alert', size: 16 %}
+                    {{ 'products.customization.errors_heading' | t }}
+                  </p>
+                  <ul class="form-errors__list" data-error-list></ul>
+                </div>
+
+                {%- comment -%}
+                  data-atc-anchor is what the sticky bar observes. When this
+                  button leaves the top of the viewport, the bar appears.
+                {%- endcomment -%}
+                <button
+                  type="submit"
+                  name="add"
+                  class="btn btn--primary btn--full product__add"
+                  data-add-to-cart
+                  data-atc-anchor
+                  data-default-text="{{ 'products.product.add_to_cart' | t }}"
+                  {% unless selected.available %}disabled{% endunless %}
+                >
+                  <span data-add-to-cart-text>
+                    {%- if selected.available -%}
+                      {{ 'products.product.add_to_cart' | t }}
+                    {%- else -%}
+                      {{ 'products.product.sold_out' | t }}
+                    {%- endif -%}
+                  </span>
+                </button>
+              </div>
+
+            {%- when 'description' -%}
+              <div class="product__block" {{ block.shopify_attributes }}>
+                <div class="rte product__description">{{ product.description }}</div>
+              </div>
+
+            {%- when 'collapsible' -%}
+              {%- comment -%}
+                Native <details>. Zero JavaScript, correct semantics, and it
+                is already keyboard and screen-reader complete.
+              {%- endcomment -%}
+              <details class="product__accordion" {{ block.shopify_attributes }}>
+                <summary class="product__accordion-summary">
+                  <span>{{ block.settings.heading }}</span>
+                  {% render 'icon', icon: 'chevron-down', size: 20, class: 'product__accordion-chevron' %}
+                </summary>
+                <div class="rte product__accordion-body">{{ block.settings.content }}</div>
+              </details>
+
+          {%- endcase -%}
+        {%- endfor -%}
+      {%- endform -%}
+    </product-form>
+  </div>
+</div>
+
+{%- if settings.sticky_atc_enabled -%}
+  {% render 'sticky-atc', product: product, form_id: form_id %}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Product",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "title",
+      "name": "Title",
+      "limit": 1,
+      "settings": [
+        { "type": "checkbox", "id": "show_vendor", "label": "Show vendor", "default": false }
+      ]
+    },
+    { "type": "price", "name": "Price", "limit": 1, "settings": [] },
+    { "type": "variant_picker", "name": "Variant picker", "limit": 1, "settings": [] },
+    { "type": "quantity", "name": "Quantity", "limit": 1, "settings": [] },
+    { "type": "buy_buttons", "name": "Buy buttons", "limit": 1, "settings": [] },
+    { "type": "description", "name": "Description", "limit": 1, "settings": [] },
+    {
+      "type": "collapsible",
+      "name": "Collapsible row",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Materials & care" },
+        { "type": "richtext", "id": "content", "label": "Content" }
+      ]
+    },
+    {
+      "type": "swatch_property",
+      "name": "Customization — colour swatches",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "Pour colour" },
+        { "type": "text", "id": "property_name", "label": "Property name", "info": "Shown on the order. Defaults to the label." },
+        { "type": "text", "id": "values", "label": "Values", "info": "Comma separated.", "default": "Charcoal, Bone, Sage, Rust" },
+        { "type": "text", "id": "hint", "label": "Hint" },
+        { "type": "checkbox", "id": "required", "label": "Required", "default": false }
+      ]
+    },
+    {
+      "type": "text_property",
+      "name": "Customization — short text",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "Engraving text" },
+        { "type": "text", "id": "property_name", "label": "Property name" },
+        { "type": "range", "id": "max_length", "label": "Maximum characters", "min": 10, "max": 120, "step": 5, "default": 30 },
+        { "type": "text", "id": "hint", "label": "Hint" },
+        { "type": "checkbox", "id": "required", "label": "Required", "default": false }
+      ]
+    },
+    {
+      "type": "textarea_property",
+      "name": "Customization — long text",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "Gift message" },
+        { "type": "text", "id": "property_name", "label": "Property name" },
+        { "type": "range", "id": "max_length", "label": "Maximum characters", "min": 50, "max": 500, "step": 25, "default": 200 },
+        { "type": "text", "id": "hint", "label": "Hint" },
+        { "type": "checkbox", "id": "required", "label": "Required", "default": false }
+      ]
+    },
+    {
+      "type": "select_property",
+      "name": "Customization — dropdown",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "Base" },
+        { "type": "text", "id": "property_name", "label": "Property name" },
+        { "type": "text", "id": "values", "label": "Values", "info": "Comma separated.", "default": "Cork, Felt, None" },
+        { "type": "text", "id": "placeholder", "label": "Placeholder", "default": "Choose an option" },
+        { "type": "text", "id": "hint", "label": "Hint" },
+        { "type": "checkbox", "id": "required", "label": "Required", "default": false }
+      ]
+    },
+    {
+      "type": "file_property",
+      "name": "Customization — file upload",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "Reference image" },
+        { "type": "text", "id": "property_name", "label": "Property name" },
+        { "type": "text", "id": "accept", "label": "Accepted types", "default": "image/jpeg,image/png,application/pdf" },
+        { "type": "range", "id": "max_size_mb", "label": "Maximum size", "min": 1, "max": 20, "step": 1, "unit": "MB", "default": 5 },
+        { "type": "checkbox", "id": "required", "label": "Required", "default": false }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Bloomarts viewport harness</title>
+    <style>
+      html, body { margin: 0; background: #2b2b2b; font: 13px ui-sans-serif, system-ui, sans-serif; color: #eee; }
+      .bar { padding: 6px 10px; background: #1b1b1b; position: sticky; top: 0; z-index: 2; }
+      .frame-wrap { padding: 10px; }
+      iframe { border: 0; background: #fff; display: block; }
+    </style>
+  </head>
+  <body>
+    <div class="bar" id="bar"></div>
+    <div class="frame-wrap"><iframe id="frame" title="Viewport under test"></iframe></div>
+
+    <script>
+      /* Renders a theme page inside an iframe of an exact CSS pixel width.
+         An iframe is a real viewport for media queries, vw/svh units and
+         container sizing, which window resizing cannot reach below the
+         browser's minimum window width (~400px on macOS). This is how the
+         320px case gets tested honestly. */
+      const params = new URLSearchParams(location.search);
+      const src = params.get('src') || 'index.html';
+      const w = Number(params.get('w') || 390);
+      const h = Number(params.get('h') || 844);
+
+      const frame = document.getElementById('frame');
+      frame.style.width = w + 'px';
+      frame.style.height = h + 'px';
+      frame.src = '/' + src.replace(/^\//, '');
+
+      document.getElementById('bar').textContent = `${src} @ ${w}x${h}`;
+      document.title = `${w}px — ${src}`;
+    </script>
+  </body>
+</html>

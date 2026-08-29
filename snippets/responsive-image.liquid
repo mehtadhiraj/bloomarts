@@ -1,0 +1,121 @@
+{%- comment -%}
+  Renders a responsive <img> against the Shopify CDN.
+
+  This is the only place in the theme that emits a product/content <img>.
+  Centralising it is what guarantees every image ships a srcset, a sizes
+  hint, and intrinsic dimensions — the last of which is most of our CLS
+  budget. A bare <img> anywhere else is a bug.
+
+  Accepts:
+    image          {Object}  Shopify image (required; falls back to a placeholder)
+    sizes          {String}  sizes attribute. Default '100vw'.
+                             Always describe the MOBILE case first.
+    widths         {String}  Comma-separated candidate widths.
+    ratio          {Number}  height / width. Supplying it crops to a fixed
+                             box, so the reserved space is exact.
+                             1 = square, 1.25 = 4:5, 0.75 = 4:3.
+    class          {String}  Class list for the <img>.
+    loading        {String}  'lazy' (default) | 'eager'
+    fetchpriority  {String}  'high' | 'low' | 'auto'
+    alt            {String}  Overrides image.alt.
+    sizes_attr_id  {String}  Optional id passed through for testing hooks.
+
+  Usage:
+    {% render 'responsive-image',
+       image: product.featured_image,
+       ratio: 1.25,
+       sizes: '(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw',
+       loading: 'eager', fetchpriority: 'high' %}
+{%- endcomment -%}
+
+{%- liquid
+  assign img_sizes = sizes | default: '100vw'
+  assign img_loading = loading | default: 'lazy'
+  assign img_class = class | default: ''
+  assign img_priority = fetchpriority | default: 'auto'
+  assign candidate_widths = widths | default: '240,360,480,640,750,828,1080,1280,1600,2000'
+  assign width_list = candidate_widths | split: ','
+-%}
+
+{%- if image != blank -%}
+  {%- liquid
+    assign native_width = image.width
+
+    if alt != blank
+      assign img_alt = alt
+    else
+      assign img_alt = image.alt
+    endif
+
+    # A cropped render has a known box, so the intrinsic attributes can be
+    # derived from the requested ratio rather than the source file.
+    if ratio != blank
+      assign attr_width = 1000
+      assign attr_height = 1000 | times: ratio | round
+    else
+      assign attr_width = image.width
+      assign attr_height = image.height
+    endif
+  -%}
+
+  {%- capture img_srcset -%}
+    {%- for w in width_list -%}
+      {%- assign candidate = w | strip | plus: 0 -%}
+      {%- if candidate < native_width -%}
+        {%- if ratio != blank -%}
+          {%- assign candidate_height = candidate | times: ratio | round -%}
+          {{ image | image_url: width: candidate, height: candidate_height, crop: 'center' }} {{ candidate }}w,
+        {%- else -%}
+          {{ image | image_url: width: candidate }} {{ candidate }}w,
+        {%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+    {%- comment -%} Always close on the native width: no trailing comma to strip. {%- endcomment -%}
+    {%- if ratio != blank -%}
+      {%- assign native_height = native_width | times: ratio | round -%}
+      {{ image | image_url: width: native_width, height: native_height, crop: 'center' }} {{ native_width }}w
+    {%- else -%}
+      {{ image | image_url: width: native_width }} {{ native_width }}w
+    {%- endif -%}
+  {%- endcapture -%}
+
+  {%- capture img_src -%}
+    {%- if ratio != blank -%}
+      {%- assign fallback_height = 640 | times: ratio | round -%}
+      {{ image | image_url: width: 640, height: fallback_height, crop: 'center' }}
+    {%- else -%}
+      {{ image | image_url: width: 640 }}
+    {%- endif -%}
+  {%- endcapture -%}
+
+  <img
+    src="{{ img_src | strip }}"
+    srcset="{{ img_srcset | strip }}"
+    sizes="{{ img_sizes }}"
+    alt="{{ img_alt | escape }}"
+    width="{{ attr_width }}"
+    height="{{ attr_height }}"
+    loading="{{ img_loading }}"
+    decoding="async"
+    fetchpriority="{{ img_priority }}"
+    {% if sizes_attr_id != blank %}id="{{ sizes_attr_id }}"{% endif %}
+    {% if img_class != blank %}class="{{ img_class }}"{% endif %}
+  >
+{%- else -%}
+  {%- comment -%}
+    The placeholder still needs a reserved box, otherwise an empty product
+    shifts the grid the moment real data arrives.
+  {%- endcomment -%}
+  <svg
+    class="placeholder-svg {{ img_class }}"
+    role="img"
+    aria-label="{{ 'general.accessibility.image_placeholder' | t }}"
+    viewBox="0 0 100 {% if ratio != blank %}{{ 100 | times: ratio | round }}{% else %}100{% endif %}"
+    width="100"
+    height="{% if ratio != blank %}{{ 100 | times: ratio | round }}{% else %}100{% endif %}"
+    preserveAspectRatio="xMidYMid slice"
+    focusable="false"
+  >
+    <rect width="100%" height="100%" fill="currentColor" opacity="0.08" />
+  </svg>
+{%- endif -%}

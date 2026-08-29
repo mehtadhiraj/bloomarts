@@ -1,0 +1,91 @@
+/* ==========================================================================
+   Mobile navigation
+   Loaded with the drawer styles; only applies inside the menu sheet.
+   ========================================================================== */
+
+.mobile-nav {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mobile-nav__item + .mobile-nav__item {
+  border-top: 1px solid var(--color-border);
+}
+
+.mobile-nav__link,
+.mobile-nav__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  /* Full-width rows: the whole line is the target, not just the words. */
+  min-height: 52px;
+  padding-block: var(--space-2xs);
+  font-size: var(--text-lg);
+  text-decoration: none;
+  list-style: none;
+}
+
+.mobile-nav__summary::-webkit-details-marker {
+  display: none;
+}
+
+.mobile-nav__chevron {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+  transition: transform var(--dur-base) var(--ease);
+}
+
+.mobile-nav__group[open] .mobile-nav__chevron {
+  transform: rotate(180deg);
+}
+
+.mobile-nav__sublist {
+  margin: 0 0 var(--space-2xs);
+  padding: 0 0 0 var(--space-sm);
+  list-style: none;
+  border-inline-start: 2px solid var(--color-border);
+}
+
+.mobile-nav__sublist .mobile-nav__link {
+  min-height: var(--tap-min);
+  font-size: var(--text-base);
+  color: var(--color-text-muted);
+}
+
+.mobile-nav__link--all {
+  font-weight: 500;
+  color: var(--color-text) !important;
+}
+
+.mobile-nav__link[aria-current="page"] {
+  font-weight: 600;
+  color: var(--color-text) !important;
+}
+
+.mobile-nav__footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.mobile-nav__social {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mobile-nav__social a {
+  color: var(--color-text-muted);
+}
+
+/* The expand animation is decorative; the chevron rotation is enough
+   feedback when motion is simplified. */
+.reduce-motion .mobile-nav__chevron {
+  transition: none;
+}

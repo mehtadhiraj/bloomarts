@@ -1,0 +1,109 @@
+{%- comment -%}
+  Product card.
+
+  Accepts:
+    product      {Object}  required
+    sizes        {String}  sizes attribute for the image
+    loading      {String}  'lazy' (default) | 'eager'
+    priority     {String}  fetchpriority
+    index        {Number}  Position in the grid, used to prioritise the
+                           first row of images.
+{%- endcomment -%}
+
+{%- liquid
+  assign card_ratio = 1.25
+  case settings.card_image_ratio
+    when 'square'
+      assign card_ratio = 1
+    when 'landscape'
+      assign card_ratio = 0.75
+  endcase
+
+  assign card_sizes = sizes | default: '(min-width: 1280px) 300px, (min-width: 1024px) 25vw, (min-width: 768px) 33vw, 45vw'
+  assign card_loading = loading | default: 'lazy'
+  assign second_image = product.images[1]
+-%}
+
+<div class="card">
+  <div class="card__media media media--{{ settings.card_image_ratio }}">
+    {% render 'responsive-image',
+       image: product.featured_image,
+       ratio: card_ratio,
+       sizes: card_sizes,
+       loading: card_loading,
+       fetchpriority: priority,
+       alt: product.title,
+       class: 'card__image' %}
+
+    {%- comment -%}
+      The hover swap is desktop-only and pointer-gated. On touch there is no
+      hover state to reveal it, so loading a second image would be pure
+      wasted bandwidth on the connection least able to afford it.
+    {%- endcomment -%}
+    {%- if second_image != blank -%}
+      <div class="card__image-alt" aria-hidden="true" data-card-hover-image>
+        {% render 'responsive-image',
+           image: second_image,
+           ratio: card_ratio,
+           sizes: card_sizes,
+           loading: 'lazy',
+           alt: '',
+           class: 'card__image' %}
+      </div>
+    {%- endif -%}
+
+    {%- unless product.available -%}
+      <span class="card__badge card__badge--sold-out">{{ 'products.product.sold_out' | t }}</span>
+    {%- else -%}
+      {%- if product.compare_at_price > product.price -%}
+        <span class="card__badge card__badge--sale">{{ 'products.product.on_sale' | t }}</span>
+      {%- endif -%}
+    {%- endunless -%}
+  </div>
+
+  <div class="card__body">
+    {%- if settings.card_show_vendor and product.vendor != blank -%}
+      <p class="card__vendor text-xs text-muted">{{ product.vendor }}</p>
+    {%- endif -%}
+
+    <h3 class="card__title">
+      {%- comment -%}
+        One link wrapping the title, stretched over the whole card by CSS.
+        A single target avoids the overlapping-link pattern that makes cards
+        awkward to tap and noisy for screen readers.
+      {%- endcomment -%}
+      <a href="{{ product.url }}" class="card__link">{{ product.title }}</a>
+    </h3>
+
+    {% render 'price', product: product, show_from: true, class: 'card__price' %}
+
+    {%- comment -%}
+      Colour swatches on a card are presentational, not controls. At card
+      width a tappable swatch would be far under 44px, and tapping one would
+      raise the question of what it selects. Choosing happens on the product
+      page where the targets are properly sized.
+    {%- endcomment -%}
+    {%- if settings.card_show_swatches -%}
+      {%- for option in product.options_with_values -%}
+        {%- assign option_name = option.name | downcase -%}
+        {%- if option_name == 'colour' or option_name == 'color' or option_name == 'finish' or option_name == 'glaze' or option_name == 'colourway' -%}
+          <ul class="card__swatches" role="list" aria-label="{{ option.name }}: {{ option.values | join: ', ' }}">
+            {%- for value in option.values limit: 5 -%}
+              <li
+                class="card__swatch"
+                data-swatch="{{ value | handle }}"
+                aria-hidden="true"
+              ></li>
+            {%- endfor -%}
+            {%- if option.values.size > 5 -%}
+              <li class="card__swatch-more text-xs text-muted" aria-hidden="true">
+                +{{ option.values.size | minus: 5 }}
+              </li>
+            {%- endif -%}
+          </ul>
+          {%- break -%}
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endif -%}
+  </div>
+</div>

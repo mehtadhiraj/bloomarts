@@ -1,0 +1,82 @@
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-swatches.css' | asset_url | stylesheet_tag }}
+{{ 'component-collection.css' | asset_url | stylesheet_tag }}
+
+<div class="collection page-width">
+  <header class="collection__header">
+    <h1 class="collection__title">
+      {%- if search.performed -%}
+        {{ 'general.search.results_for' | t: terms: search.terms }}
+      {%- else -%}
+        {{ 'general.search.title' | t }}
+      {%- endif -%}
+    </h1>
+
+    {%- comment -%}
+      A full search form on the results page too. Refining a search should
+      not require reopening the header sheet.
+    {%- endcomment -%}
+    <form action="{{ routes.search_url }}" method="get" role="search" class="search__form search__form--page">
+      <input type="hidden" name="options[prefix]" value="last">
+      <div class="search__field">
+        <label class="visually-hidden" for="search-page-input">{{ 'general.search.title' | t }}</label>
+        {% render 'icon', icon: 'search', size: 20, class: 'search__icon' %}
+        <input
+          id="search-page-input"
+          class="search__input"
+          type="search"
+          name="q"
+          value="{{ search.terms | escape }}"
+          placeholder="{{ 'general.search.placeholder' | t }}"
+          autocomplete="off"
+          autocapitalize="off"
+          spellcheck="false"
+          enterkeyhint="search"
+        >
+      </div>
+      <button type="submit" class="btn btn--primary search__submit">{{ 'general.search.submit' | t }}</button>
+    </form>
+
+    {%- if search.performed -%}
+      <p class="collection-toolbar__count" aria-live="polite">
+        {{ 'general.search.results_count' | t: count: search.results_count }}
+      </p>
+    {%- endif -%}
+  </header>
+
+  <div class="collection__results">
+    {%- if search.performed and search.results_count > 0 -%}
+      {%- paginate search.results by 16 -%}
+        <ul class="product-grid" role="list">
+          {%- for item in search.results -%}
+            <li>
+              {%- liquid
+                if forloop.index <= 4
+                  assign card_loading = 'eager'
+                else
+                  assign card_loading = 'lazy'
+                endif
+              -%}
+              {% render 'product-card', product: item, loading: card_loading %}
+            </li>
+          {%- endfor -%}
+        </ul>
+        {% render 'pagination', paginate: paginate %}
+      {%- endpaginate -%}
+    {%- elsif search.performed -%}
+      <div class="collection__empty">
+        <p>{{ 'general.search.no_results' | t: terms: search.terms }}</p>
+        <a href="{{ routes.all_products_collection_url }}" class="btn btn--secondary">
+          {{ 'collections.general.view_all' | t }}
+        </a>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Search",
+  "settings": []
+}
+{% endschema %}

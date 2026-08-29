@@ -1,0 +1,52 @@
+{{ 'component-announcement.css' | asset_url | stylesheet_tag }}
+
+{%- if section.blocks.size > 0 -%}
+  {%- comment -%}
+    Fixed height reserved in CSS. An announcement bar that sizes to its
+    content is a classic source of layout shift on mobile, where a message
+    that fits one line on a laptop wraps to two or three at 320px and shoves
+    the entire page down after paint.
+  {%- endcomment -%}
+  <div class="announcement" role="region" aria-label="Announcements">
+    {%- for block in section.blocks -%}
+      <div class="announcement__item" {{ block.shopify_attributes }}>
+        {%- if block.settings.link != blank -%}
+          <a href="{{ block.settings.link }}" class="announcement__link">
+            <span class="announcement__text">{{ block.settings.text }}</span>
+          </a>
+        {%- else -%}
+          <span class="announcement__text">{{ block.settings.text }}</span>
+        {%- endif -%}
+      </div>
+      {%- comment -%} Only the first message renders; rotation is not worth
+        the layout risk or the JavaScript on a phone. {%- endcomment -%}
+      {%- break -%}
+    {%- endfor -%}
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Announcement bar",
+  "max_blocks": 3,
+  "blocks": [
+    {
+      "type": "announcement",
+      "name": "Announcement",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Handmade in small batches — free shipping over ₹2,500"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
