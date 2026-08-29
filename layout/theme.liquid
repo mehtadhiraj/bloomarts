@@ -237,6 +237,17 @@
     {% section 'header' %}
 
     {%- comment -%}
+      Scroll sentinel for the header state.
+
+      It lives HERE, not inside the header section, because on Shopify every
+      section is wrapped in a .shopify-section div — and that wrapper is the
+      sticky element (see component-header.css). A sentinel inside a sticky
+      wrapper sticks along with it and never leaves the viewport, so the
+      header would never learn it had been scrolled past.
+    {%- endcomment -%}
+    <span data-header-sentinel aria-hidden="true"></span>
+
+    {%- comment -%}
       Sentinel for the back-to-top button. Observing a zero-height marker is
       cheaper and steadier than watching scrollY, and it needs no scroll
       listener.

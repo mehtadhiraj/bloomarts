@@ -155,13 +155,6 @@
 </header>
 
 {%- comment -%}
-  Zero-height marker sitting directly under the header. Observing it is how
-  we know the header has left the top of the page — cheaper and steadier
-  than reading scrollY on every frame.
-{%- endcomment -%}
-<span data-header-sentinel aria-hidden="true"></span>
-
-{%- comment -%}
   Mobile navigation. A bottom sheet rather than a side panel: on a phone the
   links, the search field and the account actions all need to sit inside
   thumb reach, and a full-height side drawer puts the close control in the

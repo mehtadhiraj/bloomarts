@@ -125,7 +125,8 @@
       "settings": {
         "heading": "The full studio",
         "collection": "all",
-        "products_to_show": 12
+        "products_to_show": 12,
+        "eyebrow": "Everything in stock"
       }
     }
   },

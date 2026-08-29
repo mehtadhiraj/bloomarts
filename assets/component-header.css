@@ -21,6 +21,20 @@
   top: 0;
 }
 
+/* On Shopify every section is wrapped in a .shopify-section div, and a
+   sticky element INSIDE that wrapper cannot travel — the wrapper is only as
+   tall as the header, so the header scrolls away with it. The wrapper has to
+   be the sticky element.
+
+   The local harness renders sections without wrappers, which is exactly why
+   this worked locally and failed on the store. Both rules are kept so the
+   behaviour is identical in either context. */
+.shopify-section:has(> .header--sticky) {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+}
+
 .header__inner {
   display: grid;
   /* Fixed side columns keep the brand optically centred no matter how many
@@ -280,10 +294,14 @@
               box-shadow var(--dur-base) var(--ease);
 }
 
-/* Pull the page up under the transparent header. Uses the measured
-   --header-height, so a taller announcement bar or a wrapped nav cannot
-   knock it out of alignment. */
-.header--transparent ~ main {
+/* Pull the page up under the transparent header, using the measured
+   --header-height so a taller announcement bar or a wrapped nav cannot knock
+   it out of alignment.
+
+   :has() rather than a sibling combinator: on Shopify the header sits inside
+   a .shopify-section wrapper, so `.header--transparent ~ main` never matches
+   and the hero would drop below the header instead of sitting under it. */
+body:has(.header--transparent) main {
   margin-top: calc(var(--header-height) * -1);
 }
 

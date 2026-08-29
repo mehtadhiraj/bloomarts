@@ -12,6 +12,9 @@
   <div class="page-width">
     <div class="section-head" data-scroll-reveal="blur">
       <div class="section-head__text">
+        {%- if section.settings.eyebrow != blank -%}
+          <span class="eyebrow">{{ section.settings.eyebrow }}</span>
+        {%- endif -%}
         <h2 class="section-head__title">{{ section.settings.heading }}</h2>
       </div>
       {%- if featured != blank -%}
@@ -94,6 +97,13 @@
 {
   "name": "Featured collection",
   "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "info": "A short label above the heading.",
+      "default": "Fresh from the studio"
+    },
     {
       "type": "text",
       "id": "heading",

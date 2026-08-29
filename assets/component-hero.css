@@ -204,6 +204,10 @@
 
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
+    /* The wrapper is included for the same reason as the header: on Shopify
+       a sticky element inside its .shopify-section wrapper cannot travel,
+       because the wrapper is only as tall as the section. */
+    html:not(.reduce-motion):not(.simplify-motion) body.template-index .shopify-section:has(> .hero),
     html:not(.reduce-motion):not(.simplify-motion) body.template-index .hero {
       position: sticky;
       top: 0;

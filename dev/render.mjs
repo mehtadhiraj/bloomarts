@@ -189,7 +189,24 @@ async function renderSection(name, config = {}, index = 1) {
     location: 'template'
   };
 
-  return engine.parseAndRender(section.source, { ...currentScope, section: sectionObject });
+  const rendered = await engine.parseAndRender(section.source, {
+    ...currentScope,
+    section: sectionObject
+  });
+
+  /* Shopify wraps every rendered section in a .shopify-section div. The
+     harness did not, and that gap hid real bugs: a position:sticky element
+     inside its wrapper cannot travel (the wrapper is only as tall as the
+     section), and sibling selectors like `.header ~ main` never match once
+     the header is wrapped. Both worked locally and failed on the store.
+
+     Static sections are id'd by name; sections from a JSON template use
+     Shopify's template--<id>__<key> form. */
+  const wrapperId = config.templateKey
+    ? `shopify-section-${config.templateId}__${config.templateKey}`
+    : `shopify-section-${name}`;
+
+  return `<div id="${wrapperId}" class="shopify-section">${rendered}</div>`;
 }
 
 /* Mutated in place between pages. On Shopify, page_title, product,
@@ -255,7 +272,13 @@ async function renderTemplate(templateName) {
   for (const key of order) {
     const config = template.sections[key];
     if (!config) continue;
-    parts.push(await renderSection(config.type, config, index));
+    parts.push(
+      await renderSection(
+        config.type,
+        { ...config, templateKey: key, templateId: `template--${templateName}` },
+        index
+      )
+    );
     index += 1;
   }
   return parts.join('\n');
