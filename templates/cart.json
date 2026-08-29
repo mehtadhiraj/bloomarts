@@ -2,18 +2,9 @@
   "sections": {
     "main": {
       "type": "main-cart"
-    },
-    "all_products": {
-      "type": "featured-collection",
-      "settings": {
-        "heading": "The full studio",
-        "collection": "all",
-        "products_to_show": 12
-      }
     }
   },
   "order": [
-    "main",
-    "all_products"
+    "main"
   ]
 }
