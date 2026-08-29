@@ -181,6 +181,7 @@ masked both.
 | Bug | Effect | Fix |
 |---|---|---|
 | `templates/index.json` set an `eyebrow` setting the materials schema no longer declared | Shopify **rejects a JSON template that sets an undeclared setting**, so there was no index template at all: every route worked and `/` returned 404 | Stale key removed; `check-theme.mjs` now validates every JSON template against its section schemas |
+| **`featured-collection`'s schema** — the `eyebrow` and `ghost_word` settings I had added | Shopify **silently dropped the whole section**, which 404'd the homepage. Found by mounting each suspect section in a *different* working template in one commit (`materials`→`/search`, `all_products`→`/cart`, `instagram`→`/404`): two rendered, one did not, naming the culprit in a single sync cycle | Schema simplified toward Dawn's shape (`heading`, `collection`, `products_to_show`). **Not yet pinned to which of the two settings** — both were removed together. Re-add one at a time and verify |
 | **A Liquid `{% comment %}` tag written literally inside a comment body in `materials.liquid`** | Shopify tracks *nested* comment tags, so the inner one opened a block that never closed. The section failed to parse and Shopify **silently dropped it** — no error anywhere. With it in the template the homepage returned 404; every other route worked. **LiquidJS tolerates this, so the harness rendered fine and it only appeared on the store.** This was the root cause of the homepage 404 | Rewritten as prose; `check-theme.mjs` now rejects any Liquid tag inside a comment body |
 | Three `main-product` block names over 25 characters | Shopify silently drops a block whose name exceeds the limit — the customization fields would have vanished from the product page | Shortened; schema-limit checks added |
 | `index.json` used a hyphenated section id (`all-products`) and raw-path url settings | Compared against Dawn: section **ids** are lowercase + underscores (hyphens belong in the section *type*), and url settings use `shopify://collections/all`, not `/collections/all`. Suspected cause of the homepage 404 | Renamed to `all_products`, urls switched to `shopify://`, links to nonexistent resources cleared; `check-theme.mjs` enforces both |
@@ -230,6 +231,28 @@ masked both.
 | Instagram app install guide | ⛔ §7.2 |
 
 ---
+
+## 6b. Debugging Shopify-only failures
+
+Shopify **silently drops** a section it will not accept — no error in the
+storefront, no error in the page source. The section simply is not there, and
+if it was the only thing standing between the router and a valid template, the
+page 404s. Every other route keeps working, which makes it look like a routing
+problem.
+
+The local LiquidJS harness does not reproduce this class of bug: LiquidJS
+accepts things Shopify rejects. Assume the harness passing means nothing about
+Shopify-side validity.
+
+**The technique that works:** mount each suspect section in a *different*
+template that already renders (`/search`, `/cart`, `/404`), all in one commit.
+One sync cycle then tests every suspect independently and names the culprit.
+Bisecting `index.json` one section at a time costs a sync cycle per suspect and
+takes the homepage down while you do it — avoid it.
+
+Sync timing is per-file and uneven. A brand-new section file can lag behind the
+template that references it, so a section missing right after a push may just
+be timing. Re-check before concluding.
 
 ## 7. Open decisions blocking work
 
