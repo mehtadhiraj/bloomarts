@@ -110,27 +110,6 @@
      or a wrapped nav would invalidate.
      ------------------------------------------------------------------ */
 
-  /* The announcement bar's height decides where the hero's snap position
-     sits. It wraps at narrow widths, so it is measured rather than assumed. */
-  function trackAnnouncementHeight() {
-    const bar = document.querySelector('.announcement');
-    const publish = () => {
-      document.documentElement.style.setProperty(
-        '--announcement-height',
-        bar ? `${Math.round(bar.getBoundingClientRect().height)}px` : '0px'
-      );
-    };
-
-    publish();
-    if (!bar) return;
-
-    if ('ResizeObserver' in window) {
-      new ResizeObserver(publish).observe(bar);
-    } else {
-      window.addEventListener('resize', publish, { passive: true });
-    }
-  }
-
   function trackHeaderHeight() {
     const header = document.querySelector('[data-header]');
     if (!header) return;
@@ -751,7 +730,6 @@
       watchMotionPolicy();
     });
     run('header height', trackHeaderHeight);
-    run('announcement height', trackAnnouncementHeight);
     run('responsive accordions', setupResponsiveAccordions);
     run('reveal stagger', applyStagger);
     run('scroll reveal', () => setupReveal(reduced));

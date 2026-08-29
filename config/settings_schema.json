@@ -428,13 +428,6 @@
       },
       {
         "type": "checkbox",
-        "id": "snap_sections",
-        "label": "Snap the homepage hero and panels to full screens",
-        "info": "One scroll gesture moves one full section. Uses native CSS scroll snapping \u2014 it does not intercept the wheel. Off automatically for reduced motion.",
-        "default": true
-      },
-      {
-        "type": "checkbox",
         "id": "depth_3d",
         "label": "3D depth effects",
         "info": "Card tilt and gallery rotation. Pointer devices only \u2014 never runs on touch, and off automatically on low-powered devices.",

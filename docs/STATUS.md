@@ -165,9 +165,9 @@ oversized ghost display type, and an intro splash loader.
 | Transparent header over hero + materials | ✅ | Fades to solid once the last `[data-header-overlay]` section passes |
 | Materials: 3 full-height panels, pinned | ✅ | Alternating image left/right, text top/bottom |
 | Product row as a true one-row carousel | ✅ | Was a wrapping 4-up grid at ≥1024px |
-| Full-section scroll snapping | ✅ | Native CSS snap; one gesture = one section/panel. Off under reduced motion |
 | Editable alt text on every image section | ✅ | hero, image-with-text, materials blocks |
 | Dead-setting detection in the theme check | ✅ | Follows `{% render %}` one level so block-passing isn't a false positive |
+| Full-section scroll snapping | ❌ | **Tried and reverted** — see below |
 | Image zoom on product gallery | ⬜ | Brief lists it; not built |
 | Testimonials slider animation | ⬜ | Section not built |
 | Smooth scroll (Lenis) | ⛔ | Conflicts with the brief — §7.6 |
@@ -192,9 +192,6 @@ oversized ghost display type, and an intro splash loader.
 | Panels hidden off-screen with no confirmation the timeline resolved | An unresolved timeline held every panel at its start keyframe — a blank section | Gated behind `.materials-ready`, added only after the timeline is confirmed |
 | Material panels sized `100svh - header` and pinned below the header | Left a strip of page background above each panel, so the transparent header read as a separate grey bar instead of merging into the panel | Panels run the full `100svh` under the floating header; copy padded clear of it |
 | `materials` declared an `eyebrow` setting that nothing rendered | A theme-editor control that silently did nothing | Removed; `check-theme.mjs` now fails on any unrendered setting |
-| Snap targets were 1×1 absolutely-positioned anchors | Browsers skipped straight past them, so one flick ran through all three panels at once and the hero rested mid-scroll | Replaced with real in-flow `100svh` step blocks, which snap reliably |
-| Pinned panels kept their swipe-row `scroll-snap-align` | Three duplicate page snap targets at one offset | Cleared while pinned |
-| Hero's snap position was 44px (below the announcement bar) | Mandatory snapping jerked the page down on load | `scroll-margin-top` set from a measured `--announcement-height`, putting the snap at exactly 0 |
 
 ---
 
