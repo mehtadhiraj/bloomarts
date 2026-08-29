@@ -8,7 +8,7 @@
         "script_accent": "big smiles",
         "text": "Cast, thrown and poured by hand in small batches. No two pieces come out quite the same.",
         "button_label": "Shop the collection",
-        "button_link": "/collections/all",
+        "button_link": "shopify://collections/all",
         "height": "full",
         "overlay_opacity": 75,
         "show_motifs": true
@@ -25,7 +25,7 @@
           "settings": {
             "title": "Concrete",
             "text": "Cast by hand, cured for seven days, then sealed inside and out. It takes pigment unevenly, which is the point.",
-            "link": "/collections/concrete",
+            "link": "",
             "link_label": "Shop concrete",
             "motif": "sprig"
           }
@@ -36,7 +36,7 @@
             "title": "Clay",
             "script_accent": "thrown",
             "text": "Speckled stoneware and terracotta, thrown on the wheel and fired twice. The throwing ridges stay.",
-            "link": "/collections/clay",
+            "link": "",
             "link_label": "Shop clay",
             "motif": "heart"
           }
@@ -46,7 +46,7 @@
           "settings": {
             "title": "Resin",
             "text": "Poured in layers over three days. Every piece sets a little differently, so no two match.",
-            "link": "/collections/resin",
+            "link": "",
             "link_label": "Shop resin",
             "motif": "bee"
           }
@@ -64,18 +64,8 @@
         "heading": "Made slowly, on purpose",
         "text": "<p>Bloom Arts is a two-person studio. Concrete cures for seven days before it is sealed, stoneware is fired twice, resin is poured in layers over three days. None of it can be rushed, which is why batches are small and colour shifts a little between pieces.</p>",
         "button_label": "Inside the studio",
-        "button_link": "/pages/about",
+        "button_link": "",
         "layout": "text-first"
-      }
-    },
-    "all-products": {
-      "type": "featured-collection",
-      "settings": {
-        "eyebrow": "Everything in stock",
-        "heading": "The full studio",
-        "collection": "all",
-        "products_to_show": 12,
-        "ghost_word": ""
       }
     },
     "instagram": {
@@ -129,13 +119,23 @@
         "p5",
         "p6"
       ]
+    },
+    "all_products": {
+      "type": "featured-collection",
+      "settings": {
+        "eyebrow": "Everything in stock",
+        "heading": "The full studio",
+        "collection": "all",
+        "products_to_show": 12,
+        "ghost_word": ""
+      }
     }
   },
   "order": [
     "hero",
     "materials",
     "studio",
-    "all-products",
+    "all_products",
     "instagram"
   ]
 }

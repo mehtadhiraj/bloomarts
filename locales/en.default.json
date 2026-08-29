@@ -46,6 +46,12 @@
       "instagram": "Instagram",
       "facebook": "Facebook",
       "pinterest": "Pinterest"
+    },
+    "password": {
+      "label": "Password",
+      "placeholder": "Enter password",
+      "submit": "Enter",
+      "error": "That password is incorrect. Please try again."
     }
   },
   "products": {

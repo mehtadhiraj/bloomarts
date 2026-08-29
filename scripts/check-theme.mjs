@@ -206,6 +206,54 @@ for (const f of listFiles('templates', '.json')) {
   }
 }
 
+/* JSON template conventions Shopify expects, taken from Dawn.
+
+   Both of these are silent failures: Shopify does not render an error, the
+   template simply does not exist, and every route works except the one that
+   template serves. */
+for (const f of listFiles('templates', '.json')) {
+  const rel = `templates/${f}`;
+  let json;
+  try {
+    json = JSON.parse(read(path.join(root, rel)));
+  } catch {
+    continue;
+  }
+
+  for (const [key, cfg] of Object.entries(json.sections || {})) {
+    // Dawn uses lowercase + underscores for section IDs. Hyphens in a key
+    // (as opposed to in a section TYPE, where they are correct) are not safe.
+    if (!/^[a-z0-9_]+$/.test(key)) {
+      note(rel, `section id "${key}" should be lowercase letters, numbers and underscores only — hyphens belong in the section type, not the id`);
+    }
+
+    const schema = sectionSchema(cfg.type);
+    if (!schema) continue;
+
+    const urlSettings = new Set(
+      (schema.settings || []).filter((x) => x.type === 'url').map((x) => x.id)
+    );
+    for (const [id, value] of Object.entries(cfg.settings || {})) {
+      if (!urlSettings.has(id) || !value) continue;
+      if (!String(value).startsWith('shopify://')) {
+        note(rel, `section "${key}" setting "${id}" = "${value}" — url settings use the shopify:// scheme (e.g. shopify://collections/all), not a raw path`);
+      }
+    }
+
+    for (const [blockKey, block] of Object.entries(cfg.blocks || {})) {
+      const def = (schema.blocks || []).find((b) => b.type === block.type);
+      if (!def) continue;
+      const blockUrls = new Set((def.settings || []).filter((x) => x.type === 'url').map((x) => x.id));
+      for (const [id, value] of Object.entries(block.settings || {})) {
+        if (!blockUrls.has(id) || !value) continue;
+        if (!String(value).startsWith('shopify://')) {
+          note(rel, `section "${key}" block "${blockKey}" setting "${id}" = "${value}" — url settings use the shopify:// scheme`);
+        }
+      }
+    }
+  }
+}
+
 /* Range settings must land on min + n * step.
 
    Shopify REJECTS a section schema whose range default violates this, and a

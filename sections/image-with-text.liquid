@@ -19,7 +19,7 @@
         {%- if section.settings.text != blank -%}
           <div class="rte text-muted">{{ section.settings.text }}</div>
         {%- endif -%}
-        {%- if section.settings.button_label != blank -%}
+        {%- if section.settings.button_label != blank and section.settings.button_link != blank -%}
           <a href="{{ section.settings.button_link }}" class="btn btn--secondary image-text__button">
             {{ section.settings.button_label }}
           </a>

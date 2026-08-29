@@ -104,7 +104,7 @@
                   <p class="materials__text">{{ block.settings.text }}</p>
                 {%- endif -%}
 
-                {%- if block.settings.link_label != blank -%}
+                {%- if block.settings.link_label != blank and block.settings.link != blank -%}
                   <a href="{{ block.settings.link }}" class="btn btn--primary materials__link">
                     {{ block.settings.link_label }}
                     {% render 'icon', icon: 'arrow-right', size: 16 %}
