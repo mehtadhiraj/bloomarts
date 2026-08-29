@@ -206,6 +206,26 @@ for (const f of listFiles('templates', '.json')) {
   }
 }
 
+/* Liquid tags written literally inside a comment body.
+
+   Shopify's comment tag tracks NESTED comment tags. A literal comment tag in
+   the prose opens a block that is never closed, the file fails to parse, and
+   Shopify silently drops the section from every JSON template using it — no
+   error anywhere. LiquidJS tolerates it, so the local harness renders fine
+   and the failure only appears on the store.
+
+   This cost a long debugging session; it is checked now. */
+for (const rel of liquidFiles) {
+  const src = read(path.join(root, rel));
+  for (const block of src.matchAll(/\{%-?\s*comment\s*-?%\}([\s\S]*?)\{%-?\s*endcomment\s*-?%\}/g)) {
+    const inner = block[1].match(/\{%-?\s*(\w+)/);
+    if (inner) {
+      const line = src.slice(0, block.index + inner.index).split('\n').length;
+      note(rel, `line ${line}: a Liquid tag ({% ${inner[1]} ...) is written inside a comment body — Shopify will fail to parse this file`);
+    }
+  }
+}
+
 /* Shopify schema limits. Exceeding one of these does not raise an error —
    Shopify silently drops the section or block from the theme editor and from
    any JSON template using it. */

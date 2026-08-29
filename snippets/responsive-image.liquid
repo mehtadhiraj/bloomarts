@@ -20,12 +20,11 @@
     alt            {String}  Overrides image.alt.
     sizes_attr_id  {String}  Optional id passed through for testing hooks.
 
-  Usage:
-    {% render 'responsive-image',
-       image: product.featured_image,
-       ratio: 1.25,
-       sizes: '(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw',
-       loading: 'eager', fetchpriority: 'high' %}
+  Usage: render this snippet with image, ratio, sizes and — for the LCP
+  image only — loading 'eager' and fetchpriority 'high'.
+
+  (Written in prose deliberately. A Liquid tag inside a comment body can open
+  a nested block that never closes and take the whole file down.)
 {%- endcomment -%}
 
 {%- liquid

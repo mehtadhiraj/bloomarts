@@ -14,15 +14,128 @@
         "show_motifs": true
       }
     },
+    "materials": {
+      "type": "materials",
+      "settings": {
+        "heading": "Three materials, one pair of hands"
+      },
+      "blocks": {
+        "concrete": {
+          "type": "material",
+          "settings": {
+            "title": "Concrete",
+            "text": "Cast by hand, cured for seven days, then sealed inside and out. It takes pigment unevenly, which is the point.",
+            "link": "",
+            "link_label": "Shop concrete",
+            "motif": "sprig"
+          }
+        },
+        "clay": {
+          "type": "material",
+          "settings": {
+            "title": "Clay",
+            "script_accent": "thrown",
+            "text": "Speckled stoneware and terracotta, thrown on the wheel and fired twice. The throwing ridges stay.",
+            "link": "",
+            "link_label": "Shop clay",
+            "motif": "heart"
+          }
+        },
+        "resin": {
+          "type": "material",
+          "settings": {
+            "title": "Resin",
+            "text": "Poured in layers over three days. Every piece sets a little differently, so no two match.",
+            "link": "",
+            "link_label": "Shop resin",
+            "motif": "bee"
+          }
+        }
+      },
+      "block_order": [
+        "concrete",
+        "clay",
+        "resin"
+      ]
+    },
     "studio": {
       "type": "image-with-text",
       "settings": {
-        "heading": "Control section"
+        "heading": "Made slowly, on purpose",
+        "text": "<p>Bloom Arts is a two-person studio. Concrete cures for seven days before it is sealed, stoneware is fired twice, resin is poured in layers over three days. None of it can be rushed, which is why batches are small and colour shifts a little between pieces.</p>",
+        "button_label": "Inside the studio",
+        "button_link": "",
+        "layout": "text-first"
+      }
+    },
+    "instagram": {
+      "type": "instagram-feed",
+      "settings": {
+        "heading": "From the studio"
+      },
+      "blocks": {
+        "p1": {
+          "type": "post",
+          "settings": {
+            "alt": "A charcoal planter drying on the bench"
+          }
+        },
+        "p2": {
+          "type": "post",
+          "settings": {
+            "alt": "Stoneware vases before glazing"
+          }
+        },
+        "p3": {
+          "type": "post",
+          "settings": {
+            "alt": "Resin poured in amber layers"
+          }
+        },
+        "p4": {
+          "type": "post",
+          "settings": {
+            "alt": "Tealight holders lined up"
+          }
+        },
+        "p5": {
+          "type": "post",
+          "settings": {
+            "alt": "A tray being sanded"
+          }
+        },
+        "p6": {
+          "type": "post",
+          "settings": {
+            "alt": "The studio shelf"
+          }
+        }
+      },
+      "block_order": [
+        "p1",
+        "p2",
+        "p3",
+        "p4",
+        "p5",
+        "p6"
+      ]
+    },
+    "all_products": {
+      "type": "featured-collection",
+      "settings": {
+        "eyebrow": "Everything in stock",
+        "heading": "The full studio",
+        "collection": "all",
+        "products_to_show": 12,
+        "ghost_word": ""
       }
     }
   },
   "order": [
     "hero",
-    "studio"
+    "materials",
+    "studio",
+    "all_products",
+    "instagram"
   ]
 }

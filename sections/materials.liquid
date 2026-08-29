@@ -31,8 +31,13 @@
   once the section has passed.
 
   Note the attribute sits on the tag with no Liquid comment between it and
-  its neighbour. A {%- comment -%} inside a tag strips the whitespace around
-  it and fuses the two attribute names into one.
+  its neighbour. A comment tag placed INSIDE an HTML tag strips the
+  whitespace around it and fuses the two attribute names into one.
+
+  Do not write a Liquid tag literally inside a comment body either: Shopify
+  tracks nested comment tags, so an inner one opens a block that is never
+  closed, the whole section fails to parse, and Shopify silently drops it
+  from every JSON template using it.
 {%- endcomment -%}
 {%- if panel_count > 0 -%}
   <section
