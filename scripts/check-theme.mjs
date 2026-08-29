@@ -206,6 +206,73 @@ for (const f of listFiles('templates', '.json')) {
   }
 }
 
+/* Range settings must land on min + n * step.
+
+   Shopify REJECTS a section schema whose range default violates this, and a
+   rejected schema takes every template referencing that section with it. A
+   default of 72 on a 40-90 range with step 5 removed the homepage from the
+   store entirely — every other route worked, and `/` returned 404. */
+function checkRange(file, where, setting, value) {
+  if (setting.type !== 'range' || value === undefined || value === null) return;
+  const { min, max, step, id } = setting;
+  if (typeof min !== 'number' || typeof max !== 'number' || typeof step !== 'number') return;
+
+  if (value < min || value > max) {
+    note(file, `${where} "${id}" = ${value} is outside its ${min}–${max} range`);
+    return;
+  }
+  const steps = (value - min) / step;
+  if (Math.abs(steps - Math.round(steps)) > 1e-9) {
+    note(file, `${where} "${id}" = ${value} is not min(${min}) + n x step(${step}) — Shopify rejects this`);
+  }
+}
+
+for (const rel of liquidFiles.filter((f) => f.startsWith('sections/'))) {
+  const schema = sectionSchema(path.basename(rel, '.liquid'));
+  if (!schema) continue;
+  for (const setting of schema.settings || []) {
+    checkRange(rel, 'schema default', setting, setting.default);
+  }
+  for (const block of schema.blocks || []) {
+    for (const setting of block.settings || []) {
+      checkRange(rel, `block ${block.type} default`, setting, setting.default);
+    }
+  }
+}
+
+{
+  const globals = JSON.parse(read(path.join(root, 'config/settings_schema.json')));
+  for (const group of globals) {
+    for (const setting of group.settings || []) {
+      checkRange('config/settings_schema.json', 'default', setting, setting.default);
+    }
+  }
+}
+
+for (const f of listFiles('templates', '.json')) {
+  const rel = `templates/${f}`;
+  let json;
+  try {
+    json = JSON.parse(read(path.join(root, rel)));
+  } catch {
+    continue;
+  }
+  for (const [key, cfg] of Object.entries(json.sections || {})) {
+    const schema = sectionSchema(cfg.type);
+    if (!schema) continue;
+    for (const setting of schema.settings || []) {
+      checkRange(rel, `section "${key}"`, setting, (cfg.settings || {})[setting.id]);
+    }
+    for (const [blockKey, block] of Object.entries(cfg.blocks || {})) {
+      const def = (schema.blocks || []).find((b) => b.type === block.type);
+      if (!def) continue;
+      for (const setting of def.settings || []) {
+        checkRange(rel, `section "${key}" block "${blockKey}"`, setting, (block.settings || {})[setting.id]);
+      }
+    }
+  }
+}
+
 /* Config */
 for (const f of ['config/settings_schema.json', 'config/settings_data.json']) {
   try {

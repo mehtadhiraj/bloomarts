@@ -3,9 +3,20 @@
     "main": {
       "type": "main-product",
       "blocks": {
-        "title": { "type": "title", "settings": { "show_vendor": false } },
-        "price": { "type": "price", "settings": {} },
-        "variant-picker": { "type": "variant_picker", "settings": {} },
+        "title": {
+          "type": "title",
+          "settings": {
+            "show_vendor": false
+          }
+        },
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "variant-picker": {
+          "type": "variant_picker",
+          "settings": {}
+        },
         "custom-colour": {
           "type": "swatch_property",
           "settings": {
@@ -31,7 +42,7 @@
           "settings": {
             "label": "Engraving",
             "property_name": "Engraving",
-            "max_length": 24,
+            "max_length": 25,
             "required": false
           }
         },
@@ -55,9 +66,18 @@
             "required": false
           }
         },
-        "quantity": { "type": "quantity", "settings": {} },
-        "buy": { "type": "buy_buttons", "settings": {} },
-        "description": { "type": "description", "settings": {} },
+        "quantity": {
+          "type": "quantity",
+          "settings": {}
+        },
+        "buy": {
+          "type": "buy_buttons",
+          "settings": {}
+        },
+        "description": {
+          "type": "description",
+          "settings": {}
+        },
         "care": {
           "type": "collapsible",
           "settings": {
@@ -69,7 +89,7 @@
           "type": "collapsible",
           "settings": {
             "heading": "Shipping & returns",
-            "content": "<p>Made to order in 5–7 working days, then shipped in 2–4. Personalised pieces cannot be returned unless they arrive damaged.</p>"
+            "content": "<p>Made to order in 5\u20137 working days, then shipped in 2\u20134. Personalised pieces cannot be returned unless they arrive damaged.</p>"
           }
         }
       },
@@ -90,5 +110,7 @@
       ]
     }
   },
-  "order": ["main"]
+  "order": [
+    "main"
+  ]
 }

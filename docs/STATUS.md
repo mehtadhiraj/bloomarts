@@ -181,6 +181,7 @@ masked both.
 | Bug | Effect | Fix |
 |---|---|---|
 | `templates/index.json` set an `eyebrow` setting the materials schema no longer declared | Shopify **rejects a JSON template that sets an undeclared setting**, so there was no index template at all: every route worked and `/` returned 404 | Stale key removed; `check-theme.mjs` now validates every JSON template against its section schemas |
+| `overlay_opacity` default of 72 on a 40–90 range with step 5 | Shopify **rejects a section schema whose range default is not `min + n × step`**, and a rejected schema takes every template referencing it down — the homepage 404'd while every other route worked | Changed to 75 (still above the contrast floor); `check-theme.mjs` now validates every range default and template value |
 | `font_face` emitted outside a `<style>` block | The filter returns raw CSS text, so the browser treated it as stray text in `<head>`, moved it into `<body>`, and the whole `@font-face` declaration rendered as visible text at the top of every page | Moved inside `<style>`; the harness shim now returns raw CSS like Shopify does, and `npm run render` fails if any `@font-face` lands outside a `<style>` |
 
 ### Bugs found and fixed in this area

@@ -75,9 +75,9 @@ Hero text sits over a merchant-supplied photograph from 768px up. No audit can
 verify contrast against an image nobody has seen, so the scrim is sized for the
 worst case instead.
 
-Brown at **72%** composited over a pure white photograph yields a background
+Brown at **75%** composited over a pure white photograph yields a background
 luminance that leaves cream text at roughly **5.4:1**. The first attempt used
-62%, which drops to about 4.4:1 over white and fails. 72% is the default and
+62%, which drops to about 4.4:1 over white and fails. 75% is the default (and a valid step on the 40–90 / 5 range Shopify validates) and
 the merchant can raise it (`Image overlay`, 40–90%).
 
 The script accent over the scrim uses a pale sage-cream mix, not sage: mid-tone

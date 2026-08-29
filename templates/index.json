@@ -10,7 +10,7 @@
         "button_label": "Shop the collection",
         "button_link": "/collections/all",
         "height": "full",
-        "overlay_opacity": 72,
+        "overlay_opacity": 75,
         "show_motifs": true
       }
     },

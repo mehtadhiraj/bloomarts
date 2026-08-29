@@ -103,14 +103,14 @@
 
        The strongest stop sits where the text is (the bottom) and defaults
        to 0.72. That number is not arbitrary: composited over a WORST-CASE
-       pure white photograph, brown at 0.72 yields a background luminance
+       pure white photograph, brown at 0.75 yields a background luminance
        that still gives cream text about 5.4:1. A lighter scrim (0.62 was
        the first attempt) drops to roughly 4.4:1 over white and fails.
        Merchants can raise it further but not below the floor. */
     background: linear-gradient(
       to top,
-      color-mix(in srgb, var(--brand-brown) calc(var(--hero-overlay, 72) * 1%), transparent) 0%,
-      color-mix(in srgb, var(--brand-brown) calc(var(--hero-overlay, 72) * 0.55%), transparent) 42%,
+      color-mix(in srgb, var(--brand-brown) calc(var(--hero-overlay, 75) * 1%), transparent) 0%,
+      color-mix(in srgb, var(--brand-brown) calc(var(--hero-overlay, 75) * 0.55%), transparent) 42%,
       transparent 78%
     );
   }
