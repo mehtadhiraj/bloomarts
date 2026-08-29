@@ -139,11 +139,22 @@
 /* --------------------------------------------------------------------------
    Live Instagram embeds
 
-   An embedded reel is portrait and ships Instagram's own header, caption and
-   attribution, so it will not fit the small square photo tile — their own
-   blockquote declares a 326px minimum width. This grid gives each embed room
-   instead of cropping it: one up on a phone, two from 600px, three from
-   1024px.
+   The embed is a cross-origin iframe, so its chrome — the profile bar, the
+   "View more on Instagram" link, the like and comment row — cannot be styled
+   or removed from the outside. What we can do is decide how much of the frame
+   is visible: the tile is a window, the iframe is oversized and offset behind
+   it, and everything but the reel itself falls outside and is clipped.
+
+   All the geometry below is measured from a live embed, not assumed:
+     - the profile bar above the media is a fixed 54px
+     - the media box is 4:5 of the iframe's own width
+     - a 9:16 reel is letterboxed inside that box, so the reel itself is
+       (iframe width x 0.703) wide
+
+   Inverting the last one: to make a 9:16 reel exactly fill a tile of width W,
+   the iframe has to be W / 0.703 = 1.4222 W wide and offset left by half the
+   difference. The black letterbox bars end up outside the window with the
+   rest of the chrome.
    -------------------------------------------------------------------------- */
 
 .instagram__grid--embed {
@@ -164,36 +175,56 @@
 }
 
 .instagram__tile--embed {
-  /* Overrides the 1:1 reservation — an embed's height is a function of its
-     own width, not a ratio we get to choose. */
-  aspect-ratio: auto;
+  position: relative;
+  /* Overrides the 1:1 photo reservation. */
+  aspect-ratio: 9 / 16;
   container-type: inline-size;
-  /* Instagram's embed renders on white. Matching it means the tile reads as
-     one card even where the reserved height overshoots the content. */
-  background-color: #fff;
-  border-radius: var(--radius-md);
   overflow: hidden;
+  border-radius: var(--radius-md);
+  /* Brand cream, not Instagram's white: this is what shows before the frame
+     paints, and a white flash in a cream grid reads as a broken tile. */
+  background-color: var(--color-background);
+
+  --embed-chrome: 54px;
+  --embed-frame-width: 142.222cqw;
+  --embed-frame-left: -21.111cqw;
+  --embed-media-height: calc(100cqw * 1.7778);
+}
+
+/* Anything that is not a 9:16 reel — a 4:5 or square post — already fills the
+   media box, so cropping to the reel shape would cut its sides off. This mode
+   crops the chrome only and leaves the frame whole. */
+.instagram__grid--embed[data-shape="full"] .instagram__tile--embed {
+  aspect-ratio: 4 / 5;
+
+  --embed-frame-width: 100cqw;
+  --embed-frame-left: 0;
+  --embed-media-height: calc(100cqw * 1.25);
 }
 
 .instagram__embed {
-  display: block;
-  width: 100%;
+  position: absolute;
+  top: calc(var(--embed-chrome) * -1);
+  left: var(--embed-frame-left);
+  width: var(--embed-frame-width);
+  /* Tall enough to hold the whole embed. The surplus is the chrome we are
+     deliberately clipping, so it costs nothing to be generous here. */
+  height: calc(var(--embed-media-height) + 280px);
   border: 0;
-  /* Measured from the live embed rather than assumed: the media box is 1:1.25
-     (a 9:16 reel letterboxed into it), with 54px of chrome above and 154px
-     below at a single-line caption. The 220px allows a couple of wrapped
-     caption lines in a narrow column. The asymmetry is deliberate: scrolling
-     is off inside the frame, so overshooting adds white space to an already
-     white card and is close to invisible, while undershooting clips the
-     caption and the attribution. */
-  height: calc(100cqw * 1.25 + 220px);
 }
 
-/* Container query units need a container. Without support the height cannot
-   be derived from the column, so fall back to a value tall enough for the
-   narrowest column rather than clipping the caption. */
-@supports not (height: 1cqw) {
+/* Container query units are what make the crop track the column width. With
+   no support for them the offsets cannot be computed, so show the embed whole
+   and uncropped rather than at a wrong offset. */
+@supports not (width: 1cqw) {
+  .instagram__tile--embed {
+    aspect-ratio: auto;
+    background-color: #fff;
+  }
+
   .instagram__embed {
+    position: static;
+    width: 100%;
     height: 620px;
   }
 }

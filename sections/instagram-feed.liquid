@@ -55,7 +55,13 @@
       {%- endif -%}
     </div>
 
-    <ul class="{{ grid_class }}" role="list" data-instagram-grid data-reveal-group>
+    <ul
+      class="{{ grid_class }}"
+      role="list"
+      data-shape="{{ section.settings.reel_shape }}"
+      data-instagram-grid
+      data-reveal-group
+    >
       {%- for block in section.blocks -%}
         {%- case block.type -%}
           {%- when 'post' -%}
@@ -197,7 +203,18 @@
   "name": "Instagram",
   "max_blocks": 12,
   "settings": [
-    { "type": "text", "id": "heading", "label": "Heading", "default": "From the studio" }
+    { "type": "text", "id": "heading", "label": "Heading", "default": "From the studio" },
+    {
+      "type": "select",
+      "id": "reel_shape",
+      "label": "Embed crop",
+      "info": "Instagram's profile bar, caption and like row are cropped away either way. Use the full frame if a post is not a 9:16 reel.",
+      "options": [
+        { "value": "reel", "label": "Fill the tile (9:16)" },
+        { "value": "full", "label": "Whole frame (4:5)" }
+      ],
+      "default": "reel"
+    }
   ],
   "blocks": [
     {
