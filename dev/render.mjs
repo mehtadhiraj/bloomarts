@@ -197,7 +197,11 @@ async function renderSection(name, config = {}, index = 1) {
   if (Array.isArray(config.blocks)) {
     blockList = config.blocks.map((block, i) => [`${name}-block-${i}`, block]);
   } else if (config.blocks && typeof config.blocks === "object") {
-    const order = config.block_order || config.order || Object.keys(config.blocks);
+    /* Only block_order, deliberately. Falling back to "order" or to the key
+       order made the harness more forgiving than Shopify, and it hid a
+       product template that shipped with "order" and rendered no blocks at
+       all on the store. Being lenient here means not finding out. */
+    const order = config.block_order || [];
     blockList = order
       .filter((key) => config.blocks[key])
       .map((key) => [key, config.blocks[key]]);

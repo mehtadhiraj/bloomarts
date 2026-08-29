@@ -93,7 +93,7 @@
           }
         }
       },
-      "order": [
+      "block_order": [
         "title",
         "price",
         "variant-picker",

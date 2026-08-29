@@ -212,6 +212,31 @@ for (const f of listFiles('templates', '.json')) {
     if (schema.max_blocks && Object.keys(cfg.blocks || {}).length > schema.max_blocks) {
       note(rel, `section "${key}" has more blocks than max_blocks (${schema.max_blocks})`);
     }
+
+    /* Block order lives under "block_order" inside a section; a bare "order"
+       is the key for section order at the top level. Getting them confused
+       renders every block in the section as nothing at all — the product page
+       shipped with an empty info column because of exactly this. */
+    const blockKeys = Object.keys(cfg.blocks || {});
+    if (blockKeys.length) {
+      if (!Array.isArray(cfg.block_order)) {
+        const hint = Array.isArray(cfg.order)
+          ? ' — it has "order" instead, which is the top-level key for section order'
+          : '';
+        note(rel, `section "${key}" has ${blockKeys.length} blocks but no "block_order" array${hint}; Shopify renders none of them`);
+      } else {
+        for (const id of cfg.block_order) {
+          if (!blockKeys.includes(id)) {
+            note(rel, `section "${key}" block_order lists "${id}", which is not one of its blocks`);
+          }
+        }
+        for (const id of blockKeys) {
+          if (!cfg.block_order.includes(id)) {
+            note(rel, `section "${key}" block "${id}" is missing from block_order, so it will not render`);
+          }
+        }
+      }
+    }
   }
 }
 

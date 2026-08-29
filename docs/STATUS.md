@@ -190,6 +190,7 @@ masked both.
 | `font_face` emitted outside a `<style>` block | The filter returns raw CSS text, so the browser treated it as stray text in `<head>`, moved it into `<body>`, and the whole `@font-face` declaration rendered as visible text at the top of every page | Moved inside `<style>`; the harness shim now returns raw CSS like Shopify does, and `npm run render` fails if any `@font-face` lands outside a `<style>` |
 | `position: sticky` on the header and the pinned hero | Shopify wraps every section in a `.shopify-section` div. A sticky element can only travel inside its own parent, and that wrapper is exactly as tall as the header — so the header scrolled away with it. The sibling selector `.header--transparent ~ main` stopped matching for the same reason, and the scroll sentinel sat *inside* the sticky wrapper so it could never leave the viewport | Sticky moved onto the wrapper via `.shopify-section:has(> .header--sticky)`; sibling rule rewritten as `body:has(.header--transparent) main`; sentinel moved into `layout/theme.liquid`. **The harness now emits `.shopify-section` wrappers**, since this was the third Shopify-only bug it had hidden |
 | Every `image_picker` setting in the theme is empty | The harness fills empty pickers with generated placeholders so layout can be measured, so locally the store looked finished. On Shopify the same settings render the grey placeholder SVG — the Instagram grid was six grey squares, and the logo, hero, studio image and all three material panels were unset too | The empty Instagram grid no longer renders on the storefront (it still renders in the theme editor, or a merchant could never add the first image). `npm run render` now **lists every setting it filled**, and `BLOOM_BARE=1 npm run render` renders what a freshly installed theme actually serves |
+| `templates/product.json` used `"order"` for its block order instead of `"block_order"` | `"order"` is the top-level key for *section* order; inside a section the key is `"block_order"`. Shopify rendered **none of the 13 blocks** — the product page had an image and an empty info column, no title, no price, no add to cart. Every other page was fine, so it did not look like a template problem | Key corrected. `check-theme.mjs` now fails on a section that has blocks but no `block_order`, names `"order"` explicitly as the likely confusion, and also catches blocks missing from `block_order` or listed there but not defined |
 
 ### Instagram embeds
 
@@ -313,6 +314,13 @@ template that already renders (`/search`, `/cart`, `/404`), all in one commit.
 One sync cycle then tests every suspect independently and names the culprit.
 Bisecting `index.json` one section at a time costs a sync cycle per suspect and
 takes the homepage down while you do it — avoid it.
+
+The harness has now hidden five Shopify-only failures (nested comment tag,
+`font_face` outside `<style>`, the missing `.shopify-section` wrappers, empty
+`image_picker` settings, and `"order"` accepted in place of `"block_order"`).
+The pattern every time was the harness being *more forgiving* than Shopify.
+When a divergence turns up, fix the harness to match Shopify rather than only
+fixing the theme — leniency here means not finding out.
 
 **Before every push, run `BLOOM_BARE=1 npm run render`.** It disables the
 harness's placeholder-image fill and shows what the store serves with nothing
