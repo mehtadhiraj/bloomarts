@@ -19,24 +19,30 @@ Regular** (the "arts" script), and **Poppins Medium** (body and tagline).
 | **Self-hosted woff2** | **Chosen.** Same origin as the theme, so no extra DNS + TLS handshake on a mobile connection; no third-party request, which matters for GDPR since Google Fonts logs visitor IPs; the file is versioned with the theme. Great Vibes is OFL-licensed, so redistribution inside the theme is permitted. |
 | Google Fonts CDN | Adds a cross-origin connection on the critical path and sends visitor IPs to a third party. Rejected. |
 
-## Adding the Great Vibes file
+## Great Vibes is included
 
-The theme references `assets/great-vibes-regular.woff2`. **That file is not in
-the repository** — a binary font was not something I could fetch here, so you
-need to add it once:
+`assets/great-vibes-regular.woff2` ships with the theme — 29 kB, the **latin
+subset** from Google Fonts v21, served from your own Shopify CDN rather than
+Google's.
 
-1. Download Great Vibes from Google Fonts (OFL, free for commercial use).
-2. Convert the TTF to WOFF2 (`woff2_compress`, or any web font converter).
-3. Name it exactly `great-vibes-regular.woff2`.
-4. Drop it in `assets/`, or upload it via Shopify admin → Content → Files and
-   adjust the `asset_url` in `layout/theme.liquid`.
+Great Vibes is licensed under the SIL Open Font License, which permits
+redistribution inside a theme. The OFL requires the licence to travel with the
+font; keep `assets/great-vibes-regular.woff2` and this note together, and
+retain the licence text if you redistribute the theme itself.
 
-**If you skip this, nothing breaks.** The `@font-face` request 404s and the
-`--font-script` stack falls back to `Snell Roundhand` / `Apple Chancery` /
-`cursive`. The script accent is decorative and never the only place a word
-appears, so no meaning is lost — it just will not be Great Vibes.
+Only the latin subset is bundled. The accent is a short English phrase, so the
+cyrillic, greek and vietnamese subsets would be dead weight on a mobile
+connection. If you ever need those, pull the matching subset from
+`https://fonts.googleapis.com/css2?family=Great+Vibes` and add it as a second
+`@font-face` with the right `unicode-range`.
 
-You can also switch it off entirely: **Theme settings → Typography → Use the
+### If you remove the file
+
+Nothing breaks. The `@font-face` request 404s and `--font-script` falls back to
+`Snell Roundhand` / `Apple Chancery` / `cursive`. The script accent is
+decorative and never the only place a word appears, so no meaning is lost.
+
+You can also switch it off outright: **Theme settings → Typography → Use the
 Great Vibes script accent**.
 
 ## Layout shift

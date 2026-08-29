@@ -1,0 +1,545 @@
+/* ==========================================================================
+   Bloom Arts — scroll-driven effects and 3D depth
+
+   These use native CSS scroll-driven animations (animation-timeline). That
+   choice is the whole point: a scroll-linked animation declared this way is
+   evaluated by the compositor, off the main thread. The JavaScript
+   alternative — a scroll listener that reads layout and writes transforms —
+   runs on every frame of a flick gesture and is precisely the thing that
+   makes parallax feel broken on a mid-range Android.
+
+   Everything is inside @supports. Browsers without scroll-driven animations
+   get the static layout, which is complete and correct on its own. There is
+   no JavaScript fallback, deliberately: emulating this with a scroll handler
+   would reintroduce the cost the feature exists to avoid.
+
+   Gates, all of which must pass:
+     [data-scroll-effects="subtle"|"rich"]   merchant setting
+     [data-depth="true"]                     merchant setting (3D only)
+     :not(.reduce-motion)                    device capability
+     prefers-reduced-motion: no-preference   OS preference
+     (hover: hover) and (pointer: fine)      3D only — never on touch
+   ========================================================================== */
+
+/* The parallax image is scaled beyond its box and then shifted, so the
+   container MUST clip. Without this the oversized image escapes and can push
+   the page into horizontal overflow at narrow widths. */
+.parallax-media {
+  overflow: hidden;
+}
+
+:root {
+  --parallax-shift: 5%;
+  --parallax-scale: 1.14;
+  --tilt-max: 5deg;
+  --depth-lift: 10px;
+}
+
+/* "Rich" pushes the same variables further rather than introducing new
+   effects, so there is one set of behaviours to reason about. */
+[data-scroll-effects="rich"] {
+  --parallax-shift: 9%;
+  --parallax-scale: 1.22;
+  --tilt-max: 8deg;
+  --depth-lift: 16px;
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* ----------------------------------------------------------------------
+       Parallax media
+
+       The image is scaled up first so that shifting it never exposes an
+       edge. Only translate and scale are animated — no layout, no paint.
+       ---------------------------------------------------------------------- */
+
+    [data-scroll-effects="subtle"]:not(.reduce-motion) .parallax-media > img,
+    [data-scroll-effects="subtle"]:not(.reduce-motion) .parallax-media > picture > img,
+    [data-scroll-effects="rich"]:not(.reduce-motion) .parallax-media > img,
+    [data-scroll-effects="rich"]:not(.reduce-motion) .parallax-media > picture > img {
+      animation: parallax-drift linear both;
+      animation-timeline: view();
+      /* Runs across the whole time the element is in the viewport. */
+      animation-range: entry 0% exit 100%;
+      transform-origin: center;
+    }
+
+    /* ----------------------------------------------------------------------
+       Scroll-linked entrance
+
+       Distinct from the IntersectionObserver reveal in animations.css: that
+       one fires once and finishes on its own clock. This is tied to scroll
+       position, so it tracks the finger and reverses when you scroll back.
+       ---------------------------------------------------------------------- */
+
+    [data-scroll-effects="subtle"]:not(.reduce-motion) [data-scroll-enter],
+    [data-scroll-effects="rich"]:not(.reduce-motion) [data-scroll-enter] {
+      animation: scroll-enter linear both;
+      animation-timeline: view();
+      animation-range: entry 10% entry 90%;
+    }
+
+    /* A quiet settle as a section leaves — only in rich. */
+    [data-scroll-effects="rich"]:not(.reduce-motion) [data-scroll-exit] {
+      animation: scroll-exit linear both;
+      animation-timeline: view();
+      animation-range: exit 0% exit 100%;
+    }
+
+    /* ----------------------------------------------------------------------
+       Section heading rule, drawn as it scrolls in
+       ---------------------------------------------------------------------- */
+
+    [data-scroll-effects="subtle"]:not(.reduce-motion) .section-head::after,
+    [data-scroll-effects="rich"]:not(.reduce-motion) .section-head::after {
+      animation: rule-draw linear both;
+      animation-timeline: view();
+      animation-range: entry 20% entry 80%;
+    }
+  }
+}
+
+/* The rule itself exists regardless; only its drawing is animated. */
+.section-head {
+  position: relative;
+  padding-bottom: var(--space-2xs);
+}
+
+.section-head::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 100%;
+  transform-origin: left center;
+  background: linear-gradient(
+    90deg,
+    var(--brand-amber) 0%,
+    var(--brand-coral) 45%,
+    var(--brand-sage) 100%
+  );
+  border-radius: var(--radius-pill);
+}
+
+@keyframes parallax-drift {
+  from {
+    transform: translate3d(0, calc(var(--parallax-shift) * -1), 0) scale(var(--parallax-scale));
+  }
+  to {
+    transform: translate3d(0, var(--parallax-shift), 0) scale(var(--parallax-scale));
+  }
+}
+
+@keyframes scroll-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes scroll-exit {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0.55;
+    transform: translate3d(0, -14px, 0) scale(0.985);
+  }
+}
+
+@keyframes rule-draw {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+/* --------------------------------------------------------------------------
+   Blur resolve
+
+   Text and media resolve from soft to sharp as they enter. This is the
+   signature effect from the reference site.
+
+   Gated harder than everything else: filter: blur() is NOT a
+   compositor-only property the way transform and opacity are — animating it
+   forces repaints, and on a mid-range mobile GPU a full-width blurred
+   heading is genuinely expensive. So it runs on 768px and up only, and
+   never when motion is simplified.
+   -------------------------------------------------------------------------- */
+
+@supports (animation-timeline: view()) {
+  @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+    [data-scroll-effects="subtle"]:not(.reduce-motion) [data-scroll-reveal="blur"],
+    [data-scroll-effects="rich"]:not(.reduce-motion) [data-scroll-reveal="blur"] {
+      animation: blur-resolve linear both;
+      animation-timeline: view();
+      animation-range: entry 15% entry 85%;
+    }
+  }
+}
+
+@keyframes blur-resolve {
+  from {
+    opacity: 0.25;
+    filter: blur(10px);
+    transform: translate3d(0, 14px, 0);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Text wipe
+
+   A gradient swept across the text with background-clip, so the copy
+   brightens left-to-right as it scrolls in — no per-word DOM splitting and
+   no JavaScript.
+
+   The whole block lives inside @supports (animation-timeline: view()) on
+   purpose. background-clip: text requires a transparent text colour, and if
+   the animation could not run the text would sit permanently at its start
+   state. Nesting it here means browsers without scroll-driven animations
+   never see the clip at all and render ordinary text.
+
+   Even at the start of the animation the unrevealed portion is 28% of
+   currentColor, never fully transparent — the text is always readable.
+   -------------------------------------------------------------------------- */
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    [data-scroll-effects="subtle"]:not(.reduce-motion) [data-scroll-reveal="wipe"],
+    [data-scroll-effects="rich"]:not(.reduce-motion) [data-scroll-reveal="wipe"] {
+      background-image: linear-gradient(
+        100deg,
+        currentColor 0%,
+        currentColor 40%,
+        color-mix(in srgb, currentColor 28%, transparent) 62%,
+        color-mix(in srgb, currentColor 28%, transparent) 100%
+      );
+      background-size: 260% 100%;
+      background-repeat: no-repeat;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: text-wipe linear both;
+      animation-timeline: view();
+      animation-range: entry 12% entry 88%;
+    }
+  }
+}
+
+@keyframes text-wipe {
+  from { background-position: 100% 0; }
+  to   { background-position: 0% 0; }
+}
+
+/* --------------------------------------------------------------------------
+   Ghost display word
+
+   An oversized, very low-contrast word behind a section, used as a
+   typographic marker. Purely decorative and aria-hidden: it repeats a word
+   already present in the visible heading, so nothing is lost by not
+   announcing it.
+   -------------------------------------------------------------------------- */
+
+.ghost-word {
+  position: absolute;
+  inset-inline: 0;
+  bottom: -0.12em;
+  z-index: 0;
+  display: block;
+  font-family: var(--font-heading);
+  /* Scales with the viewport so it always spans roughly the full width. */
+  font-size: clamp(4rem, 17vw, 16rem);
+  font-weight: 600;
+  line-height: 0.82;
+  letter-spacing: 0.02em;
+  text-align: center;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  color: color-mix(in srgb, var(--brand-brown) 7%, transparent);
+  /* Never allowed to widen the page. */
+  overflow: hidden;
+}
+
+.section--contrast .ghost-word {
+  color: color-mix(in srgb, var(--brand-cream) 9%, transparent);
+}
+
+@supports (animation-timeline: view()) {
+  @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+    [data-scroll-effects="subtle"]:not(.reduce-motion) .ghost-word,
+    [data-scroll-effects="rich"]:not(.reduce-motion) .ghost-word {
+      animation: ghost-drift linear both;
+      animation-timeline: view();
+      animation-range: entry 0% exit 100%;
+    }
+  }
+}
+
+@keyframes ghost-drift {
+  from { transform: translate3d(-4%, 0, 0); }
+  to   { transform: translate3d(4%, 0, 0); }
+}
+
+/* --------------------------------------------------------------------------
+   Back to top
+
+   Appears once the page has been scrolled, driven by scroll(root) — no
+   scroll listener. It is a real link to #top, so it works without any of
+   this.
+   -------------------------------------------------------------------------- */
+
+.to-top {
+  position: fixed;
+  right: calc(var(--gutter) + var(--safe-right));
+  bottom: calc(var(--space-sm) + var(--safe-bottom));
+  z-index: var(--z-sticky-atc);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tap-min);
+  height: var(--tap-min);
+  border-radius: 50%;
+  background-color: var(--color-contrast-surface);
+  color: var(--color-contrast-text);
+  box-shadow: var(--shadow-md);
+  text-decoration: none;
+  opacity: 0;
+  transform: translateY(8px) scale(0.9);
+  pointer-events: none;
+  transition: opacity var(--dur-base) var(--ease), transform var(--dur-base) var(--ease-out);
+}
+
+.to-top.is-shown {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+/* On product pages the sticky add-to-cart bar owns the bottom of the
+   screen, so the button lifts above it rather than overlapping. */
+@media (max-width: 1023px) {
+  .template-product .to-top {
+    bottom: calc(var(--space-sm) + var(--safe-bottom) + 68px);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Scroll progress bar
+
+   scroll(root) links this directly to document scroll. No listener, no JS.
+   -------------------------------------------------------------------------- */
+
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: var(--z-modal);
+  pointer-events: none;
+  background: transparent;
+}
+
+.scroll-progress__bar {
+  display: block;
+  height: 100%;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: left center;
+  background: linear-gradient(90deg, var(--brand-amber), var(--brand-coral));
+}
+
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    html:not(.reduce-motion) .scroll-progress__bar {
+      animation: progress-grow linear both;
+      animation-timeline: scroll(root block);
+    }
+  }
+}
+
+@keyframes progress-grow {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+/* --------------------------------------------------------------------------
+   3D depth
+
+   Gated to pointer-fine devices on top of everything else. A touch device
+   never evaluates any of it, so none of this costs a phone a single frame.
+   -------------------------------------------------------------------------- */
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  /* ---- Card tilt ----
+     The rotation values are set by depth.js as custom properties. The
+     transform itself lives here so the browser can interpolate it on the
+     compositor rather than having JS write a new matrix each frame. */
+  [data-depth="true"]:not(.reduce-motion) .card {
+    transform: perspective(900px)
+      rotateX(var(--tilt-x, 0deg))
+      rotateY(var(--tilt-y, 0deg))
+      translate3d(0, var(--tilt-lift, 0px), 0);
+    transform-style: preserve-3d;
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+
+  /* While the pointer is actually moving, drop the transition — otherwise
+     the tilt lags the cursor by a whole transition duration. */
+  [data-depth="true"]:not(.reduce-motion) .card.is-tilting {
+    transition: none;
+  }
+
+  /* The media plate lifts slightly out of the card plane. */
+  [data-depth="true"]:not(.reduce-motion) .card__media {
+    transform: translateZ(var(--depth-lift));
+    transition: box-shadow var(--dur-slow) var(--ease);
+  }
+
+  [data-depth="true"]:not(.reduce-motion) .card.is-tilting .card__media {
+    box-shadow: var(--shadow-lg);
+  }
+
+  /* The title sits on its own plane, just above the card face. */
+  [data-depth="true"]:not(.reduce-motion) .card__body {
+    transform: translateZ(calc(var(--depth-lift) / 3));
+  }
+
+  /* Buttons gain a small physical press. */
+  [data-depth="true"]:not(.reduce-motion) .btn--primary:active {
+    transform: perspective(600px) translate3d(0, 1px, -6px) scale(0.985);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Gallery depth
+
+   view(inline) measures each slide against the gallery's own horizontal
+   scrollport, so slides rotate away as they leave centre. The swipe itself
+   is still native scroll-snap — this only decorates it.
+   -------------------------------------------------------------------------- */
+
+@supports (animation-timeline: view()) {
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    [data-depth="true"]:not(.reduce-motion) .gallery__viewport {
+      perspective: 1400px;
+    }
+
+    [data-depth="true"]:not(.reduce-motion) .gallery__slide {
+      animation: gallery-turn linear both;
+      animation-timeline: view(inline);
+      animation-range: cover 0% cover 100%;
+      transform-origin: center center;
+    }
+  }
+}
+
+@keyframes gallery-turn {
+  0%   { transform: rotateY(12deg) scale(0.94); opacity: 0.72; }
+  50%  { transform: rotateY(0deg) scale(1); opacity: 1; }
+  100% { transform: rotateY(-12deg) scale(0.94); opacity: 0.72; }
+}
+
+/* --------------------------------------------------------------------------
+   Brakes
+
+   Last in the file so they win on source order regardless of specificity
+   ties above.
+   -------------------------------------------------------------------------- */
+
+[data-scroll-effects="none"] .parallax-media > img,
+[data-scroll-effects="none"] .parallax-media > picture > img,
+[data-scroll-effects="none"] [data-scroll-enter],
+[data-scroll-effects="none"] [data-scroll-exit],
+[data-scroll-effects="none"] [data-scroll-reveal],
+[data-scroll-effects="none"] .ghost-word,
+[data-scroll-effects="none"] .section-head::after {
+  animation: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+  filter: none !important;
+}
+
+/* Whenever the wipe is switched off, the text colour MUST come back —
+   background-clip: text leaves it transparent otherwise. */
+[data-scroll-effects="none"] [data-scroll-reveal="wipe"],
+.reduce-motion [data-scroll-reveal="wipe"] {
+  background-image: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+  color: inherit !important;
+}
+
+[data-depth="false"] .card,
+[data-depth="false"] .card__media,
+[data-depth="false"] .card__body,
+[data-depth="false"] .gallery__slide {
+  transform: none !important;
+  animation: none !important;
+}
+
+.reduce-motion .parallax-media > img,
+.reduce-motion .parallax-media > picture > img,
+.reduce-motion [data-scroll-enter],
+.reduce-motion [data-scroll-exit],
+.reduce-motion [data-scroll-reveal],
+.reduce-motion .ghost-word,
+.reduce-motion .card,
+.reduce-motion .card__media,
+.reduce-motion .card__body,
+.reduce-motion .gallery__slide,
+.reduce-motion .scroll-progress__bar,
+.reduce-motion .section-head::after {
+  animation: none !important;
+  transform: none !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+/* The progress bar has no meaning without motion — hide it rather than
+   leaving a full-width stripe across the top. */
+.reduce-motion .scroll-progress,
+[data-scroll-effects="none"] .scroll-progress {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .parallax-media > img,
+  .parallax-media > picture > img,
+  [data-scroll-enter],
+  [data-scroll-exit],
+  [data-scroll-reveal],
+  .ghost-word,
+  .card,
+  .card__media,
+  .card__body,
+  .gallery__slide,
+  .section-head::after {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+    filter: none !important;
+  }
+
+  [data-scroll-reveal="wipe"] {
+    background-image: none !important;
+    -webkit-background-clip: border-box !important;
+    background-clip: border-box !important;
+    color: inherit !important;
+  }
+
+  .scroll-progress,
+  .to-top {
+    display: none;
+  }
+}

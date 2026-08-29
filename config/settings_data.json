@@ -39,7 +39,11 @@
     "social_instagram_handle": "bloom.artss",
     "social_instagram": "https://www.instagram.com/bloom.artss/",
     "social_facebook": "",
-    "social_pinterest": ""
+    "social_pinterest": "",
+    "scroll_effects": "subtle",
+    "depth_3d": true,
+    "scroll_progress": false,
+    "show_back_to_top": true
   },
   "presets": {
     "Bloom Arts": {

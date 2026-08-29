@@ -47,15 +47,48 @@
     "settings": [
       {
         "type": "paragraph",
-        "content": "The six Bloom Arts brand colours. Roles below are assigned so every text and control combination meets WCAG 2.2 AA contrast — see docs/DESIGN-SYSTEM.md for the measured ratios."
+        "content": "The six Bloom Arts brand colours. Roles below are assigned so every text and control combination meets WCAG 2.2 AA contrast \u2014 see docs/DESIGN-SYSTEM.md for the measured ratios."
       },
-      { "type": "header", "content": "Brand palette" },
-      { "type": "color", "id": "color_brown", "label": "Dark brown", "default": "#2E241B" },
-      { "type": "color", "id": "color_amber", "label": "Amber yellow", "default": "#F6B028" },
-      { "type": "color", "id": "color_coral", "label": "Coral", "default": "#E66D5B" },
-      { "type": "color", "id": "color_olive", "label": "Olive green", "default": "#7A8F5A" },
-      { "type": "color", "id": "color_sage", "label": "Sage green", "default": "#9BAF7E" },
-      { "type": "color", "id": "color_cream", "label": "Cream", "default": "#FBF6EE" },
+      {
+        "type": "header",
+        "content": "Brand palette"
+      },
+      {
+        "type": "color",
+        "id": "color_brown",
+        "label": "Dark brown",
+        "default": "#2E241B"
+      },
+      {
+        "type": "color",
+        "id": "color_amber",
+        "label": "Amber yellow",
+        "default": "#F6B028"
+      },
+      {
+        "type": "color",
+        "id": "color_coral",
+        "label": "Coral",
+        "default": "#E66D5B"
+      },
+      {
+        "type": "color",
+        "id": "color_olive",
+        "label": "Olive green",
+        "default": "#7A8F5A"
+      },
+      {
+        "type": "color",
+        "id": "color_sage",
+        "label": "Sage green",
+        "default": "#9BAF7E"
+      },
+      {
+        "type": "color",
+        "id": "color_cream",
+        "label": "Cream",
+        "default": "#FBF6EE"
+      },
       {
         "type": "header",
         "content": "Derived text shades",
@@ -72,17 +105,20 @@
         "type": "color",
         "id": "color_error",
         "label": "Error",
-        "info": "Deepened coral. 4.51:1 on cream — pure coral is only 2.91:1.",
+        "info": "Deepened coral. 4.51:1 on cream \u2014 pure coral is only 2.91:1.",
         "default": "#B45547"
       },
       {
         "type": "color",
         "id": "color_success",
         "label": "Success",
-        "info": "Deepened olive. 4.53:1 on cream — pure olive is only 3.31:1.",
+        "info": "Deepened olive. 4.53:1 on cream \u2014 pure olive is only 3.31:1.",
         "default": "#66774B"
       },
-      { "type": "header", "content": "Surfaces" },
+      {
+        "type": "header",
+        "content": "Surfaces"
+      },
       {
         "type": "color",
         "id": "color_surface",
@@ -102,7 +138,7 @@
     "settings": [
       {
         "type": "paragraph",
-        "content": "Lora for headings, Poppins for body — matching the Bloom Arts type guide. Great Vibes is reserved for the script accent and is self-hosted; see docs/FONTS.md."
+        "content": "Lora for headings, Poppins for body \u2014 matching the Bloom Arts type guide. Great Vibes is reserved for the script accent and is self-hosted; see docs/FONTS.md."
       },
       {
         "type": "font_picker",
@@ -174,9 +210,18 @@
         "id": "corner_style",
         "label": "Corner style",
         "options": [
-          { "value": "sharp", "label": "Sharp" },
-          { "value": "soft", "label": "Soft" },
-          { "value": "rounded", "label": "Rounded" }
+          {
+            "value": "sharp",
+            "label": "Sharp"
+          },
+          {
+            "value": "soft",
+            "label": "Soft"
+          },
+          {
+            "value": "rounded",
+            "label": "Rounded"
+          }
         ],
         "default": "soft"
       },
@@ -207,9 +252,18 @@
         "id": "button_style",
         "label": "Button shape",
         "options": [
-          { "value": "pill", "label": "Pill" },
-          { "value": "soft", "label": "Soft" },
-          { "value": "square", "label": "Square" }
+          {
+            "value": "pill",
+            "label": "Pill"
+          },
+          {
+            "value": "soft",
+            "label": "Soft"
+          },
+          {
+            "value": "square",
+            "label": "Square"
+          }
         ],
         "default": "pill"
       },
@@ -229,9 +283,18 @@
         "id": "card_image_ratio",
         "label": "Image ratio",
         "options": [
-          { "value": "square", "label": "Square (1:1)" },
-          { "value": "portrait", "label": "Portrait (4:5)" },
-          { "value": "landscape", "label": "Landscape (4:3)" }
+          {
+            "value": "square",
+            "label": "Square (1:1)"
+          },
+          {
+            "value": "portrait",
+            "label": "Portrait (4:5)"
+          },
+          {
+            "value": "landscape",
+            "label": "Landscape (4:3)"
+          }
         ],
         "default": "portrait"
       },
@@ -241,16 +304,41 @@
         "label": "Hover effect",
         "info": "Pointer devices only. Touch devices never see a hover state, so nothing here costs a phone anything.",
         "options": [
-          { "value": "none", "label": "None" },
-          { "value": "lift", "label": "Lift" },
-          { "value": "zoom", "label": "Zoom image" },
-          { "value": "swap", "label": "Swap to second image" },
-          { "value": "lift-zoom", "label": "Lift and zoom" }
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "lift",
+            "label": "Lift"
+          },
+          {
+            "value": "zoom",
+            "label": "Zoom image"
+          },
+          {
+            "value": "swap",
+            "label": "Swap to second image"
+          },
+          {
+            "value": "lift-zoom",
+            "label": "Lift and zoom"
+          }
         ],
         "default": "lift-zoom"
       },
-      { "type": "checkbox", "id": "card_show_vendor", "label": "Show vendor", "default": false },
-      { "type": "checkbox", "id": "card_show_swatches", "label": "Show colour swatches", "default": true }
+      {
+        "type": "checkbox",
+        "id": "card_show_vendor",
+        "label": "Show vendor",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "card_show_swatches",
+        "label": "Show colour swatches",
+        "default": true
+      }
     ]
   },
   {
@@ -271,9 +359,18 @@
         "id": "animation_intensity",
         "label": "Intensity",
         "options": [
-          { "value": "subtle", "label": "Subtle" },
-          { "value": "balanced", "label": "Balanced" },
-          { "value": "expressive", "label": "Expressive" }
+          {
+            "value": "subtle",
+            "label": "Subtle"
+          },
+          {
+            "value": "balanced",
+            "label": "Balanced"
+          },
+          {
+            "value": "expressive",
+            "label": "Expressive"
+          }
         ],
         "default": "balanced"
       },
@@ -282,12 +379,64 @@
         "id": "reveal_style",
         "label": "Section reveal",
         "options": [
-          { "value": "none", "label": "None" },
-          { "value": "fade", "label": "Fade" },
-          { "value": "rise", "label": "Fade and rise" },
-          { "value": "rise-stagger", "label": "Fade and rise, staggered" }
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "fade",
+            "label": "Fade"
+          },
+          {
+            "value": "rise",
+            "label": "Fade and rise"
+          },
+          {
+            "value": "rise-stagger",
+            "label": "Fade and rise, staggered"
+          }
         ],
         "default": "rise-stagger"
+      },
+      {
+        "type": "select",
+        "id": "scroll_effects",
+        "label": "Scroll effects",
+        "info": "Scroll-linked parallax and depth. Uses native scroll-driven animations, which run off the main thread \u2014 browsers without support simply show the static layout.",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "subtle",
+            "label": "Subtle"
+          },
+          {
+            "value": "rich",
+            "label": "Rich"
+          }
+        ],
+        "default": "subtle"
+      },
+      {
+        "type": "checkbox",
+        "id": "depth_3d",
+        "label": "3D depth effects",
+        "info": "Card tilt and gallery rotation. Pointer devices only \u2014 never runs on touch, and off automatically on low-powered devices.",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "scroll_progress",
+        "label": "Show scroll progress bar",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "show_back_to_top",
+        "label": "Show back-to-top button",
+        "default": true
       },
       {
         "type": "range",
@@ -336,10 +485,28 @@
   {
     "name": "Social",
     "settings": [
-      { "type": "text", "id": "social_instagram_handle", "label": "Instagram handle", "default": "bloom.artss" },
-      { "type": "text", "id": "social_instagram", "label": "Instagram URL", "default": "https://www.instagram.com/bloom.artss/" },
-      { "type": "text", "id": "social_facebook", "label": "Facebook URL" },
-      { "type": "text", "id": "social_pinterest", "label": "Pinterest URL" }
+      {
+        "type": "text",
+        "id": "social_instagram_handle",
+        "label": "Instagram handle",
+        "default": "bloom.artss"
+      },
+      {
+        "type": "text",
+        "id": "social_instagram",
+        "label": "Instagram URL",
+        "default": "https://www.instagram.com/bloom.artss/"
+      },
+      {
+        "type": "text",
+        "id": "social_facebook",
+        "label": "Facebook URL"
+      },
+      {
+        "type": "text",
+        "id": "social_pinterest",
+        "label": "Pinterest URL"
+      }
     ]
   }
 ]

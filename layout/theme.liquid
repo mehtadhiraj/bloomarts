@@ -13,6 +13,8 @@
   data-reveal-style="{{ settings.reveal_style }}"
   data-hero-motion="{{ settings.hero_motion }}"
   data-card-hover="{{ settings.card_hover }}"
+  data-scroll-effects="{{ settings.scroll_effects }}"
+  data-depth="{{ settings.depth_3d }}"
   data-reduce-motion-mobile="{{ settings.reduce_motion_on_mobile }}"
 >
   <head>
@@ -191,12 +193,16 @@
 
     {{ 'base.css' | asset_url | stylesheet_tag }}
     {{ 'animations.css' | asset_url | stylesheet_tag }}
+    {{ 'scroll-effects.css' | asset_url | stylesheet_tag }}
 
     {%- comment -%}
       Registers custom elements and sets the device-capability classes that
       gate decorative motion. Deferred: nothing above the fold needs it.
     {%- endcomment -%}
     <script src="{{ 'global.js' | asset_url }}" defer></script>
+    {%- if settings.depth_3d -%}
+      <script src="{{ 'depth.js' | asset_url }}" defer></script>
+    {%- endif -%}
 
     {{ content_for_header }}
   </head>
@@ -206,6 +212,15 @@
       {{ 'general.accessibility.skip_to_content' | t }}
     </a>
 
+    {%- if settings.scroll_progress and settings.scroll_effects != 'none' -%}
+      {%- comment -%}
+        Driven entirely by a scroll-driven CSS animation — no scroll
+        listener, no JavaScript at all. Purely decorative, so it is hidden
+        from assistive technology.
+      {%- endcomment -%}
+      <div class="scroll-progress" aria-hidden="true"><span class="scroll-progress__bar"></span></div>
+    {%- endif -%}
+
     {%- comment -%}
       Announcements live in the layout, not a template, so they persist
       across navigation without re-rendering the page shell.
@@ -213,9 +228,23 @@
     {% section 'announcement-bar' %}
     {% section 'header' %}
 
+    {%- comment -%}
+      Sentinel for the back-to-top button. Observing a zero-height marker is
+      cheaper and steadier than watching scrollY, and it needs no scroll
+      listener.
+    {%- endcomment -%}
+    <span id="top-sentinel" aria-hidden="true"></span>
+
     <main id="main-content" tabindex="-1">
       {{ content_for_layout }}
     </main>
+
+    {%- if settings.show_back_to_top -%}
+      <a class="to-top" href="#main-content" data-to-top>
+        {% render 'icon', icon: 'chevron-up', size: 20 %}
+        <span class="visually-hidden">{{ 'general.accessibility.back_to_top' | t }}</span>
+      </a>
+    {%- endif -%}
 
     {% section 'footer' %}
 

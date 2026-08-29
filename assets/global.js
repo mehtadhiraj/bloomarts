@@ -17,7 +17,11 @@
      ------------------------------------------------------------------ */
 
   const Capability = {
-    prefersReducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+    // Read live via reducedMotionQuery below; kept here for callers that
+    // want a one-shot snapshot.
+    get prefersReducedMotion() {
+      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    },
 
     // navigator.deviceMemory and hardwareConcurrency are absent on Safari,
     // so a missing value must not be read as "low powered".
@@ -41,20 +45,42 @@
     }
   };
 
-  function applyMotionPolicy() {
+  const smallScreenQuery = window.matchMedia('(max-width: 767px)');
+  const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  function evaluateMotionPolicy() {
     const root = document.documentElement;
     const simplifyOnMobile = root.dataset.reduceMotionMobile === 'true';
     const merchantDisabled = root.dataset.animations === 'false';
 
-    const shouldReduce =
+    return (
       merchantDisabled ||
-      Capability.prefersReducedMotion ||
+      reducedMotionQuery.matches ||
       Capability.saveData ||
       Capability.slowNetwork ||
-      (simplifyOnMobile && (Capability.smallScreen || Capability.lowPowered));
+      (simplifyOnMobile && (smallScreenQuery.matches || Capability.lowPowered))
+    );
+  }
 
-    root.classList.toggle('reduce-motion', shouldReduce);
+  /* Re-evaluated whenever the inputs change, not just once at load.
+
+     Evaluating only at DOMContentLoaded meant a phone that loaded in
+     portrait and rotated to landscape stayed in simplified motion for the
+     rest of the session — and a desktop window dragged narrow then wide
+     did the same. Both media queries are live, so this now tracks them. */
+  function applyMotionPolicy() {
+    const shouldReduce = evaluateMotionPolicy();
+    document.documentElement.classList.toggle('reduce-motion', shouldReduce);
     return shouldReduce;
+  }
+
+  function watchMotionPolicy() {
+    const reapply = () => applyMotionPolicy();
+    smallScreenQuery.addEventListener('change', reapply);
+    reducedMotionQuery.addEventListener('change', reapply);
+    // Orientation settles a frame after the media query fires on some
+    // Android browsers.
+    window.addEventListener('orientationchange', () => requestAnimationFrame(reapply));
   }
 
   /* ------------------------------------------------------------------
@@ -402,6 +428,40 @@
   }
 
   /* ------------------------------------------------------------------
+     Back to top
+
+     Shown once the top of the page has scrolled away. Watches a zero-height
+     sentinel rather than listening to scroll, so it costs nothing per frame.
+     The control is a plain anchor to #main-content, so it works — and is
+     reachable by keyboard — whether or not this runs.
+     ------------------------------------------------------------------ */
+
+  function setupBackToTop() {
+    const button = document.querySelector('[data-to-top]');
+    const sentinel = document.getElementById('top-sentinel');
+    if (!button || !sentinel || !('IntersectionObserver' in window)) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        button.classList.toggle('is-shown', !entry.isIntersecting);
+      },
+      // Only once the top is a screenful behind us.
+      { rootMargin: '400px 0px 0px 0px', threshold: 0 }
+    );
+    observer.observe(sentinel);
+
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      const reduced = document.documentElement.classList.contains('reduce-motion');
+      window.scrollTo({ top: 0, behavior: reduced ? 'instant' : 'smooth' });
+      // Focus the top of the content so a keyboard user actually lands
+      // there, rather than the page merely scrolling under them.
+      const main = document.getElementById('main-content');
+      if (main) main.focus({ preventScroll: true });
+    });
+  }
+
+  /* ------------------------------------------------------------------
      Cart badge confirmation
      ------------------------------------------------------------------ */
 
@@ -430,6 +490,10 @@
     // than reimplement focus trapping and scroll locking.
     BloomDrawer,
     Capability,
+    // Exposed so the motion policy can be re-run and asserted directly,
+    // rather than only via media-query events (which browsers suppress in
+    // a backgrounded tab, making the behaviour untestable otherwise).
+    applyMotionPolicy,
     ScrollLock,
     trapFocus,
     focusableWithin,
@@ -443,11 +507,13 @@
 
   function init() {
     const reduced = applyMotionPolicy();
+    watchMotionPolicy();
     trackHeaderHeight();
     setupResponsiveAccordions();
     applyStagger();
     setupReveal(reduced);
     setupCartBump();
+    setupBackToTop();
   }
 
   if (document.readyState === 'loading') {

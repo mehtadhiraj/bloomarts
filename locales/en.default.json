@@ -10,11 +10,12 @@
       "image_placeholder": "Product image placeholder",
       "previous": "Previous",
       "next": "Next",
-      "loading": "Loading"
+      "loading": "Loading",
+      "back_to_top": "Back to top"
     },
     "search": {
       "title": "Search",
-      "placeholder": "Search concrete, clay, resin…",
+      "placeholder": "Search concrete, clay, resin\u2026",
       "submit": "Search",
       "clear": "Clear search",
       "results_for": "Results for \"{{ terms }}\"",
@@ -36,7 +37,7 @@
       "label": "Email address",
       "placeholder": "you@example.com",
       "submit": "Subscribe",
-      "success": "Thanks — you're on the list.",
+      "success": "Thanks \u2014 you're on the list.",
       "error": "Please enter a valid email address."
     },
     "social": {
@@ -48,7 +49,7 @@
   "products": {
     "product": {
       "add_to_cart": "Add to cart",
-      "adding": "Adding…",
+      "adding": "Adding\u2026",
       "added_to_cart": "Added to cart",
       "add_error": "Sorry, we couldn't add that. Please try again.",
       "sold_out": "Sold out",
@@ -139,7 +140,7 @@
         "other": "{{ count }} items"
       },
       "note": "Order note",
-      "note_placeholder": "Delivery instructions, gift notes…",
+      "note_placeholder": "Delivery instructions, gift notes\u2026",
       "continue_shopping": "Continue shopping"
     }
   },

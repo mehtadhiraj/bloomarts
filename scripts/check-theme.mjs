@@ -27,8 +27,10 @@ const assets = new Set(listFiles('assets', ''));
 const snippets = new Set(listFiles('snippets', '.liquid').map((f) => f.replace('.liquid', '')));
 const sections = new Set(listFiles('sections', '.liquid').map((f) => f.replace('.liquid', '')));
 
-/* Files Shopify serves itself rather than from the theme's assets folder. */
-const SHOPIFY_PROVIDED = new Set(['great-vibes-regular.woff2']);
+/* Assets referenced by the theme but intentionally not committed. Empty
+   now that Great Vibes ships with the theme; kept as the hook for any
+   future merchant-supplied file. */
+const SHOPIFY_PROVIDED = new Set();
 
 const liquidFiles = [
   ...listFiles('layout', '.liquid').map((f) => `layout/${f}`),

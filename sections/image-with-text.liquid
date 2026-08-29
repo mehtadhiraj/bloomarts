@@ -3,7 +3,7 @@
 <section class="section defer-render image-text">
   <div class="page-width">
     <div class="image-text__inner image-text__inner--{{ section.settings.layout }}" data-reveal-group>
-      <div class="image-text__media" data-reveal="scale">
+      <div class="image-text__media parallax-media" data-reveal="scale">
         {% render 'responsive-image',
            image: section.settings.image,
            ratio: 1,
@@ -12,9 +12,9 @@
            class: 'image-text__image' %}
       </div>
 
-      <div class="image-text__content" data-reveal="rise">
+      <div class="image-text__content" data-scroll-enter>
         {%- if section.settings.heading != blank -%}
-          <h2 class="image-text__heading">{{ section.settings.heading }}</h2>
+          <h2 class="image-text__heading" data-scroll-reveal="wipe">{{ section.settings.heading }}</h2>
         {%- endif -%}
         {%- if section.settings.text != blank -%}
           <div class="rte text-muted">{{ section.settings.text }}</div>

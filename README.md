@@ -120,6 +120,13 @@ scripts/     Packaging and integrity checks
 
 ## Documentation
 
+**Start here if you are picking this up cold:**
+
+- [`docs/PROJECT-BRIEF.md`](docs/PROJECT-BRIEF.md) — both client briefs, brand facts, and every decision already made
+- [`docs/STATUS.md`](docs/STATUS.md) — what is built, what is not, and what is blocked on a client decision
+
+Reference:
+
 - [`docs/DESIGN-SYSTEM.md`](docs/DESIGN-SYSTEM.md) — palette, measured contrast, type scale
 - [`docs/FONTS.md`](docs/FONTS.md) — how each family loads and why
 - [`docs/ANIMATION.md`](docs/ANIMATION.md) — motion system and its brakes

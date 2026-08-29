@@ -1,0 +1,17 @@
+{%- comment -%}
+  Oversized display word used as a typographic section marker.
+
+  Decorative only. It repeats a word already present in the visible heading,
+  so it is aria-hidden and nothing is lost by not announcing it. It sits at
+  very low contrast on purpose — it is texture, not text to be read, and it
+  must never compete with the copy in front of it.
+
+  The parent must be position: relative and clip its overflow, or a word
+  wider than the viewport will widen the page.
+
+  Accepts: word {String}
+{%- endcomment -%}
+
+{%- if word != blank -%}
+  <span class="ghost-word" aria-hidden="true">{{ word }}</span>
+{%- endif -%}

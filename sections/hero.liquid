@@ -13,7 +13,12 @@
   class="hero hero--{{ section.settings.height }}"
   style="--hero-overlay: {{ section.settings.overlay_opacity }};"
 >
-  <div class="hero__media">
+  {%- comment -%}
+    parallax-media makes this the clipping container for the scroll-linked
+    drift. It supersedes the ambient hero zoom via higher specificity —
+    running both would leave two animations fighting over `transform`.
+  {%- endcomment -%}
+  <div class="hero__media parallax-media">
     {%- if section.settings.image_desktop != blank -%}
       {% render 'art-directed-image',
          image_desktop: section.settings.image_desktop,
