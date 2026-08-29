@@ -181,11 +181,12 @@
   border: 0;
   /* Measured from the live embed rather than assumed: the media box is 1:1.25
      (a 9:16 reel letterboxed into it), with 54px of chrome above and 154px
-     below at a single-line caption. The 200px allows a couple of wrapped
-     caption lines in a narrow column — scrolling is off inside the frame, so
-     overshooting costs a little white space and undershooting clips the
-     attribution. */
-  height: calc(100cqw * 1.25 + 200px);
+     below at a single-line caption. The 220px allows a couple of wrapped
+     caption lines in a narrow column. The asymmetry is deliberate: scrolling
+     is off inside the frame, so overshooting adds white space to an already
+     white card and is close to invisible, while undershooting clips the
+     caption and the attribution. */
+  height: calc(100cqw * 1.25 + 220px);
 }
 
 /* Container query units need a container. Without support the height cannot
