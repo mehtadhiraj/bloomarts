@@ -135,6 +135,77 @@ for (const f of listFiles('templates', '.json')) {
   }
 }
 
+/* JSON templates validated against their section schemas.
+
+   Shopify rejects a JSON template that sets a setting the section's schema
+   does not declare — and rejecting it means the template does not exist at
+   all. A stale `eyebrow` key left in index.json after the setting was removed
+   from the schema took the entire homepage off the store: every other route
+   worked, and `/` returned 404 because there was no index template. */
+function sectionSchema(type) {
+  const file = path.join(root, 'sections', `${type}.liquid`);
+  if (!fs.existsSync(file)) return null;
+  const m = read(file).match(/\{%-?\s*schema\s*-?%\}([\s\S]*?)\{%-?\s*endschema\s*-?%\}/);
+  if (!m) return null;
+  try {
+    return JSON.parse(m[1]);
+  } catch {
+    return null;
+  }
+}
+
+for (const f of listFiles('templates', '.json')) {
+  const rel = `templates/${f}`;
+  let json;
+  try {
+    json = JSON.parse(read(path.join(root, rel)));
+  } catch {
+    continue; // reported above
+  }
+
+  for (const [key, cfg] of Object.entries(json.sections || {})) {
+    const schema = sectionSchema(cfg.type);
+    if (!schema) continue;
+
+    const settingIds = new Set((schema.settings || []).map((x) => x.id));
+    for (const id of Object.keys(cfg.settings || {})) {
+      if (!settingIds.has(id)) {
+        note(rel, `section "${key}" (${cfg.type}) sets "${id}", which its schema does not declare — Shopify will reject this template`);
+      }
+    }
+
+    // A select must be given one of its own option values.
+    for (const setting of schema.settings || []) {
+      if (setting.type !== 'select') continue;
+      const value = (cfg.settings || {})[setting.id];
+      if (value === undefined) continue;
+      const allowed = (setting.options || []).map((o) => o.value);
+      if (!allowed.includes(value)) {
+        note(rel, `section "${key}" (${cfg.type}) sets ${setting.id}="${value}", not one of: ${allowed.join(', ')}`);
+      }
+    }
+
+    const blockTypes = new Set((schema.blocks || []).map((b) => b.type));
+    for (const [blockKey, block] of Object.entries(cfg.blocks || {})) {
+      if (!blockTypes.has(block.type)) {
+        note(rel, `section "${key}" block "${blockKey}" has type "${block.type}", which the schema does not declare`);
+        continue;
+      }
+      const def = (schema.blocks || []).find((b) => b.type === block.type);
+      const blockIds = new Set((def.settings || []).map((x) => x.id));
+      for (const id of Object.keys(block.settings || {})) {
+        if (!blockIds.has(id)) {
+          note(rel, `section "${key}" block "${blockKey}" sets "${id}", which its schema does not declare`);
+        }
+      }
+    }
+
+    if (schema.max_blocks && Object.keys(cfg.blocks || {}).length > schema.max_blocks) {
+      note(rel, `section "${key}" has more blocks than max_blocks (${schema.max_blocks})`);
+    }
+  }
+}
+
 /* Config */
 for (const f of ['config/settings_schema.json', 'config/settings_data.json']) {
   try {

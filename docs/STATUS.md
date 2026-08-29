@@ -173,6 +173,16 @@ oversized ghost display type, and an intro splash loader.
 | Smooth scroll (Lenis) | ⛔ | Conflicts with the brief — §7.6 |
 | Intro splash / page loader | ⛔ | §7.5 |
 
+### Bugs found on the live store
+
+These only surfaced once the theme was on Shopify — the local harness had
+masked both.
+
+| Bug | Effect | Fix |
+|---|---|---|
+| `templates/index.json` set an `eyebrow` setting the materials schema no longer declared | Shopify **rejects a JSON template that sets an undeclared setting**, so there was no index template at all: every route worked and `/` returned 404 | Stale key removed; `check-theme.mjs` now validates every JSON template against its section schemas |
+| `font_face` emitted outside a `<style>` block | The filter returns raw CSS text, so the browser treated it as stray text in `<head>`, moved it into `<body>`, and the whole `@font-face` declaration rendered as visible text at the top of every page | Moved inside `<style>`; the harness shim now returns raw CSS like Shopify does, and `npm run render` fails if any `@font-face` lands outside a `<style>` |
+
 ### Bugs found and fixed in this area
 
 | Bug | Effect | Fix |

@@ -257,7 +257,21 @@ export function createEngine({ themeRoot, locale, globals, renderSection }) {
 
   /* Fonts are system-stacked in the harness — there is no Shopify font CDN
      to serve woff2 from. The shipped theme emits real @font-face rules. */
-  engine.registerFilter('font_face', () => '<!-- font_face: real @font-face rules are emitted by Shopify -->');
+  /* Shopify's font_face returns RAW CSS TEXT, not a <style> element. The
+     shim previously returned an HTML comment, which silently hid the fact
+     that the theme was emitting these outside a <style> block — on the real
+     store the whole declaration rendered as visible text at the top of every
+     page. Returning realistic CSS makes that failure reproduce locally. */
+  engine.registerFilter('font_face', (font) => {
+    const family = (font && font.family) || 'Fallback';
+    const weight = (font && font.weight) || 400;
+    const style = (font && font.style) || 'normal';
+    return (
+      `@font-face { font-family: ${family}; font-weight: ${weight}; ` +
+      `font-style: ${style}; font-display: swap; ` +
+      `src: url("/fonts/${String(family).toLowerCase()}-${weight}.woff2") format("woff2"); }`
+    );
+  });
   engine.registerFilter('font_modify', (font) => font);
   engine.registerFilter('font_url', () => '');
 

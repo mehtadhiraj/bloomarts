@@ -460,6 +460,50 @@ const pages = [
   }
 ];
 
+/* Output assertions.
+
+   Catches Shopify-shaped mistakes that only surface on a real store. The
+   first one here is not hypothetical: font_face returns raw CSS text, and
+   emitting it outside a <style> block made the entire @font-face declaration
+   render as visible text at the top of every page on the live store. */
+function auditOutput() {
+  const problems = [];
+
+  for (const file of fs.readdirSync(distRoot).filter((f) => f.endsWith('.html'))) {
+    const html = fs.readFileSync(path.join(distRoot, file), 'utf8');
+
+    const styleRanges = [...html.matchAll(/<style[^>]*>[\s\S]*?<\/style>/g)].map((m) => [
+      m.index,
+      m.index + m[0].length
+    ]);
+
+    for (const m of html.matchAll(/@font-face/g)) {
+      const inside = styleRanges.some(([a, b]) => m.index >= a && m.index <= b);
+      if (!inside) {
+        problems.push(`${file}: @font-face outside a <style> block — it will render as visible text`);
+        break;
+      }
+    }
+
+    // Liquid that failed to render leaves its delimiters behind.
+    if (/\{%[^}]*%\}/.test(html)) {
+      problems.push(`${file}: unrendered Liquid tag in output`);
+    }
+    if (html.includes('translation missing')) {
+      problems.push(`${file}: missing translation string`);
+    }
+  }
+
+  if (problems.length === 0) {
+    console.log('  ok    output audit');
+    return;
+  }
+
+  console.error('\n  Output audit failed:');
+  problems.forEach((p) => console.error(`   - ${p}`));
+  process.exitCode = 1;
+}
+
 async function build() {
   console.log('\nBloomarts — rendering theme to dev/dist\n');
   fs.mkdirSync(distRoot, { recursive: true });
@@ -477,6 +521,8 @@ async function build() {
       process.exitCode = 1;
     }
   }
+
+  auditOutput();
 
   console.log(`\n${rendered}/${pages.length} pages rendered\n`);
 }

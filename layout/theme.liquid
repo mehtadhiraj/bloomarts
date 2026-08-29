@@ -90,19 +90,26 @@
       so each variant is guarded — an unguarded nil would emit a broken
       @font-face rule.
     {%- endcomment -%}
-    {{ body_font | font_face: font_display: 'swap' }}
-    {%- if body_font_medium %}{{ body_font_medium | font_face: font_display: 'swap' }}{% endif -%}
-    {%- if body_font_bold %}{{ body_font_bold | font_face: font_display: 'swap' }}{% endif -%}
-    {%- if body_font_italic %}{{ body_font_italic | font_face: font_display: 'swap' }}{% endif -%}
-    {{ heading_font | font_face: font_display: 'swap' }}
-    {%- if heading_font_semibold %}{{ heading_font_semibold | font_face: font_display: 'swap' }}{% endif -%}
-
     {%- comment -%}
       Settings-derived tokens are inlined rather than written to a stylesheet,
       so first paint already has the right colours and the cached base.css
       stays byte-identical across stores.
     {%- endcomment -%}
     <style>
+      {%- comment -%}
+        The font_face filter returns RAW CSS TEXT, not a <style> element — so
+        these must sit inside this block. Emitted directly in <head> the
+        browser treats them as stray text, moves them into <body>, and the
+        whole @font-face declaration renders as visible text at the top of
+        every page.
+      {%- endcomment -%}
+      {{ body_font | font_face: font_display: 'swap' }}
+      {%- if body_font_medium %}{{ body_font_medium | font_face: font_display: 'swap' }}{% endif -%}
+      {%- if body_font_bold %}{{ body_font_bold | font_face: font_display: 'swap' }}{% endif -%}
+      {%- if body_font_italic %}{{ body_font_italic | font_face: font_display: 'swap' }}{% endif -%}
+      {{ heading_font | font_face: font_display: 'swap' }}
+      {%- if heading_font_semibold %}{{ heading_font_semibold | font_face: font_display: 'swap' }}{% endif -%}
+
       {%- if settings.use_script_accent -%}
       {%- comment -%}
         Great Vibes is not in Shopify's font library, so it is self-hosted.
