@@ -339,3 +339,85 @@
     animation: none !important;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Handwriting
+
+   Reveals script text left to right, so a cursive face reads as being
+   written rather than fading in. A clip edge is what sells it — an opacity
+   fade looks like text appearing, not like a pen moving.
+
+   Doing this "properly" would mean the glyphs as SVG paths with an animated
+   stroke-dashoffset. That needs the outlines converted per string, cannot
+   use live theme-editor text, and ships a large path for every phrase. A
+   clip wipe across real text keeps the copy selectable, translatable and
+   readable by a screen reader, and is indistinguishable at speed.
+
+   The insets are negative on three sides because Great Vibes has long
+   descenders and entry swashes that sit outside the text box — clipping at
+   0 would shave them.
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  html:not(.reduce-motion) .handwrite {
+    animation-name: handwrite;
+    /* Linear, not eased.
+
+       An ease-out curve covers most of the line almost immediately and then
+       crawls through the tail, so the words look finished long before the
+       animation is — which reads as a pause before the next line starts. A
+       pen moves at a roughly constant speed, and linear is what makes the
+       two lines feel like one continuous hand. */
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+    animation-duration: calc(1500ms * var(--motion-scale));
+    animation-delay: calc(250ms * var(--motion-scale));
+  }
+
+  html:not(.reduce-motion) .handwrite--first {
+    animation-duration: calc(1500ms * var(--motion-scale));
+    animation-delay: calc(250ms * var(--motion-scale));
+  }
+
+  html:not(.reduce-motion) .handwrite--second {
+    /* Great Vibes covers far more distance per character than Lora, so it
+       needs longer to read at the same writing speed.
+
+       It starts 100ms BEFORE the first line finishes. Butting the two
+       exactly end-to-end still reads as a stop, because the last stroke of
+       one and the first of the next need to overlap slightly to feel like
+       one hand continuing. */
+    animation-duration: calc(2200ms * var(--motion-scale));
+    animation-delay: calc(1650ms * var(--motion-scale));
+  }
+}
+
+/* Block, so each line clips as its own box. On an inline span that wrapped
+   to two lines the clip would apply to the whole bounding box and reveal
+   both lines at once. */
+.hero__heading-line {
+  display: block;
+}
+
+@keyframes handwrite {
+  from {
+    clip-path: inset(-0.4em 100% -0.5em -0.15em);
+  }
+  to {
+    clip-path: inset(-0.4em -0.2em -0.5em -0.15em);
+  }
+}
+
+/* Under any brake the text is simply present — never clipped, never
+   waiting on an animation that will not run. */
+.reduce-motion .handwrite {
+  animation: none !important;
+  clip-path: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .handwrite {
+    animation: none !important;
+    clip-path: none !important;
+  }
+}

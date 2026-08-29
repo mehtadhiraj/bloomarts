@@ -1,0 +1,170 @@
+{{ 'component-materials.css' | asset_url | stylesheet_tag }}
+
+{%- comment -%}
+  Materials showcase — a small number of editorial panels that move
+  horizontally, rather than a wall of product cards.
+
+  Two behaviours, deliberately different rather than one scaled down:
+
+  MOBILE   a native scroll-snap row. You swipe it. That is the gesture
+           people already have, it needs no JavaScript, and it keeps the
+           section one screen tall.
+
+  DESKTOP  the section is pinned and the track moves sideways as you scroll
+           down, driven by a named view-timeline. The page never stops
+           scrolling normally — nothing intercepts the wheel — so this is
+           not scroll-jacking; the vertical scroll is simply also driving a
+           horizontal transform.
+
+  Where scroll-driven animations are unsupported, desktop falls back to the
+  same swipeable row as mobile. Nothing is lost.
+{%- endcomment -%}
+
+{%- liquid
+  assign panels = section.blocks
+  assign panel_count = panels.size
+-%}
+
+{%- comment -%}
+  data-header-overlay: these are full-bleed dark panels, so the header stays
+  transparent across this section too and only fades to its solid colour
+  once the section has passed.
+
+  Note the attribute sits on the tag with no Liquid comment between it and
+  its neighbour. A {%- comment -%} inside a tag strips the whitespace around
+  it and fuses the two attribute names into one.
+{%- endcomment -%}
+{%- if panel_count > 0 -%}
+  <section
+    class="materials"
+    style="--panel-count: {{ panel_count }};"
+    data-materials
+    data-header-overlay
+    aria-label="{{ section.settings.heading | escape }}"
+  >
+    <div class="materials__viewport" data-materials-viewport>
+      <ol class="materials__track" role="list" data-materials-track>
+        {%- for block in panels -%}
+          {%- liquid
+            # Each panel owns an equal slice of the section's scroll range.
+            # The entrance finishes 65% of the way through its own slice and
+            # then holds, so the panel is readable for a beat before the next
+            # one slides over it — rather than still arriving as it is
+            # replaced.
+            assign slice = 100.0 | divided_by: panel_count
+            assign slice_start = forloop.index0 | times: slice
+            assign anim_span = slice | times: 0.65
+            assign slice_end = slice_start | plus: anim_span
+            assign slice_start = slice_start | round: 2
+            assign slice_end = slice_end | round: 2
+
+            # Alternate the entrance: odd panels enter from the left with the
+            # text dropping from above, even panels mirror it.
+            assign remainder = forloop.index0 | modulo: 2
+            if remainder == 0
+              assign direction = 'from-left'
+            else
+              assign direction = 'from-right'
+            endif
+          -%}
+          <li
+            class="materials__panel materials__panel--{{ direction }}"
+            style="--panel-start: {{ slice_start }}%; --panel-end: {{ slice_end }}%; --panel-z: {{ forloop.index }};"
+            {{ block.shopify_attributes }}
+          >
+            <div class="materials__media">
+              {% render 'responsive-image',
+                 image: block.settings.image,
+                 ratio: 0.62,
+                 sizes: '100vw',
+                 alt: block.settings.title,
+                 loading: forloop.first,
+                 class: 'materials__image' %}
+            </div>
+
+            {%- comment -%}
+              Text sits over the image. The scrim below it is sized the same
+              way as the hero's — strong enough that cream copy still clears
+              AA over a worst-case pale photograph.
+            {%- endcomment -%}
+            <div class="materials__body">
+              <div class="page-width materials__body-inner">
+                <span class="materials__index" aria-hidden="true">
+                  {{ forloop.index }}<span class="materials__index-total">/{{ panel_count }}</span>
+                </span>
+
+                <h3 class="materials__title">
+                  {{ block.settings.title }}
+                  {%- if block.settings.script_accent != blank -%}
+                    <span class="script materials__script">{{ block.settings.script_accent }}</span>
+                  {%- endif -%}
+                </h3>
+
+                {%- if block.settings.text != blank -%}
+                  <p class="materials__text">{{ block.settings.text }}</p>
+                {%- endif -%}
+
+                {%- if block.settings.link_label != blank -%}
+                  <a href="{{ block.settings.link }}" class="btn btn--primary materials__link">
+                    {{ block.settings.link_label }}
+                    {% render 'icon', icon: 'arrow-right', size: 16 %}
+                  </a>
+                {%- endif -%}
+              </div>
+
+              {%- if block.settings.motif != 'none' -%}
+                {% render 'brand-motif',
+                   motif: block.settings.motif,
+                   size: 84,
+                   class: 'materials__motif' %}
+              {%- endif -%}
+            </div>
+          </li>
+        {%- endfor -%}
+      </ol>
+    </div>
+  </section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Materials",
+  "max_blocks": 4,
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "What we work in" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Three materials, one pair of hands" }
+  ],
+  "blocks": [
+    {
+      "type": "material",
+      "name": "Material",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Concrete" },
+        { "type": "text", "id": "script_accent", "label": "Script accent", "info": "Optional short phrase in Great Vibes." },
+        { "type": "textarea", "id": "text", "label": "Text", "default": "Cast by hand and cured for seven days before sealing." },
+        { "type": "url", "id": "link", "label": "Link" },
+        { "type": "text", "id": "link_label", "label": "Link label", "default": "Shop concrete" },
+        {
+          "type": "select",
+          "id": "motif",
+          "label": "Decorative motif",
+          "options": [
+            { "value": "none", "label": "None" },
+            { "value": "sprig", "label": "Leaf sprig" },
+            { "value": "heart", "label": "Heart" },
+            { "value": "bee", "label": "Bee" }
+          ],
+          "default": "sprig"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Materials",
+      "blocks": [{ "type": "material" }, { "type": "material" }, { "type": "material" }]
+    }
+  ]
+}
+{% endschema %}

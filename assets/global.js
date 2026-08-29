@@ -473,14 +473,29 @@
 
     root.classList.add('reveal-ready');
 
+    const once = root.dataset.revealOnce === 'true';
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          entry.target.classList.add('is-revealed');
-          // Unobserve immediately: a reveal is a one-shot, and leaving it
-          // observed would keep the callback firing for the life of the page.
-          observer.unobserve(entry.target);
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-revealed');
+            // Only stop watching when the merchant asked for one-shot.
+            // Otherwise keep observing so the reveal can replay.
+            if (once) observer.unobserve(entry.target);
+            return;
+          }
+
+          if (once) return;
+
+          /* Reset only when the element has left UPWARD or DOWNWARD past the
+             viewport, never while it is merely partly out of view — otherwise
+             an element straddling the fold flickers as you scroll.
+
+             This is the fallback for browsers without scroll-driven
+             animations; where those exist, CSS handles reveals and this code
+             never runs. */
+          entry.target.classList.remove('is-revealed');
         });
       },
       { rootMargin: '0px 0px -8% 0px', threshold: 0.05 }
@@ -507,6 +522,110 @@
         el.style.setProperty('--reveal-offset', `${step * 4}%`);
       });
     });
+  }
+
+  /* ------------------------------------------------------------------
+     Materials pin
+
+     The pinned layout hides each panel off-screen so it can slide in. If the
+     named scroll timeline does not resolve, those panels stay hidden and the
+     section renders blank — which is exactly what happened when another rule
+     overwrote view-timeline-name on the same element.
+
+     So the pin is opt-in: confirm the timeline is declared and supported,
+     THEN allow the CSS to hide anything. Otherwise the section stays the
+     plain swipeable row, which is complete and correct on its own.
+     ------------------------------------------------------------------ */
+
+  function setupMaterialsPin() {
+    const section = document.querySelector('[data-materials]');
+    if (!section) return;
+
+    const supportsTimelines =
+      window.CSS && CSS.supports && CSS.supports('animation-timeline: view()');
+    if (!supportsTimelines) return;
+
+    const apply = () => {
+      // The pinned treatment is desktop-only; below that the swipe row is
+      // the better interaction, not a fallback.
+      if (!window.matchMedia('(min-width: 1024px)').matches) {
+        document.documentElement.classList.remove('materials-ready');
+        return;
+      }
+
+      const declared = getComputedStyle(section).viewTimelineName || '';
+      const resolved = declared.indexOf('--materials-pin') !== -1;
+      document.documentElement.classList.toggle('materials-ready', resolved);
+    };
+
+    apply();
+    window.matchMedia('(min-width: 1024px)').addEventListener('change', apply);
+
+    /* Section stylesheets are <link>s inside <body>, which are not
+       guaranteed to have applied by DOMContentLoaded — so the computed
+       view-timeline-name can still read "none" at init and the pin would
+       never engage. Re-check once everything has loaded. */
+    if (document.readyState !== 'complete') {
+      window.addEventListener('load', apply, { once: true });
+    }
+  }
+
+  /* ------------------------------------------------------------------
+     Sticky header state
+
+     Only relevant when the header is transparent over a hero. Watching a
+     zero-height sentinel costs nothing per frame, unlike reading scrollY in
+     a scroll handler.
+     ------------------------------------------------------------------ */
+
+  function setupStickyHeader() {
+    const header = document.querySelector('[data-header-transparent]');
+    const sentinel = document.querySelector('[data-header-sentinel]');
+    if (!header || !sentinel || !('IntersectionObserver' in window)) {
+      // Without an observer the header stays solid, which is the safe state:
+      // a permanently transparent header over scrolled content would be
+      // unreadable.
+      if (header) header.classList.add('is-stuck');
+      return;
+    }
+
+    /* Sections opt in with data-header-overlay — the hero and the full-bleed
+       material panels. The header stays transparent across all of them and
+       only fades to its solid colour once the LAST one has passed under it,
+       so the sentinel is moved to the end of that run. */
+    const overlays = document.querySelectorAll('[data-header-overlay]');
+    if (overlays.length > 0) {
+      overlays[overlays.length - 1].insertAdjacentElement('afterend', sentinel);
+    }
+
+    const headerHeight = () => header.getBoundingClientRect().height;
+
+    /* Deciding from boundingClientRect rather than isIntersecting matters:
+       a sentinel far BELOW the viewport is also "not intersecting", which
+       would wrongly read as scrolled-past and make the header solid at the
+       top of the page. Its position tells us which side it is on. */
+    const evaluate = (entry) => {
+      const top = entry
+        ? entry.boundingClientRect.top
+        : sentinel.getBoundingClientRect().top;
+      header.classList.toggle('is-stuck', top <= headerHeight());
+    };
+
+    let observer;
+    const observe = () => {
+      if (observer) observer.disconnect();
+      observer = new IntersectionObserver(([entry]) => evaluate(entry), {
+        // A detection line level with the bottom of the header.
+        rootMargin: `-${Math.round(headerHeight())}px 0px 0px 0px`,
+        threshold: 0
+      });
+      observer.observe(sentinel);
+      evaluate(null);
+    };
+
+    observe();
+    // The header changes height across breakpoints, which moves the line.
+    window.addEventListener('resize', () => observe(), { passive: true });
   }
 
   /* ------------------------------------------------------------------
@@ -615,6 +734,8 @@
     run('reveal stagger', applyStagger);
     run('scroll reveal', () => setupReveal(reduced));
     run('cart bump', setupCartBump);
+    run('materials pin', setupMaterialsPin);
+    run('sticky header', setupStickyHeader);
     run('back to top', setupBackToTop);
   }
 

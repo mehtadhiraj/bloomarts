@@ -11,7 +11,9 @@
       "previous": "Previous",
       "next": "Next",
       "loading": "Loading",
-      "back_to_top": "Back to top"
+      "back_to_top": "Back to top",
+      "pause_slideshow": "Pause slideshow",
+      "play_slideshow": "Play slideshow"
     },
     "search": {
       "title": "Search",

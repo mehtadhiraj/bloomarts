@@ -1,9 +1,18 @@
 /* ==========================================================================
-   Horizontal product carousel
+   Product carousel
 
-   Native scroll-snap. No JavaScript drives the gesture, so it works before
-   hydration and keeps the browser's own momentum and rubber-banding.
+   ONE ROW at every size. It used to become a 4-up grid from 1024px, which
+   wrapped to a second and third row as soon as the section showed more than
+   four products — the opposite of a carousel. It now stays a single
+   horizontally scrolling row and gains arrows on pointer devices instead.
+
+   The scroll itself is native CSS scroll-snap: real momentum on touch, and
+   it works before any script loads.
    ========================================================================== */
+
+.carousel-wrap {
+  position: relative;
+}
 
 .carousel {
   overflow-x: auto;
@@ -39,57 +48,80 @@
 }
 
 @media (min-width: 480px) {
-  .carousel__item {
-    flex-basis: 45%;
-  }
+  .carousel__item { flex-basis: 44%; }
 }
 
 @media (min-width: 768px) {
-  .carousel__track {
-    gap: var(--space-sm);
-  }
-
-  .carousel__item {
-    flex-basis: 32%;
-  }
-
+  .carousel__track { gap: var(--space-sm); }
+  .carousel__item { flex-basis: 30%; }
 }
 
-/* From desktop it stops being a carousel: everything fits, and a scroll
-   region a mouse has to drag is worse than a grid. */
 @media (min-width: 1024px) {
   .carousel {
-    overflow: visible;
-    scroll-snap-type: none;
-    padding-inline: 0;
+    /* Align the row to the page grid without becoming a grid. */
     max-width: var(--page-width);
     margin-inline: auto;
-    padding-inline: calc(var(--gutter) + var(--safe-left)) calc(var(--gutter) + var(--safe-right));
   }
 
-  .carousel__track {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: var(--space-lg) var(--space-md);
+  .carousel__track { gap: var(--space-md); }
+
+  /* Four across with a sliver of the fifth showing, so it still reads as a
+     row you can scroll rather than a complete grid. */
+  .carousel__item { flex-basis: calc((100% - (var(--space-md) * 3)) / 4 - 12px); }
+}
+
+/* --------------------------------------------------------------------------
+   Arrows — pointer devices only, where there is no swipe gesture
+   -------------------------------------------------------------------------- */
+
+.carousel__arrow {
+  display: none;
+  position: absolute;
+  top: 38%;
+  z-index: var(--z-raised);
+  border-radius: 50%;
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-border);
+}
+
+.carousel__arrow--prev { inset-inline-start: var(--space-2xs); }
+.carousel__arrow--next { inset-inline-end: var(--space-2xs); }
+
+.carousel__arrow:disabled {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .carousel__arrow {
+    display: inline-flex;
+    transition: opacity var(--dur-base) var(--ease), background-color var(--dur-fast) var(--ease);
   }
 
-  .carousel__item {
-    flex: initial;
+  .carousel__arrow:hover {
+    background-color: var(--brand-amber);
   }
 }
 
-/* The ghost word is absolutely positioned inside this section, so the
-   section must be its containing block and must clip it — an oversized word
-   would otherwise widen the page. */
+.reduce-motion .carousel__arrow {
+  transition: none;
+}
+
+/* --------------------------------------------------------------------------
+   Section wrapper
+   -------------------------------------------------------------------------- */
+
 .featured {
   position: relative;
   /* clip, not hidden — hidden would establish a scroll container and freeze
-     the view() timelines of the ghost word and section heading inside it. */
+     the view() timelines of anything inside it. */
   overflow: clip;
 }
 
 .featured > .page-width,
-.featured > .carousel {
+.featured > .carousel-wrap {
   position: relative;
   z-index: 1;
 }

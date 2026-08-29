@@ -192,7 +192,15 @@ svg {
   max-width: 100%;
 }
 
-img[width][height] {
+/* Keeps an image's aspect ratio when only its width is styled — the usual
+   companion to width/height attributes.
+
+   Wrapped in :where() so it contributes ZERO specificity. As a bare
+   attribute selector it scored (0,2,1) and silently beat every component
+   rule that sets an explicit image height — the hero, product cards,
+   Instagram tiles and material panels were all falling back to their
+   natural ratio instead of filling their box. */
+:where(img[width][height]) {
   height: auto;
 }
 

@@ -18,10 +18,10 @@
 
 .hero__image {
   width: 100%;
-  height: auto;
-  /* Matches ratio_mobile in the section so the box is reserved before the
-     image decodes. */
-  aspect-ratio: 1 / 1.2;
+  /* svh, not vh: with dynamic viewport units the hero would resize as the
+     mobile URL bar collapses, which reads as the page jumping mid-scroll.
+     A fixed height also reserves the box before the image decodes. */
+  height: var(--hero-height, 78svh);
   object-fit: cover;
   display: block;
 }
@@ -30,8 +30,13 @@
   background: linear-gradient(160deg, var(--color-border), var(--color-background));
 }
 
-.hero--compact .hero__image { aspect-ratio: 1 / 0.9; }
-.hero--tall .hero__image { aspect-ratio: 1 / 1.45; }
+.hero--compact { --hero-height: 62svh; }
+.hero--standard { --hero-height: 78svh; }
+
+/* Full bleed. The transparent header overlaps the hero rather than sitting
+   above it, so 100svh really is one screen — not one screen plus a header. */
+.hero--tall,
+.hero--full { --hero-height: 100svh; }
 
 .hero__content {
   padding-block: var(--space-md);
@@ -78,12 +83,10 @@
    -------------------------------------------------------------------------- */
 
 @media (min-width: 768px) {
-  .hero__image {
-    aspect-ratio: 1 / 0.48;
-  }
-
-  .hero--compact .hero__image { aspect-ratio: 1 / 0.38; }
-  .hero--tall .hero__image { aspect-ratio: 1 / 0.62; }
+  .hero--compact { --hero-height: 58svh; }
+  .hero--standard { --hero-height: 76svh; }
+  .hero--tall,
+  .hero--full { --hero-height: 100svh; }
 
   .hero__content {
     position: absolute;
@@ -184,5 +187,92 @@
 
   .hero__actions {
     margin-top: var(--space-sm);
+  }
+}
+
+
+/* ==========================================================================
+   Hero recede
+
+   The hero pins while the next section scrolls up over it, and quietly
+   drops back — scaling down, dimming and rounding off — so the incoming
+   section reads as a layer arriving on top rather than the page simply
+   scrolling.
+
+   Only transform and opacity are animated, so this stays on the compositor.
+   ========================================================================== */
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    html:not(.reduce-motion):not(.simplify-motion) body.template-index .hero {
+      position: sticky;
+      top: 0;
+      /* A stacking context at level 0. Sections after it are given
+         position: relative below so they paint in the positioned phase and
+         therefore above this — a static sibling would paint underneath. */
+      z-index: 0;
+    }
+
+    /* No scroll-driven animation on the hero itself.
+
+       Two earlier attempts failed for instructive reasons, recorded so they
+       are not retried:
+
+       1. `animation-range: exit ...` on the hero. A sticky element's box
+          stays pinned, so its own view() timeline never advances — the
+          animation sat frozen at 0%.
+
+       2. A named timeline on the following section, pulled into scope with
+          timeline-scope. That worked structurally but silently overwrote
+          .materials' own `--materials-pin` timeline — view-timeline-name is
+          a single property, so the later declaration won and the three
+          panel animations stopped. It also left the hero stuck at the
+          animation's end state (dimmed and scaled down) whenever the
+          timeline was inactive, which includes the top of the page.
+
+       The layering alone carries the effect: the hero pins, and the next
+       section rises over it with a soft edge. No animation needed, and
+       nothing to leave in a broken state. */
+  }
+}
+
+/* Everything after the hero must paint above it. */
+.materials,
+.image-text,
+.featured,
+.instagram,
+.footer {
+  position: relative;
+  z-index: 1;
+}
+
+.image-text,
+.featured,
+.instagram {
+  background-color: var(--color-background);
+}
+
+.reduce-motion .hero,
+.simplify-motion .hero {
+  position: static;
+}
+
+.reduce-motion .hero__media,
+.reduce-motion .hero__content,
+.simplify-motion .hero__media,
+.simplify-motion .hero__content {
+  animation: none !important;
+  transform: none !important;
+  opacity: 1 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero { position: static; }
+
+  .hero__media,
+  .hero__content {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
   }
 }

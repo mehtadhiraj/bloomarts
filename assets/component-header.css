@@ -247,3 +247,108 @@
     background-color: var(--color-background);
   }
 }
+
+/* ==========================================================================
+   Transparent over the hero
+
+   The header keeps position: sticky throughout — it is never switched
+   between absolute and fixed, which is what causes the classic jump as a
+   transparent header "lands". Instead <main> is pulled up by exactly the
+   header's height, so the hero starts underneath it, and only the
+   BACKGROUND changes on scroll.
+   ========================================================================== */
+
+/* The scroll sentinel needs a real box. An empty inline <span> has a 0x0
+   rect, and IntersectionObserver never reports a zero-area target as
+   intersecting — which left the header permanently in its "stuck" state.
+   The negative margin cancels the 1px so layout is untouched. */
+[data-header-sentinel] {
+  display: block;
+  width: 100%;
+  height: 1px;
+  margin-bottom: -1px;
+  pointer-events: none;
+}
+
+.header--transparent {
+  background-color: transparent;
+  border-bottom-color: transparent;
+  color: var(--brand-cream);
+  transition: background-color var(--dur-base) var(--ease),
+              border-color var(--dur-base) var(--ease),
+              color var(--dur-base) var(--ease),
+              box-shadow var(--dur-base) var(--ease);
+}
+
+/* Pull the page up under the transparent header. Uses the measured
+   --header-height, so a taller announcement bar or a wrapped nav cannot
+   knock it out of alignment. */
+.header--transparent ~ main {
+  margin-top: calc(var(--header-height) * -1);
+}
+
+/* The hero scrim is weakest at the top of the image — exactly where the
+   header sits — so nav text over a pale photograph would fail contrast.
+   This adds a short scrim of its own, purely behind the header. */
+.header--transparent::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: calc(100% + var(--space-lg));
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--brand-brown) 62%, transparent) 0%,
+    color-mix(in srgb, var(--brand-brown) 34%, transparent) 55%,
+    transparent 100%
+  );
+  opacity: 1;
+  transition: opacity var(--dur-base) var(--ease);
+}
+
+.header--transparent .header__inner {
+  position: relative;
+  z-index: 1;
+}
+
+.header--transparent .header__logo-text,
+.header--transparent .header__action,
+.header--transparent .header__nav-link {
+  color: var(--brand-cream);
+}
+
+/* Once scrolled, the header takes its normal solid colour and behaves like
+   any other sticky header. */
+.header--transparent.is-stuck {
+  background-color: var(--color-background);
+  border-bottom-color: var(--color-border);
+  color: var(--color-text);
+  box-shadow: var(--shadow-sm);
+}
+
+.header--transparent.is-stuck::before {
+  opacity: 0;
+}
+
+.header--transparent.is-stuck .header__logo-text,
+.header--transparent.is-stuck .header__action,
+.header--transparent.is-stuck .header__nav-link {
+  color: var(--color-text);
+}
+
+/* The dropdown panel is always a solid surface — it is a menu, not part of
+   the transparent bar. */
+.header--transparent .header__dropdown-list {
+  color: var(--color-text);
+}
+
+/* A transparent header must not be transparent over an open drawer. */
+.header--transparent[inert] {
+  color: var(--color-text);
+}
+
+.reduce-motion .header--transparent,
+.reduce-motion .header--transparent::before {
+  transition: none;
+}

@@ -10,9 +10,22 @@
   assign logo_width_desktop = section.settings.logo_width_desktop | default: 180
 -%}
 
+{%- comment -%}
+  Transparent mode is limited to the homepage, where a hero is the first
+  section. Elsewhere the header would float over ordinary content with
+  nothing behind it to read against.
+{%- endcomment -%}
+{%- liquid
+  assign transparent = false
+  if section.settings.transparent_over_hero and template.name == 'index'
+    assign transparent = true
+  endif
+-%}
+
 <header
-  class="header{% if section.settings.sticky %} header--sticky{% endif %}"
+  class="header{% if section.settings.sticky %} header--sticky{% endif %}{% if transparent %} header--transparent{% endif %}"
   data-header
+  {% if transparent %}data-header-transparent{% endif %}
   style="--logo-width-mobile: {{ logo_width_mobile }}px; --logo-width-desktop: {{ logo_width_desktop }}px;"
 >
   <div class="header__inner page-width">
@@ -142,6 +155,13 @@
 </header>
 
 {%- comment -%}
+  Zero-height marker sitting directly under the header. Observing it is how
+  we know the header has left the top of the page — cheaper and steadier
+  than reading scrollY on every frame.
+{%- endcomment -%}
+<span data-header-sentinel aria-hidden="true"></span>
+
+{%- comment -%}
   Mobile navigation. A bottom sheet rather than a side panel: on a phone the
   links, the search field and the account actions all need to sit inside
   thumb reach, and a full-height side drawer puts the close control in the
@@ -192,6 +212,13 @@
       "type": "checkbox",
       "id": "sticky",
       "label": "Keep header visible on scroll",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "transparent_over_hero",
+      "label": "Transparent over the homepage hero",
+      "info": "The header sits on the hero image with no background of its own, then takes on its solid colour once you scroll. Homepage only, and only while a hero is the first section.",
       "default": true
     },
     {

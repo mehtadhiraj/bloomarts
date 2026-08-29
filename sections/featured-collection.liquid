@@ -1,6 +1,7 @@
 {{ 'component-card.css' | asset_url | stylesheet_tag }}
 {{ 'component-swatches.css' | asset_url | stylesheet_tag }}
 {{ 'component-carousel.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'carousel.js' | asset_url }}" defer></script>
 
 {%- liquid
   assign featured = collections[section.settings.collection]
@@ -28,24 +29,43 @@
 
   {%- if featured.products.size > 0 -%}
     {%- comment -%}
-      A swipe carousel on mobile, a grid from 1024px.
+      One scrolling row at every size.
 
-      On a phone this is the right shape: it shows the row is scrollable
-      without spending four screens of vertical space, and it uses the same
-      CSS scroll-snap the product gallery does — native momentum, no
-      JavaScript for the gesture. The peeking next card is the affordance
-      that says "there is more this way".
+      It previously became a 4-up grid from 1024px, which wrapped onto a
+      second and third row as soon as the section held more than four
+      products — the opposite of a carousel. Now the row stays a row, and
+      arrows appear on pointer devices where there is no swipe gesture.
+
+      The scroll uses the same CSS scroll-snap as the product gallery:
+      native momentum on touch, and it works before the script loads. The
+      peeking next card is the affordance that says "there is more this way".
     {%- endcomment -%}
-    <div
-      class="carousel"
-      role="group"
-      aria-roledescription="carousel"
-      aria-label="{{ section.settings.heading }}"
-      tabindex="0"
-    >
-      <ul class="carousel__track" role="list" data-reveal-group>
+    <bloom-carousel class="carousel-wrap">
+      <button
+        type="button"
+        class="carousel__arrow carousel__arrow--prev tap-target"
+        data-carousel-prev
+      >
+        {% render 'icon', icon: 'chevron-left' %}
+        <span class="visually-hidden">{{ 'general.accessibility.previous' | t }}</span>
+      </button>
+
+      {%- comment -%}
+        tabindex makes the scroll container focusable so a keyboard user can
+        arrow through the row — a plain overflow container cannot be reached
+        otherwise.
+      {%- endcomment -%}
+      <div
+        class="carousel"
+        data-carousel-track
+        role="group"
+        aria-roledescription="carousel"
+        aria-label="{{ section.settings.heading }}"
+        tabindex="0"
+      >
+        <ul class="carousel__track" role="list" data-reveal-group>
         {%- for product in featured.products limit: limit -%}
-          <li class="carousel__item" data-reveal="rise-stagger">
+          <li class="carousel__item" data-carousel-item data-reveal="rise-stagger">
             {%- liquid
               if forloop.index <= 2
                 assign card_loading = 'eager'
@@ -57,10 +77,20 @@
                product: product,
                loading: card_loading,
                sizes: '(min-width: 1024px) 25vw, (min-width: 768px) 40vw, 62vw' %}
-          </li>
-        {%- endfor -%}
-      </ul>
-    </div>
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+
+      <button
+        type="button"
+        class="carousel__arrow carousel__arrow--next tap-target"
+        data-carousel-next
+      >
+        {% render 'icon', icon: 'chevron-right' %}
+        <span class="visually-hidden">{{ 'general.accessibility.next' | t }}</span>
+      </button>
+    </bloom-carousel>
   {%- endif -%}
 </section>
 

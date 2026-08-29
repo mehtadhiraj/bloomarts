@@ -160,6 +160,11 @@ oversized ghost display type, and an intro splash loader.
 | Button press depth | ✅ | CSS only |
 | Cart badge bump | ✅ | One pulse per add |
 | Decorative brand motifs (bee/heart/leaves) | ✅ | **Client approved 30 Aug** |
+| Handwriting intro on the hero heading | ✅ | Both lines, linear timing, 0.1s overlap so it reads as one hand |
+| Hero at full viewport height | ✅ | `--hero-height: 100svh`, header overlaps rather than stacking |
+| Transparent header over hero + materials | ✅ | Fades to solid once the last `[data-header-overlay]` section passes |
+| Materials: 3 full-height panels, pinned | ✅ | Alternating image left/right, text top/bottom |
+| Product row as a true one-row carousel | ✅ | Was a wrapping 4-up grid at ≥1024px |
 | Image zoom on product gallery | ⬜ | Brief lists it; not built |
 | Testimonials slider animation | ⬜ | Section not built |
 | Smooth scroll (Lenis) | ⛔ | Conflicts with the brief — §7.6 |
@@ -176,6 +181,12 @@ oversized ghost display type, and an intro splash loader.
 | Single motion brake | A phone got **no** animation at all | Split into `reduce-motion` (hard) and `simplify-motion` (soft) |
 | Reveals armed while tab hidden | Content could be hidden with no observer to reveal it | Defers arming until the page is visible |
 | "Subtle" intensity too small to perceive | Read as broken | Distances and durations raised |
+| `img[width][height] { height: auto }` in base.css | Specificity (0,2,1) silently beat **every** component image-height rule — hero, cards, Instagram tiles and material panels all fell back to natural ratio instead of filling their box | Wrapped in `:where()` so it contributes zero specificity |
+| Hero recede via a named timeline on `.materials` | `view-timeline-name` is a single property, so it **overwrote** `--materials-pin` and killed all three panel animations; it also left the hero stuck dimmed whenever the timeline was inactive | Recede removed; the layered edge carries the effect with nothing to break |
+| `{%- comment -%}` placed *inside* a `<section>` tag | Whitespace stripping fused two attributes into `data-materialsdata-header-overlay` | Comment moved above the tag |
+| Empty inline `<span>` used as an IntersectionObserver sentinel | A 0×0 rect never reports as intersecting, so the header was permanently "stuck" | Given a 1px box with a cancelling negative margin |
+| Materials pin read `view-timeline-name` at `DOMContentLoaded` | Section stylesheets are `<link>`s in `<body>` and may not have applied yet, so the pin never engaged | Re-checked on `load` |
+| Panels hidden off-screen with no confirmation the timeline resolved | An unresolved timeline held every panel at its start keyframe — a blank section | Gated behind `.materials-ready`, added only after the timeline is confirmed |
 
 ---
 

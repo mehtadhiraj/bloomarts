@@ -11,6 +11,7 @@
 
 <section
   class="hero hero--{{ section.settings.height }}"
+  data-header-overlay
   style="--hero-overlay: {{ section.settings.overlay_opacity }};"
 >
   {%- comment -%}
@@ -49,14 +50,14 @@
 
       {%- if section.settings.heading != blank -%}
         <h1 class="hero__heading" data-reveal="rise-stagger">
-          {{ section.settings.heading }}
+          <span class="hero__heading-line handwrite handwrite--first">{{ section.settings.heading }}</span>
           {%- comment -%}
             The script accent is decorative emphasis on a word the heading
             already contains — it is never the only place a word appears, so
             losing the font changes nothing semantically.
           {%- endcomment -%}
           {%- if section.settings.script_accent != blank -%}
-            <span class="script hero__script">{{ section.settings.script_accent }}</span>
+            <span class="script hero__script handwrite handwrite--second">{{ section.settings.script_accent }}</span>
           {%- endif -%}
         </h1>
       {%- endif -%}
@@ -171,9 +172,10 @@
       "options": [
         { "value": "compact", "label": "Compact" },
         { "value": "standard", "label": "Standard" },
-        { "value": "tall", "label": "Tall" }
+        { "value": "tall", "label": "Tall" },
+        { "value": "full", "label": "Full screen" }
       ],
-      "default": "standard"
+      "default": "full"
     }
   ],
   "presets": [{ "name": "Hero" }]
