@@ -48,30 +48,50 @@
   const smallScreenQuery = window.matchMedia('(max-width: 767px)');
   const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 
+  /* Two tiers, not one.
+
+     reduce-motion   HARD brake. The user or the merchant has asked for no
+                     motion, or the connection cannot afford it. Everything
+                     stops, including cheap fades.
+
+     simplify-motion SOFT brake. A small or low-powered device. Only the
+                     EXPENSIVE effects stop — parallax, blur, 3D, scroll-
+                     linked drift. Cheap opacity/transform reveals keep
+                     running.
+
+     A single brake was wrong: it meant a phone got no animation at all,
+     when the requirement is to "reduce or simplify resource-intensive
+     animation on smaller or lower-powered devices" — simplify, not
+     eliminate. */
   function evaluateMotionPolicy() {
     const root = document.documentElement;
     const simplifyOnMobile = root.dataset.reduceMotionMobile === 'true';
     const merchantDisabled = root.dataset.animations === 'false';
 
-    return (
+    const reduce =
       merchantDisabled ||
       reducedMotionQuery.matches ||
       Capability.saveData ||
-      Capability.slowNetwork ||
-      (simplifyOnMobile && (smallScreenQuery.matches || Capability.lowPowered))
-    );
+      Capability.slowNetwork;
+
+    const simplify =
+      reduce || (simplifyOnMobile && (smallScreenQuery.matches || Capability.lowPowered));
+
+    return { reduce, simplify };
   }
 
   /* Re-evaluated whenever the inputs change, not just once at load.
 
      Evaluating only at DOMContentLoaded meant a phone that loaded in
-     portrait and rotated to landscape stayed in simplified motion for the
-     rest of the session — and a desktop window dragged narrow then wide
-     did the same. Both media queries are live, so this now tracks them. */
+     portrait and rotated to landscape stayed simplified for the rest of the
+     session — and a desktop window dragged narrow then wide did the same.
+     Both media queries are live, so this now tracks them. */
   function applyMotionPolicy() {
-    const shouldReduce = evaluateMotionPolicy();
-    document.documentElement.classList.toggle('reduce-motion', shouldReduce);
-    return shouldReduce;
+    const { reduce, simplify } = evaluateMotionPolicy();
+    const root = document.documentElement;
+    root.classList.toggle('reduce-motion', reduce);
+    root.classList.toggle('simplify-motion', simplify);
+    return reduce;
   }
 
   function watchMotionPolicy() {
@@ -375,6 +395,40 @@
   });
 
   /* ------------------------------------------------------------------
+     Responsive accordions
+
+     [data-collapse-mobile] elements are authored OPEN so that, without
+     JavaScript, nothing is hidden. Below the breakpoint we close them for
+     tidiness. Anything the user has since toggled by hand is left alone.
+     ------------------------------------------------------------------ */
+
+  function setupResponsiveAccordions() {
+    const items = document.querySelectorAll('details[data-collapse-mobile]');
+    if (items.length === 0) return;
+
+    items.forEach((item) => {
+      item.addEventListener('toggle', () => {
+        item.dataset.userToggled = 'true';
+      });
+    });
+
+    const apply = () => {
+      items.forEach((item) => {
+        if (item.dataset.userToggled === 'true') return;
+        item.open = !smallScreenQuery.matches;
+      });
+    };
+
+    apply();
+    // A rotation can cross the breakpoint; re-evaluate rather than leaving
+    // a phone-shaped footer on a landscape tablet.
+    smallScreenQuery.addEventListener('change', () => {
+      items.forEach((item) => delete item.dataset.userToggled);
+      apply();
+    });
+  }
+
+  /* ------------------------------------------------------------------
      Scroll reveal
 
      Elements are authored VISIBLE. The .reveal-ready class — which is what
@@ -392,6 +446,30 @@
 
     const targets = document.querySelectorAll('[data-reveal]');
     if (targets.length === 0) return;
+
+    /* Where scroll-driven animations exist, CSS owns the reveal — see
+       scroll-effects.css. Those are tied to scroll position, so they reverse
+       on the way back up and replay on the way down. The observer path below
+       is the FALLBACK: it can only fire once, because re-observing would mean
+       re-hiding content the reader has already seen.
+
+       The merchant can force the one-shot behaviour with "play only once". */
+    const scrollLinked =
+      window.CSS &&
+      CSS.supports &&
+      CSS.supports('animation-timeline: view()') &&
+      root.dataset.revealOnce !== 'true';
+
+    if (scrollLinked) return;
+
+    /* Arming means hiding elements so they can animate in. A background tab
+       does not dispatch IntersectionObserver callbacks, so arming one would
+       hide content that never gets revealed. Wait until the page is actually
+       visible before hiding anything. */
+    if (document.visibilityState === 'hidden') {
+      document.addEventListener('visibilitychange', () => setupReveal(reduced), { once: true });
+      return;
+    }
 
     root.classList.add('reveal-ready');
 
@@ -422,7 +500,11 @@
         // Capped: beyond about six steps the last item feels broken rather
         // than choreographed.
         const step = Math.min(index, 6);
+        // Observer path: a wall-clock delay.
         el.style.setProperty('--reveal-delay', `calc(var(--reveal-stagger) * ${step})`);
+        // Scroll-linked path: there is no wall clock to delay against, so
+        // each item starts a little further along the scroll instead.
+        el.style.setProperty('--reveal-offset', `${step * 4}%`);
       });
     });
   }
@@ -505,15 +587,35 @@
     }
   };
 
+  /* Each step is isolated.
+
+     Previously a ReferenceError in one setup function aborted init() and
+     silently took every later feature with it — reveals, the cart badge
+     bump, back-to-top and the footer accordions all stopped, with no
+     visible symptom beyond "the animations don't work". Failing one
+     component must never cascade. */
+  function run(label, fn) {
+    try {
+      fn();
+    } catch (error) {
+      if (window.console && console.error) {
+        console.error(`[Bloomarts] ${label} failed to initialise:`, error);
+      }
+    }
+  }
+
   function init() {
-    const reduced = applyMotionPolicy();
-    watchMotionPolicy();
-    trackHeaderHeight();
-    setupResponsiveAccordions();
-    applyStagger();
-    setupReveal(reduced);
-    setupCartBump();
-    setupBackToTop();
+    let reduced = false;
+    run('motion policy', () => {
+      reduced = applyMotionPolicy();
+      watchMotionPolicy();
+    });
+    run('header height', trackHeaderHeight);
+    run('responsive accordions', setupResponsiveAccordions);
+    run('reveal stagger', applyStagger);
+    run('scroll reveal', () => setupReveal(reduced));
+    run('cart bump', setupCartBump);
+    run('back to top', setupBackToTop);
   }
 
   if (document.readyState === 'loading') {

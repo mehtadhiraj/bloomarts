@@ -22,26 +22,32 @@
    ========================================================================== */
 
 /* The parallax image is scaled beyond its box and then shifted, so the
-   container MUST clip. Without this the oversized image escapes and can push
-   the page into horizontal overflow at narrow widths. */
+   container must clip.
+
+   `clip`, NOT `hidden`. overflow: hidden creates a scroll container, and
+   animation-timeline: view() resolves against the nearest scrollport — so
+   with `hidden` the timeline attached to this box, which never scrolls, and
+   every parallax animation sat frozen at exactly 50% progress. `clip` clips
+   without establishing a scroll container, so the timeline correctly falls
+   through to the document. */
 .parallax-media {
-  overflow: hidden;
+  overflow: clip;
 }
 
 :root {
-  --parallax-shift: 5%;
-  --parallax-scale: 1.14;
-  --tilt-max: 5deg;
-  --depth-lift: 10px;
+  --parallax-shift: 8%;
+  --parallax-scale: 1.20;
+  --tilt-max: 7deg;
+  --depth-lift: 14px;
 }
 
 /* "Rich" pushes the same variables further rather than introducing new
    effects, so there is one set of behaviours to reason about. */
 [data-scroll-effects="rich"] {
-  --parallax-shift: 9%;
-  --parallax-scale: 1.22;
-  --tilt-max: 8deg;
-  --depth-lift: 16px;
+  --parallax-shift: 14%;
+  --parallax-scale: 1.32;
+  --tilt-max: 11deg;
+  --depth-lift: 22px;
 }
 
 @supports (animation-timeline: view()) {
@@ -53,10 +59,10 @@
        edge. Only translate and scale are animated — no layout, no paint.
        ---------------------------------------------------------------------- */
 
-    [data-scroll-effects="subtle"]:not(.reduce-motion) .parallax-media > img,
-    [data-scroll-effects="subtle"]:not(.reduce-motion) .parallax-media > picture > img,
-    [data-scroll-effects="rich"]:not(.reduce-motion) .parallax-media > img,
-    [data-scroll-effects="rich"]:not(.reduce-motion) .parallax-media > picture > img {
+    [data-scroll-effects="subtle"]:not(.simplify-motion) .parallax-media > img,
+    [data-scroll-effects="subtle"]:not(.simplify-motion) .parallax-media > picture > img,
+    [data-scroll-effects="rich"]:not(.simplify-motion) .parallax-media > img,
+    [data-scroll-effects="rich"]:not(.simplify-motion) .parallax-media > picture > img {
       animation: parallax-drift linear both;
       animation-timeline: view();
       /* Runs across the whole time the element is in the viewport. */
@@ -159,6 +165,73 @@
 }
 
 /* --------------------------------------------------------------------------
+   Section reveals, driven by scroll position
+
+   This is the default path. Because the animation is tied to the scroll
+   timeline rather than fired once by an observer, it REVERSES when you
+   scroll back up and plays again on the way down — which is what a
+   scroll-linked reveal should do, and what the one-shot
+   IntersectionObserver version could not do without re-observing every
+   element and re-hiding content under the reader.
+
+   global.js only falls back to the observer path when scroll-driven
+   animations are unsupported, or when the merchant has ticked "play only
+   once".
+
+   The stagger is expressed as an offset into the animation RANGE rather
+   than a delay: with a scroll timeline there is no wall-clock to delay
+   against, so each item simply starts a little further along the scroll.
+   -------------------------------------------------------------------------- */
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    html:not(.reduce-motion):not([data-reveal-once="true"]):not([data-reveal-style="none"]) [data-reveal] {
+      animation: reveal-rise linear both;
+      animation-timeline: view();
+      animation-range:
+        entry calc(4% + var(--reveal-offset, 0%))
+        entry calc(58% + var(--reveal-offset, 0%));
+    }
+
+    html:not(.reduce-motion):not([data-reveal-once="true"]):not([data-reveal-style="none"]) [data-reveal="scale"] {
+      animation-name: reveal-scale;
+    }
+
+    /* "Fade" drops the movement but keeps the scroll linkage. */
+    html[data-reveal-style="fade"]:not(.reduce-motion):not([data-reveal-once="true"]) [data-reveal] {
+      animation-name: reveal-fade;
+    }
+  }
+}
+
+@keyframes reveal-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, var(--reveal-distance, 24px), 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes reveal-scale {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes reveal-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* --------------------------------------------------------------------------
    Blur resolve
 
    Text and media resolve from soft to sharp as they enter. This is the
@@ -173,8 +246,8 @@
 
 @supports (animation-timeline: view()) {
   @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
-    [data-scroll-effects="subtle"]:not(.reduce-motion) [data-scroll-reveal="blur"],
-    [data-scroll-effects="rich"]:not(.reduce-motion) [data-scroll-reveal="blur"] {
+    [data-scroll-effects="subtle"]:not(.simplify-motion) [data-scroll-reveal="blur"],
+    [data-scroll-effects="rich"]:not(.simplify-motion) [data-scroll-reveal="blur"] {
       animation: blur-resolve linear both;
       animation-timeline: view();
       animation-range: entry 15% entry 85%;
@@ -214,8 +287,8 @@
 
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
-    [data-scroll-effects="subtle"]:not(.reduce-motion) [data-scroll-reveal="wipe"],
-    [data-scroll-effects="rich"]:not(.reduce-motion) [data-scroll-reveal="wipe"] {
+    [data-scroll-effects="subtle"]:not(.simplify-motion) [data-scroll-reveal="wipe"],
+    [data-scroll-effects="rich"]:not(.simplify-motion) [data-scroll-reveal="wipe"] {
       background-image: linear-gradient(
         100deg,
         currentColor 0%,
@@ -266,8 +339,9 @@
   pointer-events: none;
   user-select: none;
   color: color-mix(in srgb, var(--brand-brown) 7%, transparent);
-  /* Never allowed to widen the page. */
-  overflow: hidden;
+  /* Never allowed to widen the page. clip rather than hidden, for the same
+     scroll-container reason as .parallax-media above. */
+  overflow: clip;
 }
 
 .section--contrast .ghost-word {
@@ -276,8 +350,8 @@
 
 @supports (animation-timeline: view()) {
   @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
-    [data-scroll-effects="subtle"]:not(.reduce-motion) .ghost-word,
-    [data-scroll-effects="rich"]:not(.reduce-motion) .ghost-word {
+    [data-scroll-effects="subtle"]:not(.simplify-motion) .ghost-word,
+    [data-scroll-effects="rich"]:not(.simplify-motion) .ghost-word {
       animation: ghost-drift linear both;
       animation-timeline: view();
       animation-range: entry 0% exit 100%;
@@ -385,7 +459,7 @@
      The rotation values are set by depth.js as custom properties. The
      transform itself lives here so the browser can interpolate it on the
      compositor rather than having JS write a new matrix each frame. */
-  [data-depth="true"]:not(.reduce-motion) .card {
+  [data-depth="true"]:not(.simplify-motion) .card {
     transform: perspective(900px)
       rotateX(var(--tilt-x, 0deg))
       rotateY(var(--tilt-y, 0deg))
@@ -396,27 +470,27 @@
 
   /* While the pointer is actually moving, drop the transition — otherwise
      the tilt lags the cursor by a whole transition duration. */
-  [data-depth="true"]:not(.reduce-motion) .card.is-tilting {
+  [data-depth="true"]:not(.simplify-motion) .card.is-tilting {
     transition: none;
   }
 
   /* The media plate lifts slightly out of the card plane. */
-  [data-depth="true"]:not(.reduce-motion) .card__media {
+  [data-depth="true"]:not(.simplify-motion) .card__media {
     transform: translateZ(var(--depth-lift));
     transition: box-shadow var(--dur-slow) var(--ease);
   }
 
-  [data-depth="true"]:not(.reduce-motion) .card.is-tilting .card__media {
+  [data-depth="true"]:not(.simplify-motion) .card.is-tilting .card__media {
     box-shadow: var(--shadow-lg);
   }
 
   /* The title sits on its own plane, just above the card face. */
-  [data-depth="true"]:not(.reduce-motion) .card__body {
+  [data-depth="true"]:not(.simplify-motion) .card__body {
     transform: translateZ(calc(var(--depth-lift) / 3));
   }
 
   /* Buttons gain a small physical press. */
-  [data-depth="true"]:not(.reduce-motion) .btn--primary:active {
+  [data-depth="true"]:not(.simplify-motion) .btn--primary:active {
     transform: perspective(600px) translate3d(0, 1px, -6px) scale(0.985);
   }
 }
@@ -431,11 +505,11 @@
 
 @supports (animation-timeline: view()) {
   @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-    [data-depth="true"]:not(.reduce-motion) .gallery__viewport {
+    [data-depth="true"]:not(.simplify-motion) .gallery__viewport {
       perspective: 1400px;
     }
 
-    [data-depth="true"]:not(.reduce-motion) .gallery__slide {
+    [data-depth="true"]:not(.simplify-motion) .gallery__slide {
       animation: gallery-turn linear both;
       animation-timeline: view(inline);
       animation-range: cover 0% cover 100%;
@@ -473,6 +547,7 @@
 /* Whenever the wipe is switched off, the text colour MUST come back —
    background-clip: text leaves it transparent otherwise. */
 [data-scroll-effects="none"] [data-scroll-reveal="wipe"],
+.simplify-motion [data-scroll-reveal="wipe"],
 .reduce-motion [data-scroll-reveal="wipe"] {
   background-image: none !important;
   -webkit-background-clip: border-box !important;
@@ -488,10 +563,30 @@
   animation: none !important;
 }
 
+/* Soft brake — expensive effects only. Cheap reveals keep running. */
+.simplify-motion .parallax-media > img,
+.simplify-motion .parallax-media > picture > img,
+.simplify-motion [data-scroll-reveal],
+.simplify-motion .ghost-word,
+.simplify-motion .card,
+.simplify-motion .card__media,
+.simplify-motion .card__body,
+.simplify-motion .gallery__slide {
+  animation: none !important;
+  transform: none !important;
+  filter: none !important;
+}
+
+.simplify-motion [data-scroll-reveal] {
+  opacity: 1 !important;
+}
+
+/* Hard brake — everything, including cheap reveals. */
 .reduce-motion .parallax-media > img,
 .reduce-motion .parallax-media > picture > img,
 .reduce-motion [data-scroll-enter],
 .reduce-motion [data-scroll-exit],
+.reduce-motion [data-reveal],
 .reduce-motion [data-scroll-reveal],
 .reduce-motion .ghost-word,
 .reduce-motion .card,

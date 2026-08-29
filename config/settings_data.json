@@ -43,7 +43,8 @@
     "scroll_effects": "subtle",
     "depth_3d": true,
     "scroll_progress": false,
-    "show_back_to_top": true
+    "show_back_to_top": true,
+    "reveal_once": false
   },
   "presets": {
     "Bloom Arts": {

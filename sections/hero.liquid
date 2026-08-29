@@ -44,11 +44,11 @@
   <div class="hero__content">
     <div class="page-width hero__content-inner" data-reveal-group>
       {%- if section.settings.subheading != blank -%}
-        <p class="eyebrow hero__subheading" data-reveal="rise">{{ section.settings.subheading }}</p>
+        <p class="eyebrow hero__subheading" data-reveal="rise-stagger">{{ section.settings.subheading }}</p>
       {%- endif -%}
 
       {%- if section.settings.heading != blank -%}
-        <h1 class="hero__heading" data-reveal="rise">
+        <h1 class="hero__heading" data-reveal="rise-stagger">
           {{ section.settings.heading }}
           {%- comment -%}
             The script accent is decorative emphasis on a word the heading
@@ -62,11 +62,11 @@
       {%- endif -%}
 
       {%- if section.settings.text != blank -%}
-        <p class="hero__text" data-reveal="rise">{{ section.settings.text }}</p>
+        <p class="hero__text" data-reveal="rise-stagger">{{ section.settings.text }}</p>
       {%- endif -%}
 
       {%- if section.settings.button_label != blank -%}
-        <div class="hero__actions" data-reveal="rise">
+        <div class="hero__actions" data-reveal="rise-stagger">
           <a
             href="{{ section.settings.button_link | default: routes.all_products_collection_url }}"
             class="btn btn--primary hero__button"

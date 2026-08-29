@@ -83,7 +83,9 @@
    would otherwise widen the page. */
 .featured {
   position: relative;
-  overflow: hidden;
+  /* clip, not hidden — hidden would establish a scroll container and freeze
+     the view() timelines of the ghost word and section heading inside it. */
+  overflow: clip;
 }
 
 .featured > .page-width,

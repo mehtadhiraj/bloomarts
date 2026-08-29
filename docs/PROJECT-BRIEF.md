@@ -315,4 +315,6 @@ remaining decisions and future improvements.
 | Design ambition | Rich, but capability-gated |
 | Colours and fonts | Per the identity sheet above |
 | Instagram | Use a Shopify app, never raw Meta credentials |
+| Decorative logo motifs (bee, heart, leaves) reused as interface decoration | **Approved 30 Aug** — on by default, toggleable per section |
+| Section reveals | Reversible on scroll (replay on the way back down), not one-shot |
 | Commit identity | `mehtadhiraj21@gmail.com` |

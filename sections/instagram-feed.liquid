@@ -13,10 +13,12 @@
 
 <section class="section defer-render instagram">
   <div class="page-width">
-    <div class="instagram__header">
-      <h2 class="instagram__heading">{{ section.settings.heading }}</h2>
+    <div class="section-head" data-scroll-reveal="blur">
+      <div class="section-head__text">
+        <h2 class="section-head__title">{{ section.settings.heading }}</h2>
+      </div>
       {%- if settings.social_instagram != blank -%}
-        <a href="{{ settings.social_instagram }}" class="instagram__handle" rel="noopener" target="_blank">
+        <a href="{{ settings.social_instagram }}" class="section-head__link" rel="noopener" target="_blank">
           {% render 'icon', icon: 'instagram', size: 18 %}
           <span>@{{ settings.social_instagram_handle }}</span>
         </a>

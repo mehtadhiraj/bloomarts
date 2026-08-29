@@ -20,27 +20,29 @@
 :root {
   /* Intensity drives distance and duration together. Overridden below by
      the merchant's intensity setting. */
-  --reveal-distance: 16px;
+  --reveal-distance: 28px;
   --reveal-duration: var(--dur-slower);
-  --reveal-stagger: 60ms;
-  --hover-lift: 4px;
-  --hover-zoom: 1.05;
+  --reveal-stagger: 90ms;
+  --hover-lift: 5px;
+  --hover-zoom: 1.06;
 }
 
+/* "Subtle" still has to be visible — the first pass at 8px over 420ms was
+   close enough to no animation that it read as broken. */
 [data-animation-intensity="subtle"] {
-  --reveal-distance: 8px;
-  --reveal-duration: calc(420ms * var(--motion-scale));
-  --reveal-stagger: 40ms;
-  --hover-lift: 2px;
-  --hover-zoom: 1.025;
+  --reveal-distance: 16px;
+  --reveal-duration: calc(520ms * var(--motion-scale));
+  --reveal-stagger: 60ms;
+  --hover-lift: 3px;
+  --hover-zoom: 1.03;
 }
 
 [data-animation-intensity="expressive"] {
-  --reveal-distance: 28px;
-  --reveal-duration: calc(760ms * var(--motion-scale));
-  --reveal-stagger: 85ms;
-  --hover-lift: 7px;
-  --hover-zoom: 1.08;
+  --reveal-distance: 44px;
+  --reveal-duration: calc(820ms * var(--motion-scale));
+  --reveal-stagger: 120ms;
+  --hover-lift: 9px;
+  --hover-zoom: 1.1;
 }
 
 /* --------------------------------------------------------------------------
@@ -88,7 +90,7 @@
    -------------------------------------------------------------------------- */
 
 @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
-  [data-hero-motion="true"] .hero__image {
+  [data-hero-motion="true"]:not(.simplify-motion) .hero__image {
     animation: hero-drift 24s var(--ease) infinite alternate;
   }
 }
@@ -304,6 +306,10 @@
   transition: none !important;
 }
 
+/* Continuous ambient motion is expensive; it stops under the soft brake
+   even though cheap reveals continue. */
+.simplify-motion .hero__image,
+.simplify-motion .motif,
 .reduce-motion .hero__image,
 .reduce-motion .motif,
 .reduce-motion .is-skeleton::after {

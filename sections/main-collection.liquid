@@ -15,7 +15,7 @@
 
 <div class="collection page-width">
   {%- if section.settings.show_banner -%}
-    <header class="collection__header">
+    <header class="collection__header" data-scroll-reveal="blur">
       <h1 class="collection__title">{{ collection.title }}</h1>
       {%- if collection.description != blank -%}
         <div class="rte collection__description text-muted">{{ collection.description }}</div>

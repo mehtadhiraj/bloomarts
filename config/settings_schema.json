@@ -399,6 +399,13 @@
         "default": "rise-stagger"
       },
       {
+        "type": "checkbox",
+        "id": "reveal_once",
+        "label": "Play section reveals only once",
+        "info": "Off (default): reveals are tied to scroll position, so they replay when you scroll back up. On: each section animates once and stays put.",
+        "default": false
+      },
+      {
         "type": "select",
         "id": "scroll_effects",
         "label": "Scroll effects",

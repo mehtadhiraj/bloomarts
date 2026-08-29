@@ -3,7 +3,7 @@
 {{ 'component-collection.css' | asset_url | stylesheet_tag }}
 
 <div class="collection page-width">
-  <header class="collection__header">
+  <header class="collection__header" data-scroll-reveal="blur">
     <h1 class="collection__title">
       {%- if search.performed -%}
         {{ 'general.search.results_for' | t: terms: search.terms }}
@@ -47,9 +47,9 @@
   <div class="collection__results">
     {%- if search.performed and search.results_count > 0 -%}
       {%- paginate search.results by 16 -%}
-        <ul class="product-grid" role="list">
+        <ul class="product-grid" role="list" data-reveal-group>
           {%- for item in search.results -%}
-            <li>
+            <li data-reveal="rise-stagger">
               {%- liquid
                 if forloop.index <= 4
                   assign card_loading = 'eager'

@@ -14,16 +14,32 @@
 - **Reveals are one-shot.** Each element is `unobserve`d the moment it
   reveals, so nothing keeps consuming callbacks after it has played.
 
-## Three independent brakes
+## Two brake tiers
 
-Any one of these simplifies motion:
+A single brake was wrong: it meant a phone got **no** animation at all, when
+the requirement is to *reduce or simplify* resource-intensive animation on
+smaller devices — simplify, not eliminate.
 
-1. `[data-animations="false"]` — the merchant's master switch.
-2. `.reduce-motion` — set by `global.js` from device capability:
-   `prefers-reduced-motion`, `Save-Data`, 2G/slow-2G `effectiveType`,
-   `deviceMemory <= 4`, `hardwareConcurrency <= 4`, or a screen under 768px
-   when *Simplify motion on small or low-powered devices* is on.
-3. `@media (prefers-reduced-motion: reduce)` — the OS preference, last word.
+**`reduce-motion` — hard brake.** Everything stops, including cheap fades.
+Triggered by: the merchant's master switch, `prefers-reduced-motion: reduce`,
+`Save-Data`, or a 2G/slow-2G `effectiveType`.
+
+**`simplify-motion` — soft brake.** Only the *expensive* effects stop:
+parallax, blur resolve, text wipe, 3D tilt, gallery rotation, hero drift and
+motif float. Cheap opacity/transform reveals keep running. Triggered by a
+screen under 768px or `deviceMemory <= 4` / `hardwareConcurrency <= 4`, when
+*Simplify motion on small or low-powered devices* is on.
+
+`@media (prefers-reduced-motion: reduce)` backs both up at the CSS level as
+the last word.
+
+Missing signals are never read as "low powered" — `deviceMemory` and
+`hardwareConcurrency` are absent in Safari, and treating absence as low-end
+would disable motion for every iPhone.
+
+The policy is **re-evaluated live**, not once at load. Evaluating only at
+`DOMContentLoaded` meant a phone that loaded in portrait and rotated to
+landscape stayed simplified for the whole session.
 
 Missing signals are never read as "low powered" — `deviceMemory` and
 `hardwareConcurrency` are absent in Safari, and treating absence as a low-end
@@ -49,7 +65,7 @@ the merchant's choice.
 
 | Element | Motion |
 |---|---|
-| Sections | Fade + rise on entry, staggered per group (capped at 6 steps) |
+| Sections | Fade + rise on entry, staggered per group (capped at 6 steps), **reversible** |
 | Hero image | 24s scale drift — desktop and pointer-fine only |
 | Hero content | Staggered rise |
 | Product cards | Lift + image zoom + underline draw — **hover-capable pointers only** |
@@ -60,6 +76,26 @@ the merchant's choice.
 | Accordions | Chevron rotation |
 | Loading | Skeleton shimmer |
 | Brand motifs | 9–14s float — desktop only |
+
+## Reveals reverse on scroll
+
+Section reveals are driven by **scroll position**, not fired once by an
+observer. Scrolling back up runs them backwards, and scrolling down again
+replays them.
+
+The earlier implementation used `IntersectionObserver` with `unobserve()`
+after the first hit, which meant a reveal played exactly once per page load —
+scrolling back up and down showed nothing. Re-observing would have worked, but
+it costs continuous observer traffic and, worse, re-hides content the reader
+has already seen.
+
+The observer path still exists as the **fallback** for browsers without
+scroll-driven animations, where it necessarily remains one-shot. Merchants who
+prefer that behaviour everywhere can tick **Play section reveals only once**.
+
+Because a scroll timeline has no wall clock, the stagger is expressed as an
+offset into the animation *range* — each item starts a little further along
+the scroll — rather than as `animation-delay`.
 
 ## Scroll-driven effects
 
