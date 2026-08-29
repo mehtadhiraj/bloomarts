@@ -206,6 +206,56 @@ for (const f of listFiles('templates', '.json')) {
   }
 }
 
+/* Shopify schema limits. Exceeding one of these does not raise an error —
+   Shopify silently drops the section or block from the theme editor and from
+   any JSON template using it. */
+for (const rel of liquidFiles.filter((f) => f.startsWith('sections/'))) {
+  const schema = sectionSchema(path.basename(rel, '.liquid'));
+  if (!schema) continue;
+
+  if (schema.name && schema.name.length > 25) {
+    note(rel, `section name "${schema.name}" is ${schema.name.length} characters (Shopify's limit is 25)`);
+  }
+
+  const seen = new Set();
+  for (const setting of schema.settings || []) {
+    if (!setting.type) note(rel, 'a setting has no type');
+    if (setting.id) {
+      if (seen.has(setting.id)) note(rel, `duplicate setting id "${setting.id}"`);
+      seen.add(setting.id);
+    }
+    if (setting.type === 'select') {
+      const values = (setting.options || []).map((o) => o.value);
+      if (values.length === 0) note(rel, `select "${setting.id}" has no options`);
+      if (setting.default !== undefined && !values.includes(setting.default)) {
+        note(rel, `select "${setting.id}" default "${setting.default}" is not one of its options`);
+      }
+    }
+    if (setting.type === 'range') {
+      const steps = (setting.max - setting.min) / setting.step + 1;
+      if (steps > 101) note(rel, `range "${setting.id}" has ${Math.round(steps)} steps (Shopify's limit is 101)`);
+      if (setting.default === undefined) note(rel, `range "${setting.id}" has no default (Shopify requires one)`);
+    }
+  }
+
+  for (const block of schema.blocks || []) {
+    if (block.type !== '@app' && !block.name) note(rel, `block "${block.type}" has no name`);
+    if (block.name && block.name.length > 25) {
+      note(rel, `block name "${block.name}" is ${block.name.length} characters (Shopify's limit is 25) — the block is silently dropped`);
+    }
+    const blockSeen = new Set();
+    for (const setting of block.settings || []) {
+      if (setting.id) {
+        if (blockSeen.has(setting.id)) note(rel, `block ${block.type}: duplicate setting id "${setting.id}"`);
+        blockSeen.add(setting.id);
+      }
+      if (setting.type === 'range' && setting.default === undefined) {
+        note(rel, `block ${block.type}: range "${setting.id}" has no default`);
+      }
+    }
+  }
+}
+
 /* JSON template conventions Shopify expects, taken from Dawn.
 
    Both of these are silent failures: Shopify does not render an error, the
