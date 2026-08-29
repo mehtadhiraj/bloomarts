@@ -165,6 +165,7 @@ oversized ghost display type, and an intro splash loader.
 | Transparent header over hero + materials | ✅ | Fades to solid once the last `[data-header-overlay]` section passes |
 | Materials: 3 full-height panels, pinned | ✅ | Alternating image left/right, text top/bottom |
 | Product row as a true one-row carousel | ✅ | Was a wrapping 4-up grid at ≥1024px |
+| Full-section scroll snapping | ✅ | Native CSS snap; one gesture = one section/panel. Off under reduced motion |
 | Image zoom on product gallery | ⬜ | Brief lists it; not built |
 | Testimonials slider animation | ⬜ | Section not built |
 | Smooth scroll (Lenis) | ⛔ | Conflicts with the brief — §7.6 |

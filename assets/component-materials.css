@@ -266,3 +266,64 @@
     opacity: 1 !important;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Scroll snapping
+
+   Native CSS snapping — the browser decides where a gesture rests. Nothing
+   intercepts the wheel, so this is not the scroll-jacking the brief rules
+   out; it is the same mechanism the product gallery already uses, applied
+   to the page instead of a row.
+   -------------------------------------------------------------------------- */
+
+.materials__snap {
+  position: absolute;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+  /* Only meaningful while the section is pinned; below that the whole
+     section is a single snap point instead. */
+  scroll-snap-align: none;
+}
+
+html[data-snap="true"]:not(.reduce-motion) {
+  scroll-snap-type: y mandatory;
+  /* Snap positions land below the header rather than under it. */
+  scroll-padding-top: 0;
+}
+
+/* Every top-level section gets a snap point. Without one, a long section
+   after the last anchor leaves mandatory snapping with nowhere nearby to
+   rest, which is what makes it fight the reader. */
+html[data-snap="true"]:not(.reduce-motion) .hero,
+html[data-snap="true"]:not(.reduce-motion) .image-text,
+html[data-snap="true"]:not(.reduce-motion) .featured,
+html[data-snap="true"]:not(.reduce-motion) .instagram,
+html[data-snap="true"]:not(.reduce-motion) .footer {
+  scroll-snap-align: start;
+}
+
+/* scroll-snap-stop: always is what guarantees ONE gesture moves ONE
+   section — without it a fast flick skips straight past several. */
+html[data-snap="true"]:not(.reduce-motion) .hero {
+  scroll-snap-stop: always;
+}
+
+html.materials-ready[data-snap="true"]:not(.reduce-motion) .materials__snap {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+/* Unpinned, the section is one snap point rather than several. */
+html[data-snap="true"]:not(.materials-ready):not(.reduce-motion) .materials {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+/* Snapping is disorienting for anyone who asked for less motion, and it
+   makes long content harder to read at leisure. */
+.reduce-motion,
+html[data-snap="false"] {
+  scroll-snap-type: none;
+}

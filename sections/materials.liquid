@@ -42,6 +42,20 @@
     data-header-overlay
     aria-label="{{ section.settings.heading | escape }}"
   >
+    {%- comment -%}
+      One snap anchor per panel, spaced a viewport apart down the pinned
+      wrapper. They are what make a single scroll gesture advance exactly one
+      panel. Zero-size and aria-hidden — they are scroll geometry, not
+      content.
+    {%- endcomment -%}
+    {%- for block in panels -%}
+      <span
+        class="materials__snap"
+        style="top: calc({{ forloop.index0 }} * 100svh);"
+        aria-hidden="true"
+      ></span>
+    {%- endfor -%}
+
     <div class="materials__viewport" data-materials-viewport>
       <ol class="materials__track" role="list" data-materials-track>
         {%- for block in panels -%}

@@ -12,6 +12,7 @@
   data-animation-intensity="{{ settings.animation_intensity }}"
   data-reveal-style="{{ settings.reveal_style }}"
   data-reveal-once="{{ settings.reveal_once }}"
+  data-snap="{% if settings.snap_sections and template.name == 'index' %}true{% else %}false{% endif %}"
   data-hero-motion="{{ settings.hero_motion }}"
   data-card-hover="{{ settings.card_hover }}"
   data-scroll-effects="{{ settings.scroll_effects }}"

@@ -44,7 +44,8 @@
     "depth_3d": true,
     "scroll_progress": false,
     "show_back_to_top": true,
-    "reveal_once": false
+    "reveal_once": false,
+    "snap_sections": true
   },
   "presets": {
     "Bloom Arts": {
