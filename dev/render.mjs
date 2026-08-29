@@ -127,15 +127,43 @@ function mockImage(seed, wide) {
 
 let mockSeed = 0;
 
-function fillImageSettings(schemaSettings, values) {
-  if (!Array.isArray(schemaSettings)) return values;
+/* Every fill is recorded. The fill is what makes the harness useful, but it
+   is also a lie the store will not tell: on Shopify an unset image_picker
+   renders the grey placeholder SVG, and we have already shipped a section
+   that looked complete here and was six empty squares in production. The
+   notice at the end of a build is the reminder of what still needs picking
+   in the theme editor. */
+const filledImages = [];
+
+/* BLOOM_BARE=1 renders what a freshly installed theme looks like before any
+   image has been picked. Worth running before every push: it is the view the
+   store actually serves on day one. */
+const bare = process.env.BLOOM_BARE === '1';
+
+function fillImageSettings(schemaSettings, values, context) {
+  if (bare || !Array.isArray(schemaSettings)) return values;
   for (const setting of schemaSettings) {
     if (setting.type !== "image_picker") continue;
     if (values[setting.id]) continue;
     const wide = /desktop|banner|wide/.test(setting.id);
     values[setting.id] = mockImage(mockSeed++, wide);
+    if (context) filledImages.push(`${context}.${setting.id}`);
   }
   return values;
+}
+
+function reportFilledImages() {
+  if (!filledImages.length) return;
+  const counts = new Map();
+  filledImages.forEach((entry) => counts.set(entry, (counts.get(entry) || 0) + 1));
+  console.log(`\n  note  ${filledImages.length} image settings are empty in the theme and were`);
+  console.log('        filled with placeholders here. On the store they render as grey');
+  console.log('        boxes until someone picks an image in the theme editor:');
+  [...counts.entries()]
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .forEach(([entry, count]) => {
+      console.log(`         - ${entry}${count > 1 ? ` (\u00d7${count})` : ''}`);
+    });
 }
 
 function readSection(name) {
@@ -171,7 +199,8 @@ async function renderSection(name, config = {}, index = 1) {
     type: block.type,
     settings: fillImageSettings(
       blockSchema(section.schema, block.type),
-      { ...blockDefaults(section.schema, block.type), ...(block.settings || {}) }
+      { ...blockDefaults(section.schema, block.type), ...(block.settings || {}) },
+      `${name}.blocks.${block.type}`
     ),
     shopify_attributes: `data-block="${id}"`
   }));
@@ -181,7 +210,8 @@ async function renderSection(name, config = {}, index = 1) {
     type: name,
     settings: fillImageSettings(
       section.schema ? section.schema.settings : [],
-      { ...schemaDefaults(section.schema), ...(config.settings || {}) }
+      { ...schemaDefaults(section.schema), ...(config.settings || {}) },
+      name
     ),
     blocks,
     index,
@@ -546,6 +576,7 @@ async function build() {
   }
 
   auditOutput();
+  reportFilledImages();
 
   console.log(`\n${rendered}/${pages.length} pages rendered\n`);
 }

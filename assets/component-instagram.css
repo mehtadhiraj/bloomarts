@@ -90,3 +90,48 @@
     font-size: var(--text-2xl);
   }
 }
+
+/* --------------------------------------------------------------------------
+   Reels
+
+   A reel is a Shopify-hosted video in the same 1:1 box as an image tile, so
+   mixing the two never disturbs the grid. Playback is opt-in per tile and
+   driven by visibility — six autoplaying videos on a phone is a battery and
+   bandwidth cost with nothing to show for it while they are off screen.
+   -------------------------------------------------------------------------- */
+
+.instagram__video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  background-color: var(--color-border);
+}
+
+.instagram__tile--reel {
+  position: relative;
+}
+
+.instagram__reel-badge {
+  position: absolute;
+  inset-block-start: var(--space-3xs);
+  inset-inline-end: var(--space-3xs);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 24px;
+  block-size: 24px;
+  border-radius: 50%;
+  /* Fixed dark chip rather than a theme token: it sits on unknown footage,
+     so the contrast has to come from the chip itself. */
+  background-color: rgb(0 0 0 / 0.55);
+  color: #fff;
+  pointer-events: none;
+}
+
+/* The badge reads as "this is a clip". Once it is playing it has said its
+   piece, so it fades out rather than sitting on top of the footage. */
+.instagram__tile--reel:has(video[data-reel-playing]) .instagram__reel-badge {
+  opacity: 0;
+  transition: opacity var(--duration-md) var(--ease-out);
+}

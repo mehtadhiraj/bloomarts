@@ -663,6 +663,61 @@
   }
 
   /* ------------------------------------------------------------------
+     Reel playback
+
+     Six autoplaying videos is a real cost on a phone — battery, data, and
+     decoder pressure — and five of them are off screen. So each reel loads
+     nothing until it is close to view, plays only while visible, and pauses
+     the moment it leaves. Under the hard motion brake it never plays at all
+     and the poster carries the tile, which is why the poster is a real
+     attribute rather than a first frame.
+     ------------------------------------------------------------------ */
+
+  function setupReels() {
+    const reels = document.querySelectorAll('video[data-reel]');
+    if (!reels.length) return;
+
+    const root = document.documentElement;
+    if (root.classList.contains('reduce-motion')) return;
+    if (!('IntersectionObserver' in window)) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const video = entry.target;
+          if (entry.isIntersecting) {
+            // preload is 'none' in the markup so nothing downloads until a
+            // tile is actually approaching the viewport.
+            if (video.preload === 'none') video.preload = 'metadata';
+            const attempt = video.play();
+            if (attempt && typeof attempt.catch === 'function') {
+              // Autoplay can still be refused (Low Power Mode, Save-Data).
+              // The poster is already there, so there is nothing to repair.
+              attempt.catch(() => {});
+            }
+            video.setAttribute('data-reel-playing', '');
+          } else {
+            video.pause();
+            video.removeAttribute('data-reel-playing');
+          }
+        });
+      },
+      { rootMargin: '200px 0px', threshold: 0.25 }
+    );
+
+    reels.forEach((video) => {
+      // Safari honours the property but not always the attribute.
+      video.muted = true;
+      observer.observe(video);
+    });
+
+    // A backgrounded tab keeps decoding otherwise.
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) reels.forEach((video) => video.pause());
+    });
+  }
+
+  /* ------------------------------------------------------------------
      Cart badge confirmation
      ------------------------------------------------------------------ */
 
@@ -737,6 +792,7 @@
     run('materials pin', setupMaterialsPin);
     run('sticky header', setupStickyHeader);
     run('back to top', setupBackToTop);
+    run('reels', setupReels);
   }
 
   if (document.readyState === 'loading') {

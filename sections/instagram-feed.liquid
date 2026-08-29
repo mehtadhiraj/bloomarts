@@ -11,6 +11,25 @@
   embed later — drops into space that was already accounted for.
 {%- endcomment -%}
 
+{%- liquid
+  # An empty grid is six grey squares to a shopper. Reserving space matters
+  # once there is something to reserve it for, so the section only renders on
+  # the storefront when at least one tile has content. In the theme editor it
+  # always renders, otherwise the merchant could never add the first image.
+  assign has_media = false
+  for block in section.blocks
+    if block.type == '@app'
+      assign has_media = true
+      break
+    endif
+    if block.settings.image != blank or block.settings.video != blank
+      assign has_media = true
+      break
+    endif
+  endfor
+-%}
+
+{%- if has_media or request.design_mode -%}
 <section class="section defer-render instagram">
   <div class="page-width">
     <div class="section-head" data-scroll-reveal="blur">
@@ -29,18 +48,56 @@
       {%- for block in section.blocks -%}
         {%- case block.type -%}
           {%- when 'post' -%}
-            <li class="instagram__tile" data-reveal="scale" {{ block.shopify_attributes }}>
+            {%- liquid
+              assign reel = block.settings.video
+              assign poster = block.settings.image
+              if poster == blank and reel != blank
+                assign poster = reel.preview_image
+              endif
+            -%}
+            <li class="instagram__tile{% if reel != blank %} instagram__tile--reel{% endif %}" data-reveal="scale" {{ block.shopify_attributes }}>
               {%- if block.settings.link != blank -%}
                 <a href="{{ block.settings.link }}" class="instagram__link" rel="noopener" target="_blank">
               {%- endif -%}
 
-              {% render 'responsive-image',
-                 image: block.settings.image,
-                 ratio: 1,
-                 sizes: '(min-width: 1024px) 16vw, (min-width: 768px) 25vw, 50vw',
-                 widths: '200,300,400,600,800',
-                 alt: block.settings.alt,
-                 class: 'instagram__image' %}
+              {%- if reel != blank -%}
+                {%- comment -%}
+                  A reel is a Shopify-hosted video, not an embed. Muted, looping
+                  and inline so iOS plays it in place rather than going
+                  fullscreen. The poster is rendered as a real image so the tile
+                  shows something before the first frame decodes, and stays the
+                  whole story when motion is turned down.
+                {%- endcomment -%}
+                <video
+                  class="instagram__video"
+                  data-reel
+                  muted
+                  loop
+                  playsinline
+                  preload="none"
+                  poster="{{ poster | image_url: width: 600, height: 600, crop: 'center' }}"
+                  width="600"
+                  height="600"
+                  aria-label="{{ block.settings.alt | escape }}"
+                >
+                  {%- for source in reel.sources -%}
+                    {%- if source.format == 'mp4' -%}
+                      <source src="{{ source.url }}" type="{{ source.mime_type }}">
+                    {%- endif -%}
+                  {%- endfor -%}
+                </video>
+                <span class="instagram__reel-badge" aria-hidden="true">
+                  {% render 'icon', icon: 'play', size: 14 %}
+                </span>
+              {%- else -%}
+                {% render 'responsive-image',
+                   image: block.settings.image,
+                   ratio: 1,
+                   sizes: '(min-width: 1024px) 16vw, (min-width: 768px) 25vw, 50vw',
+                   widths: '200,300,400,600,800',
+                   alt: block.settings.alt,
+                   class: 'instagram__image' %}
+              {%- endif -%}
 
               {%- if block.settings.link != blank -%}
                   <span class="visually-hidden">{{ block.settings.alt | default: 'View on Instagram' }}</span>
@@ -71,6 +128,7 @@
     </ul>
   </div>
 </section>
+{%- endif -%}
 
 {% schema %}
 {
@@ -85,6 +143,7 @@
       "name": "Post",
       "settings": [
         { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "video", "id": "video", "label": "Reel", "info": "Upload a reel or clip. It plays muted on loop and replaces the image." },
         { "type": "url", "id": "link", "label": "Link" },
         { "type": "text", "id": "alt", "label": "Alt text", "info": "Describe the image for screen readers." }
       ]
