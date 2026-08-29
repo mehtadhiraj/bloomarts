@@ -1,29 +1,40 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "hero": {
       "type": "hero",
       "settings": {
-        "subheading": "Concrete \u00b7 Clay \u00b7 Resin",
+        "image_alt": "",
+        "subheading": "Concrete · Clay · Resin",
         "heading": "Little creations,",
-        "script_accent": "big smiles",
         "text": "Cast, thrown and poured by hand in small batches. No two pieces come out quite the same.",
+        "script_accent": "big smiles",
         "button_label": "Shop the collection",
         "button_link": "shopify://collections/all",
-        "height": "full",
+        "button_2_label": "",
+        "button_2_link": "",
         "overlay_opacity": 75,
-        "show_motifs": true
+        "show_motifs": true,
+        "height": "full"
       }
     },
     "materials": {
       "type": "materials",
-      "settings": {
-        "heading": "Three materials, one pair of hands"
-      },
       "blocks": {
         "concrete": {
           "type": "material",
           "settings": {
+            "image_alt": "",
             "title": "Concrete",
+            "script_accent": "",
             "text": "Cast by hand, cured for seven days, then sealed inside and out. It takes pigment unevenly, which is the point.",
             "link": "",
             "link_label": "Shop concrete",
@@ -33,6 +44,7 @@
         "clay": {
           "type": "material",
           "settings": {
+            "image_alt": "",
             "title": "Clay",
             "script_accent": "thrown",
             "text": "Speckled stoneware and terracotta, thrown on the wheel and fired twice. The throwing ridges stay.",
@@ -44,7 +56,9 @@
         "resin": {
           "type": "material",
           "settings": {
+            "image_alt": "",
             "title": "Resin",
+            "script_accent": "",
             "text": "Poured in layers over three days. Every piece sets a little differently, so no two match.",
             "link": "",
             "link_label": "Shop resin",
@@ -56,11 +70,15 @@
         "concrete",
         "clay",
         "resin"
-      ]
+      ],
+      "settings": {
+        "heading": "Three materials, one pair of hands"
+      }
     },
     "studio": {
       "type": "image-with-text",
       "settings": {
+        "image_alt": "",
         "heading": "Made slowly, on purpose",
         "text": "<p>Bloom Arts is a two-person studio. Concrete cures for seven days before it is sealed, stoneware is fired twice, resin is poured in layers over three days. None of it can be rushed, which is why batches are small and colour shifts a little between pieces.</p>",
         "button_label": "Inside the studio",
@@ -68,45 +86,57 @@
         "layout": "text-first"
       }
     },
+    "all_products": {
+      "type": "featured-collection",
+      "settings": {
+        "eyebrow": "Everything in stock",
+        "heading": "The full studio",
+        "collection": "all",
+        "products_to_show": 12
+      }
+    },
     "instagram": {
       "type": "instagram-feed",
-      "settings": {
-        "heading": "From the studio"
-      },
       "blocks": {
         "p1": {
           "type": "post",
           "settings": {
+            "link": "",
             "alt": "A charcoal planter drying on the bench"
           }
         },
         "p2": {
           "type": "post",
           "settings": {
+            "link": "",
             "alt": "Stoneware vases before glazing"
           }
         },
         "p3": {
           "type": "post",
           "settings": {
+            "link": "",
             "alt": "Resin poured in amber layers"
           }
         },
         "p4": {
           "type": "post",
           "settings": {
+            "link": "",
             "alt": "Tealight holders lined up"
           }
         },
         "p5": {
           "type": "post",
           "settings": {
+            "link": "",
             "alt": "A tray being sanded"
           }
         },
         "p6": {
           "type": "post",
           "settings": {
+            "link": "",
             "alt": "The studio shelf"
           }
         }
@@ -118,15 +148,9 @@
         "p4",
         "p5",
         "p6"
-      ]
-    },
-    "all_products": {
-      "type": "featured-collection",
+      ],
       "settings": {
-        "heading": "The full studio",
-        "collection": "all",
-        "products_to_show": 12,
-        "eyebrow": "Everything in stock"
+        "heading": "From the studio"
       }
     }
   },

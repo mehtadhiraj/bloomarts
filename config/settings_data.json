@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "current": {
     "tagline": "Little Creations, Big Smiles",
@@ -31,6 +40,11 @@
     "animations_enabled": true,
     "animation_intensity": "balanced",
     "reveal_style": "rise-stagger",
+    "reveal_once": false,
+    "scroll_effects": "subtle",
+    "depth_3d": true,
+    "scroll_progress": false,
+    "show_back_to_top": true,
     "animation_speed": 100,
     "hero_motion": true,
     "reduce_motion_on_mobile": true,
@@ -40,11 +54,38 @@
     "social_instagram": "https://www.instagram.com/bloom.artss/",
     "social_facebook": "",
     "social_pinterest": "",
-    "scroll_effects": "subtle",
-    "depth_3d": true,
-    "scroll_progress": false,
-    "show_back_to_top": true,
-    "reveal_once": false
+    "sections": {
+      "announcement-bar": {
+        "type": "announcement-bar",
+        "settings": {}
+      },
+      "header": {
+        "type": "header",
+        "settings": {
+          "logo": "shopify://shop_images/bloom-art-png-logo.png",
+          "logo_width_mobile": 120,
+          "logo_width_desktop": 180,
+          "menu": "main-menu",
+          "sticky": true,
+          "transparent_over_hero": true,
+          "show_search": true
+        }
+      },
+      "footer": {
+        "type": "footer",
+        "settings": {
+          "show_newsletter": true,
+          "newsletter_heading": "New pieces, first",
+          "newsletter_text": "Small-batch drops sell out fast. Hear about them before they go live.",
+          "show_payment_icons": true
+        }
+      },
+      "cart-drawer": {
+        "type": "cart-drawer",
+        "settings": {}
+      }
+    },
+    "content_for_index": []
   },
   "presets": {
     "Bloom Arts": {
