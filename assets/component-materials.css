@@ -174,9 +174,9 @@
       view-timeline-axis: block;
     }
 
-    html.materials-ready:not(.reduce-motion):not(.simplify-motion) .materials {
-      height: calc(var(--panel-count) * 100svh);
-    }
+    /* No explicit height: the sticky viewport contributes its own viewport
+       of flow and each step adds another, which already totals
+       panel-count x 100svh. Setting it as well would double-count. */
 
     html.materials-ready:not(.reduce-motion):not(.simplify-motion) .materials__viewport {
       position: sticky;
@@ -285,15 +285,16 @@
    to the page instead of a row.
    -------------------------------------------------------------------------- */
 
-.materials__snap {
-  position: absolute;
-  left: 0;
-  width: 1px;
-  height: 1px;
+/* Scroll steps. Only exist while the section is pinned — unpinned they
+   would add empty viewports of dead space below the swipe row. */
+.materials__step {
+  display: none;
+}
+
+html.materials-ready:not(.reduce-motion) .materials__step {
+  display: block;
+  height: 100svh;
   pointer-events: none;
-  /* Only meaningful while the section is pinned; below that the whole
-     section is a single snap point instead. */
-  scroll-snap-align: none;
 }
 
 html[data-snap="true"]:not(.reduce-motion) {
@@ -317,11 +318,30 @@ html[data-snap="true"]:not(.reduce-motion) .footer {
    section — without it a fast flick skips straight past several. */
 html[data-snap="true"]:not(.reduce-motion) .hero {
   scroll-snap-stop: always;
+  /* The announcement bar sits above the hero, so the hero's own top is ~44px
+     down the document. Left alone, the nearest snap position on load is that
+     44px — and mandatory snapping jerks the page down to it the moment it
+     settles. scroll-margin pulls the snap position back to exactly 0.
+     The height is measured and published by global.js, because the bar wraps
+     to two lines at narrow widths. */
+  scroll-margin-top: var(--announcement-height, 0px);
 }
 
-html.materials-ready[data-snap="true"]:not(.reduce-motion) .materials__snap {
+/* Snap targets while pinned: the section start lands panel 1, then each
+   step lands the next. scroll-snap-stop: always is what stops a single
+   flick running past several at once. */
+html.materials-ready[data-snap="true"]:not(.reduce-motion) .materials,
+html.materials-ready[data-snap="true"]:not(.reduce-motion) .materials__step {
   scroll-snap-align: start;
   scroll-snap-stop: always;
+}
+
+/* Pinned, the panels are absolutely stacked at one offset, so their swipe-row
+   snap alignment turns into three duplicate page snap targets at the same
+   position. Cleared — the section start already covers panel one. */
+html.materials-ready[data-snap="true"]:not(.reduce-motion) .materials__panel {
+  scroll-snap-align: none;
+  scroll-snap-stop: normal;
 }
 
 /* Unpinned, the section is one snap point rather than several. */

@@ -42,20 +42,6 @@
     data-header-overlay
     aria-label="{{ section.settings.heading | escape }}"
   >
-    {%- comment -%}
-      One snap anchor per panel, spaced a viewport apart down the pinned
-      wrapper. They are what make a single scroll gesture advance exactly one
-      panel. Zero-size and aria-hidden — they are scroll geometry, not
-      content.
-    {%- endcomment -%}
-    {%- for block in panels -%}
-      <span
-        class="materials__snap"
-        style="top: calc({{ forloop.index0 }} * 100svh);"
-        aria-hidden="true"
-      ></span>
-    {%- endfor -%}
-
     <div class="materials__viewport" data-materials-viewport>
       <ol class="materials__track" role="list" data-materials-track>
         {%- for block in panels -%}
@@ -137,6 +123,26 @@
         {%- endfor -%}
       </ol>
     </div>
+
+    {%- comment -%}
+      Scroll steps.
+
+      These are what give the pinned viewport something to travel against,
+      AND what a scroll gesture snaps to. They are real in-flow blocks, one
+      viewport tall each, because browsers snap to those far more reliably
+      than to the zero-height absolutely-positioned anchors this used to
+      use — those were being skipped straight past, so one flick ran through
+      all three panels at once.
+
+      There is one fewer step than panels: the sticky viewport already
+      occupies the first viewport of flow.
+
+      Empty and aria-hidden — pure scroll geometry, no content.
+    {%- endcomment -%}
+    {%- assign step_count = panel_count | minus: 1 -%}
+    {%- for i in (1..step_count) -%}
+      <div class="materials__step" aria-hidden="true"></div>
+    {%- endfor -%}
   </section>
 {%- endif -%}
 
