@@ -29,7 +29,7 @@
          breakpoint: '768px',
          loading: 'eager',
          fetchpriority: 'high',
-         alt: section.settings.heading,
+         alt: section.settings.image_alt,
          class: 'hero__image' %}
     {%- else -%}
       <div class="hero__image hero__image--placeholder" aria-hidden="true"></div>
@@ -122,9 +122,15 @@
     },
     {
       "type": "text",
+      "id": "image_alt",
+      "label": "Image alt text",
+      "info": "Describes the image for screen readers. Leave blank if it is purely decorative."
+    },
+    {
+      "type": "text",
       "id": "subheading",
       "label": "Subheading",
-      "default": "Concrete · Clay · Resin"
+      "default": "Concrete \u00b7 Clay \u00b7 Resin"
     },
     {
       "type": "text",
@@ -142,12 +148,29 @@
       "type": "text",
       "id": "script_accent",
       "label": "Script accent",
-      "info": "A short word set in Great Vibes. Decorative only — keep it under three words."
+      "info": "A short word set in Great Vibes. Decorative only \u2014 keep it under three words."
     },
-    { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop the collection" },
-    { "type": "url", "id": "button_link", "label": "Button link" },
-    { "type": "text", "id": "button_2_label", "label": "Secondary button label" },
-    { "type": "url", "id": "button_2_link", "label": "Secondary button link" },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Shop the collection"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "text",
+      "id": "button_2_label",
+      "label": "Secondary button label"
+    },
+    {
+      "type": "url",
+      "id": "button_2_link",
+      "label": "Secondary button link"
+    },
     {
       "type": "range",
       "id": "overlay_opacity",
@@ -170,14 +193,30 @@
       "id": "height",
       "label": "Height",
       "options": [
-        { "value": "compact", "label": "Compact" },
-        { "value": "standard", "label": "Standard" },
-        { "value": "tall", "label": "Tall" },
-        { "value": "full", "label": "Full screen" }
+        {
+          "value": "compact",
+          "label": "Compact"
+        },
+        {
+          "value": "standard",
+          "label": "Standard"
+        },
+        {
+          "value": "tall",
+          "label": "Tall"
+        },
+        {
+          "value": "full",
+          "label": "Full screen"
+        }
       ],
       "default": "full"
     }
   ],
-  "presets": [{ "name": "Hero" }]
+  "presets": [
+    {
+      "name": "Hero"
+    }
+  ]
 }
 {% endschema %}

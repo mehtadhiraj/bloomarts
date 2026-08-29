@@ -91,7 +91,7 @@
                  image: block.settings.image,
                  ratio: 0.62,
                  sizes: '100vw',
-                 alt: block.settings.title,
+                 alt: block.settings.image_alt,
                  loading: forloop.first,
                  class: 'materials__image' %}
             </div>
@@ -145,29 +145,80 @@
   "name": "Materials",
   "max_blocks": 4,
   "settings": [
-    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "What we work in" },
-    { "type": "text", "id": "heading", "label": "Heading", "default": "Three materials, one pair of hands" }
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Accessible name",
+      "default": "Three materials, one pair of hands",
+      "info": "Describes the section to screen readers. Not shown on screen \u2014 each panel carries its own visible title."
+    }
   ],
   "blocks": [
     {
       "type": "material",
       "name": "Material",
       "settings": [
-        { "type": "image_picker", "id": "image", "label": "Image" },
-        { "type": "text", "id": "title", "label": "Title", "default": "Concrete" },
-        { "type": "text", "id": "script_accent", "label": "Script accent", "info": "Optional short phrase in Great Vibes." },
-        { "type": "textarea", "id": "text", "label": "Text", "default": "Cast by hand and cured for seven days before sealing." },
-        { "type": "url", "id": "link", "label": "Link" },
-        { "type": "text", "id": "link_label", "label": "Link label", "default": "Shop concrete" },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "image_alt",
+          "label": "Image alt text",
+          "info": "Describes the image for screen readers. Leave blank if it is purely decorative."
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Concrete"
+        },
+        {
+          "type": "text",
+          "id": "script_accent",
+          "label": "Script accent",
+          "info": "Optional short phrase in Great Vibes."
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "Cast by hand and cured for seven days before sealing."
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        },
+        {
+          "type": "text",
+          "id": "link_label",
+          "label": "Link label",
+          "default": "Shop concrete"
+        },
         {
           "type": "select",
           "id": "motif",
           "label": "Decorative motif",
           "options": [
-            { "value": "none", "label": "None" },
-            { "value": "sprig", "label": "Leaf sprig" },
-            { "value": "heart", "label": "Heart" },
-            { "value": "bee", "label": "Bee" }
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "sprig",
+              "label": "Leaf sprig"
+            },
+            {
+              "value": "heart",
+              "label": "Heart"
+            },
+            {
+              "value": "bee",
+              "label": "Bee"
+            }
           ],
           "default": "sprig"
         }
@@ -177,7 +228,17 @@
   "presets": [
     {
       "name": "Materials",
-      "blocks": [{ "type": "material" }, { "type": "material" }, { "type": "material" }]
+      "blocks": [
+        {
+          "type": "material"
+        },
+        {
+          "type": "material"
+        },
+        {
+          "type": "material"
+        }
+      ]
     }
   ]
 }

@@ -51,8 +51,13 @@
   scroll-snap-align: center;
   scroll-snap-stop: always;
   min-width: 0;
-  /* Full height, less the header, so one panel is one screen. */
-  height: calc(100svh - var(--header-height));
+  /* A full screen, INCLUDING the strip behind the header.
+
+     Subtracting the header height left a band above each panel showing the
+     page background, so the transparent header read as a separate grey bar
+     instead of merging into whatever panel sits behind it. The header floats
+     over the image; it does not sit above it. */
+  height: 100svh;
   overflow: clip;
 }
 
@@ -78,6 +83,8 @@
   inset: 0;
   display: flex;
   align-items: center;
+  /* Keeps centred copy from drifting under the floating header. */
+  padding-top: var(--header-height);
   color: var(--brand-cream);
   background: linear-gradient(
     to top,
@@ -173,8 +180,10 @@
 
     html.materials-ready:not(.reduce-motion):not(.simplify-motion) .materials__viewport {
       position: sticky;
-      top: var(--header-height);
-      height: calc(100svh - var(--header-height));
+      /* Pinned to the very top, not below the header — see the note on
+         .materials__panel height. */
+      top: 0;
+      height: 100svh;
       /* The transform does the travel; nothing scrolls horizontally here.
          A NAMED view-timeline is resolved by name up the ancestor chain, so
          clipping here does not detach it the way an anonymous view() would. */

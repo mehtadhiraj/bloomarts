@@ -166,6 +166,8 @@ oversized ghost display type, and an intro splash loader.
 | Materials: 3 full-height panels, pinned | ✅ | Alternating image left/right, text top/bottom |
 | Product row as a true one-row carousel | ✅ | Was a wrapping 4-up grid at ≥1024px |
 | Full-section scroll snapping | ✅ | Native CSS snap; one gesture = one section/panel. Off under reduced motion |
+| Editable alt text on every image section | ✅ | hero, image-with-text, materials blocks |
+| Dead-setting detection in the theme check | ✅ | Follows `{% render %}` one level so block-passing isn't a false positive |
 | Image zoom on product gallery | ⬜ | Brief lists it; not built |
 | Testimonials slider animation | ⬜ | Section not built |
 | Smooth scroll (Lenis) | ⛔ | Conflicts with the brief — §7.6 |
@@ -188,6 +190,8 @@ oversized ghost display type, and an intro splash loader.
 | Empty inline `<span>` used as an IntersectionObserver sentinel | A 0×0 rect never reports as intersecting, so the header was permanently "stuck" | Given a 1px box with a cancelling negative margin |
 | Materials pin read `view-timeline-name` at `DOMContentLoaded` | Section stylesheets are `<link>`s in `<body>` and may not have applied yet, so the pin never engaged | Re-checked on `load` |
 | Panels hidden off-screen with no confirmation the timeline resolved | An unresolved timeline held every panel at its start keyframe — a blank section | Gated behind `.materials-ready`, added only after the timeline is confirmed |
+| Material panels sized `100svh - header` and pinned below the header | Left a strip of page background above each panel, so the transparent header read as a separate grey bar instead of merging into the panel | Panels run the full `100svh` under the floating header; copy padded clear of it |
+| `materials` declared an `eyebrow` setting that nothing rendered | A theme-editor control that silently did nothing | Removed; `check-theme.mjs` now fails on any unrendered setting |
 
 ---
 

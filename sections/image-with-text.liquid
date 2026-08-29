@@ -8,7 +8,7 @@
            image: section.settings.image,
            ratio: 1,
            sizes: '(min-width: 768px) 45vw, 100vw',
-           alt: section.settings.heading,
+           alt: section.settings.image_alt,
            class: 'image-text__image' %}
       </div>
 
@@ -33,27 +33,61 @@
 {
   "name": "Image with text",
   "settings": [
-    { "type": "image_picker", "id": "image", "label": "Image" },
-    { "type": "text", "id": "heading", "label": "Heading", "default": "Made slowly, on purpose" },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "image_alt",
+      "label": "Image alt text",
+      "info": "Describes the image for screen readers. Leave blank if it is purely decorative."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Made slowly, on purpose"
+    },
     {
       "type": "richtext",
       "id": "text",
       "label": "Text",
       "default": "<p>Concrete cures for seven days before it is sealed. Stoneware is fired twice. Resin is poured in layers over three. None of it can be rushed, which is why batches are small and why colour shifts a little between pieces.</p>"
     },
-    { "type": "text", "id": "button_label", "label": "Button label", "default": "About the studio" },
-    { "type": "url", "id": "button_link", "label": "Button link" },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "About the studio"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
     {
       "type": "select",
       "id": "layout",
       "label": "Image position (desktop)",
       "options": [
-        { "value": "image-first", "label": "Image first" },
-        { "value": "text-first", "label": "Text first" }
+        {
+          "value": "image-first",
+          "label": "Image first"
+        },
+        {
+          "value": "text-first",
+          "label": "Text first"
+        }
       ],
       "default": "image-first"
     }
   ],
-  "presets": [{ "name": "Image with text" }]
+  "presets": [
+    {
+      "name": "Image with text"
+    }
+  ]
 }
 {% endschema %}

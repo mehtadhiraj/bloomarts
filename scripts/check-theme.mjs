@@ -76,6 +76,46 @@ for (const rel of liquidFiles) {
   }
 }
 
+/* Settings declared in a schema but never read.
+
+   A setting nothing renders is a control that silently does nothing in the
+   theme editor — the merchant changes it and nothing happens.
+
+   Snippets are followed one level deep, because sections routinely pass a
+   whole block into a snippet ({% render 'customization-field', block: block %})
+   and read its settings there. Without that, every such setting looks dead. */
+for (const rel of liquidFiles.filter((f) => f.startsWith('sections/'))) {
+  const src = read(path.join(root, rel));
+  const schema = src.match(/\{%-?\s*schema\s*-?%\}([\s\S]*?)\{%-?\s*endschema\s*-?%\}/);
+  if (!schema) continue;
+
+  let parsed;
+  try {
+    parsed = JSON.parse(schema[1]);
+  } catch {
+    continue; // already reported above
+  }
+
+  // The section body plus every snippet it renders.
+  let body = src.slice(0, schema.index);
+  for (const m of body.matchAll(/\{%-?\s*render\s+'([^']+)'/g)) {
+    const snippet = path.join(root, 'snippets', `${m[1]}.liquid`);
+    if (fs.existsSync(snippet)) body += read(snippet);
+  }
+
+  const declared = [
+    ...(parsed.settings || []).map((x) => [x.id, 'settings']),
+    ...(parsed.blocks || []).flatMap((b) => (b.settings || []).map((x) => [x.id, `block ${b.type}`]))
+  ];
+
+  for (const [id, where] of declared) {
+    if (!id) continue;
+    if (!body.includes(`settings.${id}`)) {
+      note(rel, `${where} setting "${id}" is declared but never rendered`);
+    }
+  }
+}
+
 /* JSON templates */
 for (const f of listFiles('templates', '.json')) {
   const rel = `templates/${f}`;
