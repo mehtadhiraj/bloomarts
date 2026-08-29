@@ -17,16 +17,27 @@
   # the storefront when at least one tile has content. In the theme editor it
   # always renders, otherwise the merchant could never add the first image.
   assign has_media = false
+  assign has_embed = false
   for block in section.blocks
     if block.type == '@app'
       assign has_media = true
-      break
     endif
     if block.settings.image != blank or block.settings.video != blank
       assign has_media = true
-      break
+    endif
+    if block.settings.permalink != blank
+      assign has_media = true
+      assign has_embed = true
     endif
   endfor
+
+  # A reel embed is portrait and carries Instagram's own header and caption,
+  # so it cannot live in the same small square as a photo. One grid or the
+  # other, decided by what is actually in the blocks.
+  assign grid_class = 'instagram__grid'
+  if has_embed
+    assign grid_class = 'instagram__grid instagram__grid--embed'
+  endif
 -%}
 
 {%- if has_media or request.design_mode -%}
@@ -44,7 +55,7 @@
       {%- endif -%}
     </div>
 
-    <ul class="instagram__grid" role="list" data-instagram-grid data-reveal-group>
+    <ul class="{{ grid_class }}" role="list" data-instagram-grid data-reveal-group>
       {%- for block in section.blocks -%}
         {%- case block.type -%}
           {%- when 'post' -%}
@@ -54,8 +65,58 @@
               if poster == blank and reel != blank
                 assign poster = reel.preview_image
               endif
+
+              # Instagram's own embed markup is a skeleton blockquote plus
+              # embed.js, which rewrites it into this same iframe. Only the
+              # permalink actually varies, so that is all the merchant pastes:
+              # a whole blockquote in a text setting would be unmaintainable
+              # and would put a third-party script on every page.
+              assign embed_path = ''
+              assign raw_link = block.settings.permalink | strip
+              if raw_link contains '/reel/'
+                assign embed_code = raw_link | split: '/reel/' | last | split: '?' | first | split: '/' | first
+                assign embed_path = 'reel'
+              elsif raw_link contains '/reels/'
+                assign embed_code = raw_link | split: '/reels/' | last | split: '?' | first | split: '/' | first
+                assign embed_path = 'reel'
+              elsif raw_link contains '/tv/'
+                assign embed_code = raw_link | split: '/tv/' | last | split: '?' | first | split: '/' | first
+                assign embed_path = 'tv'
+              elsif raw_link contains '/p/'
+                assign embed_code = raw_link | split: '/p/' | last | split: '?' | first | split: '/' | first
+                assign embed_path = 'p'
+              endif
+              if embed_code == blank
+                assign embed_path = ''
+              endif
+
+              assign tile_class = 'instagram__tile'
+              if embed_path != blank
+                assign tile_class = 'instagram__tile instagram__tile--embed'
+              elsif reel != blank
+                assign tile_class = 'instagram__tile instagram__tile--reel'
+              endif
             -%}
-            <li class="instagram__tile{% if reel != blank %} instagram__tile--reel{% endif %}" data-reveal="scale" {{ block.shopify_attributes }}>
+            <li class="{{ tile_class }}" data-reveal="scale" {{ block.shopify_attributes }}>
+              {%- if embed_path != blank -%}
+                {%- comment -%}
+                  Lazy, so six of these do not all fetch on first paint, and
+                  scrolling="no" because the iframe sizes itself to its own
+                  content. Nothing is cropped: the caption and the @bloom.artss
+                  attribution are part of what an embed is allowed to be.
+                {%- endcomment -%}
+                <iframe
+                  class="instagram__embed"
+                  src="https://www.instagram.com/{{ embed_path }}/{{ embed_code | url_encode }}/embed/"
+                  title="{{ 'sections.instagram.embed_title' | t: handle: settings.social_instagram_handle }}"
+                  loading="lazy"
+                  scrolling="no"
+                  frameborder="0"
+                  allow="encrypted-media; picture-in-picture; web-share"
+                  allowtransparency="true"
+                  allowfullscreen
+                ></iframe>
+              {%- else -%}
               {%- if block.settings.link != blank -%}
                 <a href="{{ block.settings.link }}" class="instagram__link" rel="noopener" target="_blank">
               {%- endif -%}
@@ -103,6 +164,7 @@
                   <span class="visually-hidden">{{ block.settings.alt | default: 'View on Instagram' }}</span>
                 </a>
               {%- endif -%}
+              {%- endif -%}
             </li>
 
           {%- comment -%}
@@ -142,6 +204,7 @@
       "type": "post",
       "name": "Post",
       "settings": [
+        { "type": "text", "id": "permalink", "label": "Instagram link", "info": "Paste the reel or post URL, e.g. https:\/\/www.instagram.com\/reel\/DbUm3CNPomR\/ — it is embedded live and takes priority over the image and reel below." },
         { "type": "image_picker", "id": "image", "label": "Image" },
         { "type": "video", "id": "video", "label": "Reel", "info": "Upload a reel or clip. It plays muted on loop and replaces the image." },
         { "type": "url", "id": "link", "label": "Link" },

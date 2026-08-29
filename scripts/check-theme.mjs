@@ -18,6 +18,15 @@ const problems = [];
 const note = (file, msg) => problems.push(`${file}: ${msg}`);
 
 const read = (p) => fs.readFileSync(p, 'utf8');
+
+/* Shopify writes a "contents are auto-generated" banner comment at the top of
+   every JSON file it syncs back from the theme editor. That is not valid JSON
+   by the spec, but Shopify both emits and accepts it, so anything reading
+   these files has to tolerate it too. */
+function parseThemeJson(text) {
+  return JSON.parse(String(text).replace(/^\uFEFF?\s*\/\*[\s\S]*?\*\//, ''));
+}
+
 const listFiles = (dir, ext) =>
   fs.existsSync(path.join(root, dir))
     ? fs.readdirSync(path.join(root, dir)).filter((f) => f.endsWith(ext))
@@ -121,7 +130,7 @@ for (const f of listFiles('templates', '.json')) {
   const rel = `templates/${f}`;
   let json;
   try {
-    json = JSON.parse(read(path.join(root, rel)));
+    json = parseThemeJson(read(path.join(root, rel)));
   } catch (error) {
     note(rel, `invalid JSON — ${error.message}`);
     continue;
@@ -158,7 +167,7 @@ for (const f of listFiles('templates', '.json')) {
   const rel = `templates/${f}`;
   let json;
   try {
-    json = JSON.parse(read(path.join(root, rel)));
+    json = parseThemeJson(read(path.join(root, rel)));
   } catch {
     continue; // reported above
   }
@@ -285,7 +294,7 @@ for (const f of listFiles('templates', '.json')) {
   const rel = `templates/${f}`;
   let json;
   try {
-    json = JSON.parse(read(path.join(root, rel)));
+    json = parseThemeJson(read(path.join(root, rel)));
   } catch {
     continue;
   }
@@ -359,7 +368,7 @@ for (const rel of liquidFiles.filter((f) => f.startsWith('sections/'))) {
 }
 
 {
-  const globals = JSON.parse(read(path.join(root, 'config/settings_schema.json')));
+  const globals = parseThemeJson(read(path.join(root, 'config/settings_schema.json')));
   for (const group of globals) {
     for (const setting of group.settings || []) {
       checkRange('config/settings_schema.json', 'default', setting, setting.default);
@@ -371,7 +380,7 @@ for (const f of listFiles('templates', '.json')) {
   const rel = `templates/${f}`;
   let json;
   try {
-    json = JSON.parse(read(path.join(root, rel)));
+    json = parseThemeJson(read(path.join(root, rel)));
   } catch {
     continue;
   }
@@ -394,7 +403,7 @@ for (const f of listFiles('templates', '.json')) {
 /* Config */
 for (const f of ['config/settings_schema.json', 'config/settings_data.json']) {
   try {
-    JSON.parse(read(path.join(root, f)));
+    parseThemeJson(read(path.join(root, f)));
   } catch (error) {
     note(f, `invalid JSON — ${error.message}`);
   }
@@ -403,7 +412,7 @@ for (const f of ['config/settings_schema.json', 'config/settings_data.json']) {
 /* Locales */
 for (const f of listFiles('locales', '.json')) {
   try {
-    JSON.parse(read(path.join(root, `locales/${f}`)));
+    parseThemeJson(read(path.join(root, `locales/${f}`)));
   } catch (error) {
     note(`locales/${f}`, `invalid JSON — ${error.message}`);
   }

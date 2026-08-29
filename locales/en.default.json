@@ -168,5 +168,10 @@
       "body": "The page you're looking for doesn't exist or has moved.",
       "action": "Back to home"
     }
+  },
+  "sections": {
+    "instagram": {
+      "embed_title": "Instagram reel from @{{ handle }}"
+    }
   }
 }

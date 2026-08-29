@@ -135,3 +135,64 @@
   opacity: 0;
   transition: opacity var(--duration-md) var(--ease-out);
 }
+
+/* --------------------------------------------------------------------------
+   Live Instagram embeds
+
+   An embedded reel is portrait and ships Instagram's own header, caption and
+   attribution, so it will not fit the small square photo tile — their own
+   blockquote declares a 326px minimum width. This grid gives each embed room
+   instead of cropping it: one up on a phone, two from 600px, three from
+   1024px.
+   -------------------------------------------------------------------------- */
+
+.instagram__grid--embed {
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-sm);
+}
+
+@media (min-width: 600px) {
+  .instagram__grid--embed {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .instagram__grid--embed {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.instagram__tile--embed {
+  /* Overrides the 1:1 reservation — an embed's height is a function of its
+     own width, not a ratio we get to choose. */
+  aspect-ratio: auto;
+  container-type: inline-size;
+  /* Instagram's embed renders on white. Matching it means the tile reads as
+     one card even where the reserved height overshoots the content. */
+  background-color: #fff;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.instagram__embed {
+  display: block;
+  width: 100%;
+  border: 0;
+  /* Measured from the live embed rather than assumed: the media box is 1:1.25
+     (a 9:16 reel letterboxed into it), with 54px of chrome above and 154px
+     below at a single-line caption. The 200px allows a couple of wrapped
+     caption lines in a narrow column — scrolling is off inside the frame, so
+     overshooting costs a little white space and undershooting clips the
+     attribution. */
+  height: calc(100cqw * 1.25 + 200px);
+}
+
+/* Container query units need a container. Without support the height cannot
+   be derived from the column, so fall back to a value tall enough for the
+   narrowest column rather than clipping the caption. */
+@supports not (height: 1cqw) {
+  .instagram__embed {
+    height: 620px;
+  }
+}

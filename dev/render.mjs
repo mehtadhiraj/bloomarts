@@ -15,8 +15,17 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const themeRoot = path.join(here, '..');
 const distRoot = path.join(here, 'dist');
 
-const locale = JSON.parse(fs.readFileSync(path.join(themeRoot, 'locales/en.default.json'), 'utf8'));
-const settingsData = JSON.parse(fs.readFileSync(path.join(themeRoot, 'config/settings_data.json'), 'utf8'));
+
+/* Shopify writes a "contents are auto-generated" banner comment at the top of
+   every JSON file it syncs back from the theme editor. That is not valid JSON
+   by the spec, but Shopify both emits and accepts it, so anything reading
+   these files has to tolerate it too. */
+function parseThemeJson(text) {
+  return JSON.parse(String(text).replace(/^\uFEFF?\s*\/\*[\s\S]*?\*\//, ''));
+}
+
+const locale = parseThemeJson(fs.readFileSync(path.join(themeRoot, 'locales/en.default.json'), 'utf8'));
+const settingsData = parseThemeJson(fs.readFileSync(path.join(themeRoot, 'config/settings_data.json'), 'utf8'));
 
 /* Font settings are objects in Liquid (family, fallback_families, weight),
    not the "assistant_n4" handle stored in settings_data. */
@@ -294,7 +303,7 @@ async function renderTemplate(templateName) {
   const jsonPath = path.join(themeRoot, 'templates', `${templateName}.json`);
   if (!fs.existsSync(jsonPath)) return null;
 
-  const template = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+  const template = parseThemeJson(fs.readFileSync(jsonPath, 'utf8'));
   const order = template.order || Object.keys(template.sections || {});
 
   const parts = [];

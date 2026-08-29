@@ -191,6 +191,34 @@ masked both.
 | `position: sticky` on the header and the pinned hero | Shopify wraps every section in a `.shopify-section` div. A sticky element can only travel inside its own parent, and that wrapper is exactly as tall as the header — so the header scrolled away with it. The sibling selector `.header--transparent ~ main` stopped matching for the same reason, and the scroll sentinel sat *inside* the sticky wrapper so it could never leave the viewport | Sticky moved onto the wrapper via `.shopify-section:has(> .header--sticky)`; sibling rule rewritten as `body:has(.header--transparent) main`; sentinel moved into `layout/theme.liquid`. **The harness now emits `.shopify-section` wrappers**, since this was the third Shopify-only bug it had hidden |
 | Every `image_picker` setting in the theme is empty | The harness fills empty pickers with generated placeholders so layout can be measured, so locally the store looked finished. On Shopify the same settings render the grey placeholder SVG — the Instagram grid was six grey squares, and the logo, hero, studio image and all three material panels were unset too | The empty Instagram grid no longer renders on the storefront (it still renders in the theme editor, or a merchant could never add the first image). `npm run render` now **lists every setting it filled**, and `BLOOM_BARE=1 npm run render` renders what a freshly installed theme actually serves |
 
+### Instagram embeds
+
+The grid renders live Instagram embeds. A `post` block takes an **Instagram
+link** — the reel or post permalink, editable per block in the theme editor —
+and the theme turns it into an `https://www.instagram.com/reel/<code>/embed/`
+iframe. That is the same endpoint Instagram's own `embed.js` produces, so the
+merchant pastes only the URL rather than a wall of blockquote markup, and no
+third-party script runs on the storefront.
+
+Priority per tile: **permalink → Shopify-hosted video → image**.
+
+Sizing is measured from the live embed, not guessed: the media box is 1:1.25
+(a 9:16 reel letterboxed into it), with 54px of chrome above and 154px below
+at a single-line caption. The tile is a container and the iframe height is
+`calc(100cqw * 1.25 + 200px)`, the slack covering a wrapped caption. Grid goes
+1 / 2 / 3 columns — an embed cannot use the 6-up square photo grid, since
+Instagram's own blockquote declares a 326px minimum width.
+
+**Known limitation:** the embeds render blank when framed from `localhost` —
+Instagram's script loads and runs, but paints nothing. Reproduced on a bare
+test page with no theme CSS, so it is an embedding-origin check on their side,
+not ours. They must be verified on the real domain. If Instagram ever refuses
+there too, the Shopify-hosted video path is already built and needs only a
+file per block.
+
+Embedding also loads Meta content into the storefront and sets their cookies
+for every visitor, which is a consent question wherever that matters.
+
 ### Bugs found and fixed in this area
 
 | Bug | Effect | Fix |
