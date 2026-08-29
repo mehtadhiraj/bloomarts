@@ -1,4 +1,21 @@
 {
-  "sections": { "main": { "type": "main-cart" } },
-  "order": ["main"]
+  "sections": {
+    "main": {
+      "type": "main-cart"
+    },
+    "all_products": {
+      "type": "featured-collection",
+      "settings": {
+        "eyebrow": "Everything in stock",
+        "heading": "The full studio",
+        "collection": "all",
+        "products_to_show": 12,
+        "ghost_word": ""
+      }
+    }
+  },
+  "order": [
+    "main",
+    "all_products"
+  ]
 }

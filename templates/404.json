@@ -2,7 +2,62 @@
   "sections": {
     "main": {
       "type": "main-404"
+    },
+    "instagram": {
+      "type": "instagram-feed",
+      "settings": {
+        "heading": "From the studio"
+      },
+      "blocks": {
+        "p1": {
+          "type": "post",
+          "settings": {
+            "alt": "A charcoal planter drying on the bench"
+          }
+        },
+        "p2": {
+          "type": "post",
+          "settings": {
+            "alt": "Stoneware vases before glazing"
+          }
+        },
+        "p3": {
+          "type": "post",
+          "settings": {
+            "alt": "Resin poured in amber layers"
+          }
+        },
+        "p4": {
+          "type": "post",
+          "settings": {
+            "alt": "Tealight holders lined up"
+          }
+        },
+        "p5": {
+          "type": "post",
+          "settings": {
+            "alt": "A tray being sanded"
+          }
+        },
+        "p6": {
+          "type": "post",
+          "settings": {
+            "alt": "The studio shelf"
+          }
+        }
+      },
+      "block_order": [
+        "p1",
+        "p2",
+        "p3",
+        "p4",
+        "p5",
+        "p6"
+      ]
     }
   },
-  "order": ["main"]
+  "order": [
+    "main",
+    "instagram"
+  ]
 }

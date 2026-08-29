@@ -1,4 +1,55 @@
 {
-  "sections": { "main": { "type": "main-search" } },
-  "order": ["main"]
+  "sections": {
+    "main": {
+      "type": "main-search"
+    },
+    "materials": {
+      "type": "materials",
+      "settings": {
+        "heading": "Three materials, one pair of hands"
+      },
+      "blocks": {
+        "concrete": {
+          "type": "material",
+          "settings": {
+            "title": "Concrete",
+            "text": "Cast by hand, cured for seven days, then sealed inside and out. It takes pigment unevenly, which is the point.",
+            "link": "",
+            "link_label": "Shop concrete",
+            "motif": "sprig"
+          }
+        },
+        "clay": {
+          "type": "material",
+          "settings": {
+            "title": "Clay",
+            "script_accent": "thrown",
+            "text": "Speckled stoneware and terracotta, thrown on the wheel and fired twice. The throwing ridges stay.",
+            "link": "",
+            "link_label": "Shop clay",
+            "motif": "heart"
+          }
+        },
+        "resin": {
+          "type": "material",
+          "settings": {
+            "title": "Resin",
+            "text": "Poured in layers over three days. Every piece sets a little differently, so no two match.",
+            "link": "",
+            "link_label": "Shop resin",
+            "motif": "bee"
+          }
+        }
+      },
+      "block_order": [
+        "concrete",
+        "clay",
+        "resin"
+      ]
+    }
+  },
+  "order": [
+    "main",
+    "materials"
+  ]
 }
