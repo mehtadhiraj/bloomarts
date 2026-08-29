@@ -202,19 +202,53 @@ third-party script runs on the storefront.
 
 Priority per tile: **permalink → Shopify-hosted video → image**.
 
-Sizing is measured from the live embed, not guessed: the media box is 1:1.25
-(a 9:16 reel letterboxed into it), with 54px of chrome above and 154px below
-at a single-line caption. The tile is a container and the iframe height is
-`calc(100cqw * 1.25 + 200px)`, the slack covering a wrapped caption. Grid goes
-1 / 2 / 3 columns — an embed cannot use the 6-up square photo grid, since
-Instagram's own blockquote declares a 326px minimum width.
+**Instagram's chrome is cropped away**, at the merchant's request — no profile
+bar, no "View more on Instagram", no like and comment row. A cross-origin
+iframe cannot be styled from outside, so the tile is a window: the iframe is
+oversized, offset up and left, and everything but the reel falls outside the
+clip.
 
-**Known limitation:** the embeds render blank when framed from `localhost` —
-Instagram's script loads and runs, but paints nothing. Reproduced on a bare
-test page with no theme CSS, so it is an embedding-origin check on their side,
-not ours. They must be verified on the real domain. If Instagram ever refuses
-there too, the Shopify-hosted video path is already built and needs only a
-file per block.
+The geometry is measured from a live embed at five different widths, not
+assumed. Constant across all of them:
+
+| Quantity | Value |
+|---|---|
+| Chrome above the media | 54px, fixed |
+| Media box | 1:1.25 of the iframe width |
+| Chrome below | ~154px at a single-line caption |
+| 9:16 reel inside the media box | letterboxed to 0.703 x the media width |
+
+Inverting the last row: a reel fills a tile of width W when the iframe is
+`W / 0.703 = 1.4222W` wide and offset left by `0.2111W`, which is what the CSS
+does in `cqw` units. Tiles are 9:16; grid is 1 / 2 / 3 columns. (A 15px
+discrepancy in the first measurement was the frame's own scrollbar gutter —
+`scrolling="no"` removes it, so it is not in the formula.)
+
+The **Embed crop** section setting switches to the whole 4:5 frame for a post
+that is not a 9:16 reel, which would otherwise have its sides cropped. All six
+current reels are 1512x2688, so the default is correct for them.
+
+**They are slow and they are flaky.** Measured on the live store, each embed
+document takes about 8.4 seconds to arrive, and the app inside it needs longer
+still. Six of them is a real cost. Two mitigations are in: a `preconnect` to
+`www.instagram.com`, and JS that promotes the frames from `lazy` to `eager`
+once the section is about two screens away, so they have loaded by the time
+they are scrolled to. Frames stay lazy in the markup, which is the no-JS
+behaviour.
+
+Instagram also **rate-limits**. After roughly 25 embed loads from one IP in a
+few minutes they start returning blank frames — verified by injecting a plain,
+uncropped, fully visible control iframe alongside the cropped ones and finding
+that it went blank too, having rendered fine minutes earlier. Do not read a
+blank grid during development as a theme bug without running that control.
+
+They also render blank when framed from `localhost` — the script loads and
+runs but paints nothing. Reproduced on a bare test page with no theme CSS, so
+it is an embedding-origin check on their side. Local previews of this section
+will look empty; only the real domain tells you anything.
+
+If Instagram ever refuses outright, the Shopify-hosted video path is already
+built and needs only a file per block.
 
 Embedding also loads Meta content into the storefront and sets their cookies
 for every visitor, which is a consent question wherever that matters.

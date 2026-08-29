@@ -718,6 +718,44 @@
   }
 
   /* ------------------------------------------------------------------
+     Instagram embeds
+
+     Measured on the live store, an embed document takes around eight
+     seconds to arrive, and the app inside it needs longer still. Native
+     lazy loading only starts a few hundred pixels out, which on this page
+     means the reels are still blank when the shopper reaches them.
+
+     So the frames stay lazy in the markup — that is the no-JS behaviour and
+     it is the right default — and this promotes them to eager once the
+     section is roughly two screens away. Far enough ahead to have loaded by
+     the time it is scrolled to, late enough that landing on the homepage
+     does not pull six Instagram pages down with it.
+     ------------------------------------------------------------------ */
+
+  function setupEmbedPreload() {
+    const frames = document.querySelectorAll('iframe[loading="lazy"][data-embed-preload]');
+    if (!frames.length || !('IntersectionObserver' in window)) return;
+
+    // Save-Data means the shopper has asked for less. Six third-party frames
+    // is exactly the sort of thing they meant.
+    const connection = navigator.connection;
+    if (connection && connection.saveData) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.loading = 'eager';
+          observer.unobserve(entry.target);
+        });
+      },
+      { rootMargin: '200% 0px' }
+    );
+
+    frames.forEach((frame) => observer.observe(frame));
+  }
+
+  /* ------------------------------------------------------------------
      Cart badge confirmation
      ------------------------------------------------------------------ */
 
@@ -793,6 +831,7 @@
     run('sticky header', setupStickyHeader);
     run('back to top', setupBackToTop);
     run('reels', setupReels);
+    run('embed preload', setupEmbedPreload);
   }
 
   if (document.readyState === 'loading') {

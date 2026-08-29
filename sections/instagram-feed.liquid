@@ -40,6 +40,14 @@
   endif
 -%}
 
+{%- if has_embed -%}
+  {%- comment -%}
+    Each embed document takes several seconds to arrive. Getting the
+    connection out of the way early is a cheap head start on that.
+  {%- endcomment -%}
+  <link rel="preconnect" href="https://www.instagram.com" crossorigin>
+{%- endif -%}
+
 {%- if has_media or request.design_mode -%}
 <section class="section defer-render instagram">
   <div class="page-width">
@@ -116,6 +124,7 @@
                   src="https://www.instagram.com/{{ embed_path }}/{{ embed_code | url_encode }}/embed/"
                   title="{{ 'sections.instagram.embed_title' | t: handle: settings.social_instagram_handle }}"
                   loading="lazy"
+                  data-embed-preload
                   scrolling="no"
                   frameborder="0"
                   allow="encrypted-media; picture-in-picture; web-share"
