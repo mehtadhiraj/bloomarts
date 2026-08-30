@@ -194,6 +194,34 @@ at 60% with the text following at 72%. The stagger is a **hold at the start of
 the text's keyframes**, not a delay — a scroll-linked animation has no delay to
 give, since its progress is scroll position rather than elapsed time.
 
+**The band is pinned.** The section is a 190svh runway with a `position:
+sticky` inner, so it holds still while its own contents leave and the next
+section then climbs over the emptied band. Nothing is scroll-jacked — the
+wheel behaves normally — but because the band is pinned, the movement the
+shopper reads is the next section arriving rather than this one departing.
+
+The next section needs `position: relative; z-index: 1`, applied via
+`.shopify-section:has(> .image-text--editorial) + .shopify-section`. A sticky
+element is positioned and would otherwise paint above the in-flow section
+after it, so the next section would climb up *behind* the pinned one.
+
+Pinning also forces the timeline to change. Once the band is pinned its
+contents stop moving relative to the viewport, so an anonymous `view()`
+timeline on them stalls exactly when the sweep is meant to be happening. The
+named `--editorial-pin` timeline belongs to the runway, which is still
+scrolling. Mapped onto the runway, `cover` progress 34%-66% is the pinned
+phase; the image settles at 30% and is gone by 64%, the text settles at 42%
+and is gone by 68%.
+
+Pinning is gated behind `.editorial-ready`, added by `global.js` only after it
+confirms the named timeline resolved — the same gate as the materials pin and
+for the same reason. The sweep's first keyframe is fully off-screen at zero
+opacity, so an ungated pin plus an unresolved timeline would be a
+two-viewport band of invisible content.
+
+The section also drops `parallax-media`: a drift keyed to the image's own
+`view()` timeline freezes mid-drift once the band is pinned.
+
 **The section must not carry `defer-render`.** `content-visibility: auto`
 guesses the height from `contain-intrinsic-size` (600px), which sized the
 full-height band at 600px while its own contents were 861px, and it left the

@@ -684,6 +684,17 @@
       animation-timeline: view();
       animation-range: entry 0% exit 100%;
     }
+
+    /* Once the section is pinned, its contents stop moving relative to the
+       viewport, so an anonymous view() timeline on them stalls exactly when
+       the sweep is supposed to be happening. The named timeline belongs to
+       the runway, which is still scrolling, and `cover` measures the whole
+       time any part of that runway is on screen. */
+    html.editorial-ready [data-editorial="media"],
+    html.editorial-ready [data-editorial="text"] {
+      animation-timeline: --editorial-pin;
+      animation-range: cover 0% cover 100%;
+    }
   }
 }
 
@@ -696,11 +707,14 @@
   }
   /* Settles first. The image is the thing the eye lands on, so it arrives
      and the words follow onto it. */
-  34%,
-  60% {
+  30%,
+  50% {
     transform: translate3d(0, 0, 0);
     opacity: 1;
   }
+  /* Gone before the pin releases at roughly 66%, so the band is empty by the
+     time the next section starts to climb over it. */
+  64%,
   100% {
     transform: translate3d(var(--media-to, -34%), 0, 0);
     opacity: 0;
@@ -717,11 +731,12 @@
     transform: translate3d(var(--text-from, -34%), 0, 0);
     opacity: 0;
   }
-  52%,
-  72% {
+  42%,
+  56% {
     transform: translate3d(0, 0, 0);
     opacity: 1;
   }
+  68%,
   100% {
     transform: translate3d(var(--text-to, 34%), 0, 0);
     opacity: 0;

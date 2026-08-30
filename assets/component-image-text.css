@@ -273,3 +273,57 @@
     padding-inline-start: var(--space-lg);
   }
 }
+
+/* --------------------------------------------------------------------------
+   The pin
+
+   The section holds still while its own contents leave, and then the next
+   section rides up over the emptied band. The scroll wheel does the same
+   thing it always does — nothing is hijacked — but because the band is
+   pinned, what the shopper reads as movement is the next section arriving
+   rather than this one departing.
+
+   The runway is the extra scroll distance that buys the hold. The section is
+   taller than the viewport; the inner sticks to the top and stays there
+   until the runway runs out.
+
+   Gated behind .editorial-ready for the same reason the materials pin is:
+   the entrance keyframes start fully off-screen and at zero opacity, so if
+   the named timeline ever fails to resolve, an ungated pin would leave a
+   tall empty band with the content stuck at its first keyframe. global.js
+   only adds the class once it has confirmed the timeline resolved. Worst
+   case is then the ordinary unpinned band.
+   -------------------------------------------------------------------------- */
+
+@supports (animation-timeline: view()) {
+  @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+    /* Declared ungated: the name has no visual effect on its own, and
+       global.js reads it back to decide whether the pin is safe. Gating the
+       name behind the class the name is used to set would be circular. */
+    html:not(.reduce-motion):not(.simplify-motion) .image-text--editorial {
+      view-timeline-name: --editorial-pin;
+      view-timeline-axis: block;
+    }
+
+    html.editorial-ready:not(.reduce-motion):not(.simplify-motion) .image-text--editorial {
+      /* One viewport of content plus most of one more of hold. */
+      height: 190svh;
+    }
+
+    html.editorial-ready:not(.reduce-motion):not(.simplify-motion) .image-text--editorial .image-text__inner {
+      position: sticky;
+      top: 0;
+      height: 100svh;
+      min-height: 0;
+    }
+
+    /* Whatever follows has to paint over the pinned band. A sticky element is
+       positioned, so by default it paints above the in-flow section after it
+       — which would leave the next section sliding up *behind* this one. */
+    .shopify-section:has(> .image-text--editorial) + .shopify-section {
+      position: relative;
+      z-index: 1;
+      background-color: var(--color-background);
+    }
+  }
+}

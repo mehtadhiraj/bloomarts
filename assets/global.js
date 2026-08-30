@@ -571,6 +571,46 @@
   }
 
   /* ------------------------------------------------------------------
+     Editorial pin readiness
+
+     Same gate as the materials pin, for the same reason: the sweep's first
+     keyframe is fully off-screen at zero opacity, so if the named timeline
+     never resolves an ungated pin would leave a two-viewport band holding
+     invisible content. Confirm the timeline first, then let CSS pin.
+     ------------------------------------------------------------------ */
+
+  function setupEditorialPin() {
+    const section = document.querySelector('.image-text--editorial');
+    if (!section) return;
+
+    if (!(window.CSS && CSS.supports && CSS.supports('animation-timeline: view()'))) return;
+
+    const query = window.matchMedia('(min-width: 768px)');
+
+    const apply = () => {
+      if (!query.matches) {
+        document.documentElement.classList.remove('editorial-ready');
+        return;
+      }
+      const declared = getComputedStyle(section).viewTimelineName || '';
+      document.documentElement.classList.toggle(
+        'editorial-ready',
+        declared.indexOf('--editorial-pin') !== -1
+      );
+    };
+
+    apply();
+    query.addEventListener('change', apply);
+
+    // Section stylesheets are <link>s in the body and are not guaranteed to
+    // have applied by DOMContentLoaded, so the computed name can still read
+    // "none" at init.
+    if (document.readyState !== 'complete') {
+      window.addEventListener('load', apply, { once: true });
+    }
+  }
+
+  /* ------------------------------------------------------------------
      Sticky header state
 
      Only relevant when the header is transparent over a hero. Watching a
@@ -828,6 +868,7 @@
     run('scroll reveal', () => setupReveal(reduced));
     run('cart bump', setupCartBump);
     run('materials pin', setupMaterialsPin);
+    run('editorial pin', setupEditorialPin);
     run('sticky header', setupStickyHeader);
     run('back to top', setupBackToTop);
     run('reels', setupReels);

@@ -17,6 +17,11 @@
   generic reveals on top of it would mean two systems animating the same
   elements against each other.
 
+  No `parallax-media` either: once the band is pinned its image stops moving
+  relative to the viewport, so a parallax drift keyed to the image's own
+  view() timeline would freeze mid-drift exactly when the section is being
+  looked at. The sweep is the effect here.
+
   No `defer-render` either, deliberately. `content-visibility: auto` guesses
   a height from `contain-intrinsic-size` (600px), which is wrong for a band
   that is a full viewport tall — the section rendered 600px while its own
@@ -27,7 +32,7 @@
 
 <section class="section image-text image-text--editorial">
   <div class="image-text__inner image-text__inner--{{ section.settings.layout }}">
-    <div class="image-text__media parallax-media" data-editorial="media">
+    <div class="image-text__media" data-editorial="media">
       {% render 'responsive-image',
          image: section.settings.image,
          sizes: '(min-width: 768px) 62vw, 100vw',
