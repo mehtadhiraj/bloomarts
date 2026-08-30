@@ -82,7 +82,7 @@
     "studio": {
       "type": "image-with-text",
       "settings": {
-        "image": "shopify://shop_images/bloom-art-bee-svg.svg",
+        "image": "shopify://shop_images/bloom-art-bee-gif.gif",
         "image_alt": "",
         "eyebrow": "The studio",
         "heading": "Made slowly,",
