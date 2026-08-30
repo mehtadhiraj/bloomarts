@@ -33,18 +33,20 @@
      stopped short of the image instead of crossing onto it. */
   gap: 0;
 
-  /* Image right, text left. */
-  --media-from: 16%;
-  --media-to: -16%;
-  --text-from: -16%;
-  --text-to: 16%;
+  /* Image right, text left. Deliberately a long travel: at 16% the movement
+     was finished before the section was properly on screen, so what the
+     shopper actually saw was a static section. */
+  --media-from: 34%;
+  --media-to: -34%;
+  --text-from: -34%;
+  --text-to: 34%;
 }
 
 .image-text--editorial .image-text__inner--image-first {
-  --media-from: -16%;
-  --media-to: 16%;
-  --text-from: 16%;
-  --text-to: -16%;
+  --media-from: -34%;
+  --media-to: 34%;
+  --text-from: 34%;
+  --text-to: -34%;
 }
 
 .image-text--editorial .image-text__media {
@@ -73,7 +75,10 @@
 
 .image-text--editorial .image-text__content {
   position: relative;
-  z-index: 1;
+  /* Comfortably above the image. Both children animate opacity and transform,
+     so each is its own stacking context — the order between them is decided
+     here and nowhere else. */
+  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -172,13 +177,21 @@
   .image-text--editorial .image-text__inner {
     grid-template-columns: repeat(12, minmax(0, 1fr));
     align-items: center;
+    /* svh, never vh: on mobile Safari vh is the tallest the viewport ever
+       gets, so a 100vh band is cropped by the URL bar on arrival. */
+    min-height: 100svh;
   }
 
   /* Centre to the right edge. Row 1 for both children: they share the cell,
      which is what puts the text over the image. */
   .image-text--editorial .image-text__media {
     grid-area: 1 / 6 / 2 / -1;
-    height: clamp(460px, 76vh, 820px);
+    /* Stretch rather than a fixed height, so the image fills the full-height
+       row. align-self is needed explicitly because the grid centres its
+       items; the row height is definite, which is what lets the image below
+       resolve height: 100%. */
+    align-self: stretch;
+    height: auto;
   }
 
   .image-text--editorial .image-text__inner--image-first .image-text__media {
@@ -186,17 +199,19 @@
   }
 
   /* Left edge to two thirds across, so it genuinely crosses onto the image
-     rather than stopping at its edge. */
+     rather than stopping at its edge. The copy stays left aligned but is
+     indented well in from the edge — hard against the gutter it read as
+     stranded in the corner rather than as one composition with the image. */
   .image-text--editorial .image-text__content {
     grid-area: 1 / 1 / 2 / 9;
-    padding-inline: calc(var(--gutter) + var(--safe-left)) var(--space-md);
+    padding-inline: clamp(var(--space-lg), 13vw, 240px) var(--space-md);
     padding-block: var(--space-lg);
     gap: var(--space-md);
   }
 
   .image-text--editorial .image-text__inner--image-first .image-text__content {
     grid-area: 1 / 5 / 2 / -1;
-    padding-inline: var(--space-md) calc(var(--gutter) + var(--safe-right));
+    padding-inline: var(--space-md) clamp(var(--space-lg), 13vw, 240px);
     align-items: flex-start;
   }
 

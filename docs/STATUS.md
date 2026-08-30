@@ -187,8 +187,25 @@ point and would need the reversal written by hand. Directions are custom
 properties, so the theme editor's image-position setting flips the animation
 with the layout.
 
-Measured across the range at 1512px: media `+111px → 0 → -140px` with opacity
-`0.2 → 1 → 0`, text `-117px → 0 → +120px`.
+The band is a full `100svh` and the image leads: sampled off the keyframes at
+1000px width, the image settles at 34% progress while the text is still at
+-180px, the text settles at 52%, and on the way out the image starts leaving
+at 60% with the text following at 72%. The stagger is a **hold at the start of
+the text's keyframes**, not a delay — a scroll-linked animation has no delay to
+give, since its progress is scroll position rather than elapsed time.
+
+**The section must not carry `defer-render`.** `content-visibility: auto`
+guesses the height from `contain-intrinsic-size` (600px), which sized the
+full-height band at 600px while its own contents were 861px, and it left the
+`view()` timeline inactive so the sweep never ran.
+
+**Measuring scroll-driven animation through browser automation does not
+work.** A backgrounded tab suspends `requestAnimationFrame` and scroll
+timelines, so every `ViewTimeline.currentTime` on the page reads `null` —
+including ones that are known good. Sample the `@keyframes` instead, by
+applying them to a throwaway element with `animation-play-state: paused` and a
+negative `animation-delay`: that runs on the document timeline and gives exact
+values per progress point without needing the page to be live.
 
 Client reference: **momentolegal.com** — inspected; uses Lenis smooth scroll,
 `data-reveal` attributes, blur-to-sharp text resolve, gradient text wipes,

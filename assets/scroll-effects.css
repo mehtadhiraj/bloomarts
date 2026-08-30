@@ -654,10 +654,16 @@
    reversing it means writing the reversal by hand and getting it wrong at
    the boundaries.
 
+   The image leads and the text follows onto it, which is a hold at the start
+   of the text's keyframes rather than a delay — a scroll-linked animation has
+   no delay to give, since its progress is scroll position and not time.
+
    The range runs entry 0% to exit 100% — the element's entire life in the
-   viewport — with the settled state held across the middle 40% so the
-   section is legible for most of the time it is on screen rather than
-   permanently in motion.
+   viewport. The settled state is held across only the middle band: with a
+   wider hold the movement finished while the section was still below the
+   fold, so by the time it was worth looking at it had already arrived and
+   the effect was invisible. Now it is still travelling as it comes into
+   view, settles as it fills the screen, and leaves as you scroll on.
 
    Directions come from custom properties set on the section, so the theme
    editor's image-position setting flips the animation with the layout.
@@ -685,32 +691,39 @@
    image moving across the viewport costs no layout and no paint. */
 @keyframes editorial-sweep-media {
   0% {
-    transform: translate3d(var(--media-from, 16%), 0, 0);
+    transform: translate3d(var(--media-from, 34%), 0, 0);
     opacity: 0;
   }
-  30%,
-  70% {
+  /* Settles first. The image is the thing the eye lands on, so it arrives
+     and the words follow onto it. */
+  34%,
+  60% {
     transform: translate3d(0, 0, 0);
     opacity: 1;
   }
   100% {
-    transform: translate3d(var(--media-to, -16%), 0, 0);
+    transform: translate3d(var(--media-to, -34%), 0, 0);
     opacity: 0;
   }
 }
 
 @keyframes editorial-sweep-text {
-  0% {
-    transform: translate3d(var(--text-from, -16%), 0, 0);
+  /* Held offstage until the image is most of the way in. The stagger is a
+     hold at the start rather than a delay, because a scroll-linked animation
+     has no delay to give it — progress is scroll position, not elapsed
+     time. */
+  0%,
+  18% {
+    transform: translate3d(var(--text-from, -34%), 0, 0);
     opacity: 0;
   }
-  30%,
-  70% {
+  52%,
+  72% {
     transform: translate3d(0, 0, 0);
     opacity: 1;
   }
   100% {
-    transform: translate3d(var(--text-to, 16%), 0, 0);
+    transform: translate3d(var(--text-to, 34%), 0, 0);
     opacity: 0;
   }
 }

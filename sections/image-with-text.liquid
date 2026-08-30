@@ -16,9 +16,16 @@
   a single scroll-linked movement across the whole section; layering the
   generic reveals on top of it would mean two systems animating the same
   elements against each other.
+
+  No `defer-render` either, deliberately. `content-visibility: auto` guesses
+  a height from `contain-intrinsic-size` (600px), which is wrong for a band
+  that is a full viewport tall — the section rendered 600px while its own
+  contents were 861px and the overflow was clipped. It also left the section's
+  view() timeline inactive, so the sweep never ran at all. The section is one
+  image and a paragraph; there is nothing here worth deferring.
 {%- endcomment -%}
 
-<section class="section image-text image-text--editorial defer-render">
+<section class="section image-text image-text--editorial">
   <div class="image-text__inner image-text__inner--{{ section.settings.layout }}">
     <div class="image-text__media parallax-media" data-editorial="media">
       {% render 'responsive-image',
