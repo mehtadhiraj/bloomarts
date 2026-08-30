@@ -285,16 +285,19 @@
     align-items: start;
   }
 
-  .product__info {
+  /* The gallery is what sticks, not the info column.
+
+     Sticking the info column meant capping its height and giving it its own
+     overflow, because a sticky element taller than the viewport pins at the
+     top and its lower half becomes unreachable. That cap is where the second
+     scrollbar came from — and a nested scroller is the wrong trade either
+     way: it steals the wheel, it hides the buy button behind a scroll the
+     shopper has no reason to expect, and on a trackpad it fights the page.
+
+     The image is a known, bounded height, so it can stick safely. The info
+     column then just flows, and the page scroll is the only scroll. */
+  .product__gallery {
     position: sticky;
     top: calc(var(--header-height) + var(--space-md));
-    /* Long customization forms must still be scrollable inside a sticky
-       column rather than clipped. */
-    max-height: calc(100dvh - var(--header-height) - var(--space-lg));
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    /* Space for the focus ring on the last control, which would otherwise
-       be clipped by the scroll container. */
-    padding-inline-end: var(--space-3xs);
   }
 }

@@ -39,7 +39,7 @@
   width: 100%;
   height: auto;
   /* Fixed box: the page cannot reflow as each image decodes. */
-  aspect-ratio: 4 / 5;
+  aspect-ratio: var(--gallery-ratio, 4 / 5);
   object-fit: cover;
   border-radius: var(--radius);
   background-color: var(--color-border);
@@ -160,4 +160,23 @@
 
 .reduce-motion .gallery__dot-mark {
   transition: none;
+}
+
+/* --------------------------------------------------------------------------
+   Desktop proportions
+
+   Portrait suits a phone, where the image is the full width and height is
+   cheap. In a two-column desktop layout the same 4:5 runs past the fold and
+   takes the buy controls with it, so the image squares up.
+
+   Only the ratio changes. The slide stays exactly the column's width — a
+   height cap here would mean giving the image an auto width, and an image
+   with both dimensions auto falls back to its intrinsic size, which would
+   break the snap carousel it sits in.
+   -------------------------------------------------------------------------- */
+
+@media (min-width: 1024px) {
+  .gallery {
+    --gallery-ratio: 1 / 1;
+  }
 }
