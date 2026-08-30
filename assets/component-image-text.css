@@ -178,7 +178,12 @@
     grid-template-columns: repeat(12, minmax(0, 1fr));
     align-items: center;
     /* svh, never vh: on mobile Safari vh is the tallest the viewport ever
-       gets, so a 100vh band is cropped by the URL bar on arrival. */
+       gets, so a 100vh band is cropped by the URL bar on arrival.
+
+       A floor, not a fixed height. Full height is the intent, but if the
+       merchant's copy needs more room the band grows rather than clipping it
+       — a section that hides half its own text to hold a round number is the
+       worse failure. */
     min-height: 100svh;
   }
 
@@ -205,8 +210,8 @@
   .image-text--editorial .image-text__content {
     grid-area: 1 / 1 / 2 / 9;
     padding-inline: clamp(var(--space-lg), 13vw, 240px) var(--space-md);
-    padding-block: var(--space-lg);
-    gap: var(--space-md);
+    padding-block: var(--space-md);
+    gap: var(--space-sm);
   }
 
   .image-text--editorial .image-text__inner--image-first .image-text__content {
