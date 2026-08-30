@@ -82,16 +82,17 @@
     "studio": {
       "type": "image-with-text",
       "settings": {
+        "image": "shopify://shop_images/bloom-art-bee-svg.svg",
         "image_alt": "",
+        "eyebrow": "The studio",
         "heading": "Made slowly,",
+        "script_accent": "on purpose",
         "text": "<p>Bloom Arts is a two-person studio. Concrete cures for seven days before it is sealed, stoneware is fired twice, resin is poured in layers over three days. None of it can be rushed, which is why batches are small and colour shifts a little between pieces.</p>",
+        "stat_value": "7 days",
+        "stat_label": "for concrete to cure before it is sealed",
         "button_label": "See the full collection",
         "button_link": "shopify://collections/all",
-        "layout": "text-first",
-        "eyebrow": "The studio",
-        "script_accent": "on purpose",
-        "stat_value": "7 days",
-        "stat_label": "for concrete to cure before it is sealed"
+        "layout": "text-first"
       }
     },
     "all_products": {
@@ -100,6 +101,8 @@
         "eyebrow": "Everything in stock",
         "heading": "The full studio",
         "collection": "all",
+        "link_label": "View all",
+        "link": "",
         "products_to_show": 12
       }
     },
@@ -110,42 +113,48 @@
           "type": "post",
           "settings": {
             "permalink": "https://www.instagram.com/reel/DbUm3CNPomR/",
-            "link": ""
+            "link": "",
+            "alt": ""
           }
         },
         "p2": {
           "type": "post",
           "settings": {
             "permalink": "https://www.instagram.com/reel/DcQ8zHQMXNF/",
-            "link": ""
+            "link": "",
+            "alt": ""
           }
         },
         "p3": {
           "type": "post",
           "settings": {
             "permalink": "https://www.instagram.com/reel/DbqgOMIMfSE/",
-            "link": ""
+            "link": "",
+            "alt": ""
           }
         },
         "p4": {
           "type": "post",
           "settings": {
             "permalink": "https://www.instagram.com/reel/DbqfGRZMQbs/",
-            "link": ""
+            "link": "",
+            "alt": ""
           }
         },
         "p5": {
           "type": "post",
           "settings": {
             "permalink": "https://www.instagram.com/reel/DboBGcSP9jT/",
-            "link": ""
+            "link": "",
+            "alt": ""
           }
         },
         "p6": {
           "type": "post",
           "settings": {
             "permalink": "https://www.instagram.com/reel/DbIhlvFvkZ6/",
-            "link": ""
+            "link": "",
+            "alt": ""
           }
         }
       },
@@ -158,7 +167,8 @@
         "p6"
       ],
       "settings": {
-        "heading": "From the studio"
+        "heading": "From the studio",
+        "reel_shape": "reel"
       }
     }
   },
