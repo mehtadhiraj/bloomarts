@@ -207,6 +207,14 @@
       /* Later panels sit above earlier ones, so each slides in over the
          last rather than needing the previous to animate out. */
       z-index: var(--panel-z, 1);
+      /* All three panels are full-size and present at all times — only their
+         contents are translated away. So the last panel sat over the whole
+         viewport from the start and swallowed every click, and the buttons on
+         panels one and two could never be reached. Nothing here was
+         interactive until those buttons were added, which is why it went
+         unnoticed. Interactivity is handed back per panel, in the body
+         keyframes below, as each one arrives. */
+      pointer-events: none;
     }
 
     html.materials-ready:not(.reduce-motion):not(.simplify-motion) .materials__media,
@@ -245,16 +253,20 @@
   to   { transform: translate3d(0, 0, 0); }
 }
 
+/* pointer-events rides along with the entrance. A panel becomes clickable
+   only once it has arrived, so the panel above never intercepts a click meant
+   for the one on screen. It is a discrete property, so it flips rather than
+   interpolating — which is exactly what is wanted. */
 @keyframes panel-body-top {
-  from { opacity: 0; transform: translate3d(0, -45%, 0); }
-  60%  { opacity: 1; }
-  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+  from { opacity: 0; transform: translate3d(0, -45%, 0); pointer-events: none; }
+  60%  { opacity: 1; pointer-events: auto; }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); pointer-events: auto; }
 }
 
 @keyframes panel-body-bottom {
-  from { opacity: 0; transform: translate3d(0, 45%, 0); }
-  60%  { opacity: 1; }
-  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+  from { opacity: 0; transform: translate3d(0, 45%, 0); pointer-events: none; }
+  60%  { opacity: 1; pointer-events: auto; }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); pointer-events: auto; }
 }
 
 /* --------------------------------------------------------------------------

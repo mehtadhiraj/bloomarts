@@ -17,9 +17,24 @@
         {%- endif -%}
         <h2 class="section-head__title">{{ section.settings.heading }}</h2>
       </div>
-      {%- if featured != blank -%}
-        <a href="{{ featured.url }}" class="section-head__link">
-          {{ 'collections.general.view_all' | t }}
+      {%- comment -%}
+        The chosen collection is the sensible default, but the link is
+        overridable — a merchant showing one collection here may well want the
+        "view all" to lead somewhere broader.
+      {%- endcomment -%}
+      {%- liquid
+        assign head_link = section.settings.link
+        if head_link == blank
+          assign head_link = featured.url
+        endif
+      -%}
+      {%- if head_link != blank -%}
+        <a href="{{ head_link }}" class="section-head__link">
+          {%- if section.settings.link_label != blank -%}
+            {{ section.settings.link_label }}
+          {%- else -%}
+            {{ 'collections.general.view_all' | t }}
+          {%- endif -%}
           {% render 'icon', icon: 'arrow-right', size: 16 %}
         </a>
       {%- endif -%}
@@ -114,6 +129,18 @@
       "type": "collection",
       "id": "collection",
       "label": "Collection"
+    },
+    {
+      "type": "text",
+      "id": "link_label",
+      "label": "Link label",
+      "default": "View all"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Link",
+      "info": "Where the link beside the heading goes. Defaults to the collection above."
     },
     {
       "type": "range",

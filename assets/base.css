@@ -254,8 +254,11 @@ summary::-webkit-details-marker {
   display: none;
 }
 
+/* Translucent rather than solid. Chrome paints the selection colour over
+   images too, so a full-strength accent turned a selected photograph into a
+   flat yellow sheet — which reads as a rendering fault, not as a selection. */
 ::selection {
-  background-color: var(--brand-amber);
+  background-color: color-mix(in srgb, var(--brand-amber) 45%, transparent);
   color: var(--brand-brown);
 }
 
