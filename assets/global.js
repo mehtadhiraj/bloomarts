@@ -588,6 +588,23 @@
 
   const SVG_FORBIDDEN_TAGS = ['script', 'foreignObject', 'iframe', 'embed', 'object', 'animate', 'set', 'handler'];
 
+  /* A reference is safe if it points inside this document, or if it is an
+     embedded raster image.
+
+     The raster case is not a nicety: export tools routinely emit an "SVG"
+     that is really a wrapper around base64 PNGs in <image xlink:href>, and
+     the first version of this stripped every non-fragment href — which threw
+     the artwork away and left an empty frame. Rasters cannot execute
+     anything, so they are allowed.
+
+     data:image/svg+xml is deliberately NOT allowed: a nested SVG can carry
+     script, and it would arrive after this pass had already run. */
+  function isSafeSvgRef(value) {
+    const ref = value.trim();
+    if (ref.startsWith('#')) return true;
+    return /^data:image\/(png|jpe?g|gif|webp|avif);base64,/i.test(ref);
+  }
+
   function sanitiseSvg(svg) {
     SVG_FORBIDDEN_TAGS.forEach((tag) => {
       svg.querySelectorAll(tag).forEach((node) => node.remove());
@@ -596,13 +613,20 @@
     svg.querySelectorAll('*').forEach((node) => {
       Array.from(node.attributes).forEach((attr) => {
         const name = attr.name.toLowerCase();
-        const value = (attr.value || '').trim().toLowerCase();
-        // Inline handlers, and any reference that could fetch or navigate.
-        if (name.startsWith('on')) node.removeAttribute(attr.name);
-        if ((name === 'href' || name === 'xlink:href') && !value.startsWith('#')) {
+        const value = (attr.value || '').trim();
+
+        // Inline handlers.
+        if (name.startsWith('on')) {
           node.removeAttribute(attr.name);
+          return;
         }
-        if (value.startsWith('javascript:')) node.removeAttribute(attr.name);
+
+        if (name === 'href' || name === 'xlink:href') {
+          if (!isSafeSvgRef(value)) node.removeAttribute(attr.name);
+          return;
+        }
+
+        if (value.toLowerCase().startsWith('javascript:')) node.removeAttribute(attr.name);
       });
     });
 

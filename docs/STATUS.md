@@ -183,6 +183,13 @@ SMIL `animate`/`set`, every `on*` attribute, any `href` that is not a local
 fragment, and any `javascript:` value. That guarantee should not be quietly
 traded away for an animation.
 
+**The studio artwork is raster, not vector.** The file is three `<image>`
+elements holding base64 PNGs, wrapped in masks — zero paths, circles or
+polygons. Part-level animation still works, because each of the three groups
+is one bitmap, but anything that needs real geometry (a stroke drawing itself,
+wings that flap, the heart's two brush strokes arriving separately) is not
+possible from this file. That needs a true vector export.
+
 Top-level `<g>` elements are numbered `data-art-part="1..n"` — no assumption
 about ids the merchant's export tool may not have written. For the studio
 artwork those are, in document order, the bee with its brush, the heart, and
@@ -386,6 +393,7 @@ for every visitor, which is a consent question wherever that matters.
 
 | Bug | Effect | Fix |
 |---|---|---|
+| The SVG sanitiser stripped every `href` that was not a local fragment | The studio artwork is not vector art — it is six base64 PNGs in `<image xlink:href="data:image/png;base64,...">`, which is what export tools commonly emit. Stripping those threw the whole drawing away and left an empty frame. Shipped, and only caught when the source file was inspected directly | `isSafeSvgRef()` allows local fragments and base64 **raster** data URIs, which cannot execute anything. `data:image/svg+xml` stays blocked — a nested SVG can carry script and would arrive after the sanitiser had run. Rule unit-tested against fragment, png, jpeg, nested svg, `javascript:`, cross-origin and same-origin-path inputs |
 | Hero copy moved from bottom-aligned to centred | The scrim's strongest stop was at the bottom *because that is where the text was*. Moving the copy without moving the band would have left the heading on the weak middle of the gradient at roughly 0.55 strength — under the documented contrast floor over a light photograph | Full scrim strength now spans 20%-80%, which is the centred copy's band (~29%-71%) plus margin, and no wider. Outside it the scrim still eases off so the photograph does not become a flat wash |
 | Every horizontal scroller set `overflow-x: auto` and left `overflow-y` unset | An unset `overflow-y` next to a scrollable axis computes to **`auto`, not `visible`** — so the product carousel, the product gallery and the materials row were all vertical scroll containers. The scroll-reveal keyframes translate content down by up to 14px while they run, which gave the container real scrollable overflow and a scrollbar that swallowed the page's wheel — so it only misbehaved *while scrolling*, which is what made it look like an image-size problem | `overflow-y: hidden` on all three (`clip` is not a legal pairing with a scrollable axis and computes to `hidden` regardless). It costs nothing, since `overflow-x: auto` had already made each one a scroll container. The carousel also gains `padding-block` with a cancelling negative margin, so the hover lift and focus rings are not clipped |
 | The product gallery passed `ratio: 1.25` to `responsive-image` | That crops on the **CDN**, so the parts of the photograph outside a 4:5 box never reached the browser at all — no CSS could recover them. The image on a product page was silently cropped | Ratio dropped, `object-fit: contain`, and the frame takes the page background so the fitted space reads as page rather than as bars |
