@@ -1,0 +1,94 @@
+{{ 'component-customer.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'customer-addresses.js' | asset_url }}" defer></script>
+
+{%- comment -%}
+  Saved addresses. Shopify stores them against the customer; this renders the
+  list and the forms that change it.
+
+  Every form here is a real Shopify address form, so the page works with the
+  script blocked — the new-address form is simply always open, and each edit
+  form sits under its address rather than behind a toggle.
+{%- endcomment -%}
+
+<div class="customer page-width">
+  <div class="customer__header">
+    <h1 class="customer__title">{{ 'customer.addresses.title' | t }}</h1>
+    <a href="{{ routes.account_url }}" class="customer__link">{{ 'customer.addresses.back' | t }}</a>
+  </div>
+
+  {%- paginate customer.addresses by 12 -%}
+    <section aria-labelledby="new-address-heading">
+      <h2 class="customer__card-title" id="new-address-heading">{{ 'customer.addresses.add' | t }}</h2>
+
+      {%- form 'customer_address', customer.new_address, novalidate: 'novalidate' -%}
+        {% render 'form-errors', form: form %}
+        {% render 'address-fields', form_id: 'new', address: customer.new_address %}
+
+        <button type="submit" class="btn btn--primary customer__submit">
+          {{ 'customer.addresses.save' | t }}
+        </button>
+      {%- endform -%}
+    </section>
+
+    {%- if customer.addresses.size > 0 -%}
+      <section aria-labelledby="saved-heading" class="customer__grid">
+        <h2 class="customer__card-title" id="saved-heading">{{ 'customer.addresses.title' | t }}</h2>
+      </section>
+
+      <ul class="address-list" role="list">
+        {%- for address in customer.addresses -%}
+          <li class="customer__card">
+            {%- if address == customer.default_address -%}
+              <span class="address-card__badge">{{ 'customer.addresses.default' | t }}</span>
+            {%- endif -%}
+
+            <address class="customer__address">{{ address | format_address }}</address>
+
+            <div class="address-card__actions">
+              <button
+                type="button"
+                class="btn btn--secondary"
+                data-address-edit="{{ address.id }}"
+                aria-expanded="false"
+                aria-controls="address-form-{{ address.id }}"
+              >
+                {{ 'customer.addresses.edit' | t }}
+              </button>
+
+              {%- comment -%}
+                Deleting is destructive and irreversible, so it asks first.
+                data-confirm carries the wording; the script owns the prompt so
+                the markup does not depend on a browser dialog.
+              {%- endcomment -%}
+              <button
+                type="button"
+                class="btn btn--secondary"
+                data-address-delete="{{ address.url }}"
+                data-confirm="{{ 'customer.addresses.delete_confirm' | t }}"
+              >
+                {{ 'customer.addresses.delete' | t }}
+              </button>
+            </div>
+
+            <div id="address-form-{{ address.id }}" data-address-form="{{ address.id }}" hidden>
+              {%- form 'customer_address', address, novalidate: 'novalidate' -%}
+                {% render 'form-errors', form: form %}
+                {% render 'address-fields', form_id: address.id, address: address %}
+
+                <button type="submit" class="btn btn--primary customer__submit">
+                  {{ 'customer.addresses.save' | t }}
+                </button>
+              {%- endform -%}
+            </div>
+          </li>
+        {%- endfor -%}
+      </ul>
+
+      {%- if paginate.pages > 1 -%}
+        {% render 'pagination', paginate: paginate %}
+      {%- endif -%}
+    {%- else -%}
+      <p class="customer__subtitle">{{ 'customer.addresses.none' | t }}</p>
+    {%- endif -%}
+  {%- endpaginate -%}
+</div>

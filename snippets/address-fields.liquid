@@ -1,0 +1,89 @@
+{%- comment -%}
+  The fields of a Shopify address form, rendered once for both the new-address
+  form and every edit form.
+
+  Country and province use Shopify's own country_option_tags, and the province
+  field is driven from the country selection by customer-addresses.js. Without
+  the script both selects still submit — the province list is simply not
+  filtered, which is a smaller failure than a field that cannot be changed.
+
+  Accepts: form_id {String|Number}, address {Object}
+{%- endcomment -%}
+
+<div class="address-form">
+  <div class="address-form__row">
+    <div class="field">
+      <label class="field__label" for="address-first-{{ form_id }}">{{ 'customer.addresses.first_name' | t }}</label>
+      <input type="text" class="input" id="address-first-{{ form_id }}" name="address[first_name]"
+             value="{{ address.first_name }}" autocomplete="given-name" autocapitalize="words">
+    </div>
+    <div class="field">
+      <label class="field__label" for="address-last-{{ form_id }}">{{ 'customer.addresses.last_name' | t }}</label>
+      <input type="text" class="input" id="address-last-{{ form_id }}" name="address[last_name]"
+             value="{{ address.last_name }}" autocomplete="family-name" autocapitalize="words">
+    </div>
+  </div>
+
+  <div class="field">
+    <label class="field__label" for="address-company-{{ form_id }}">{{ 'customer.addresses.company' | t }}</label>
+    <input type="text" class="input" id="address-company-{{ form_id }}" name="address[company]"
+           value="{{ address.company }}" autocomplete="organization">
+  </div>
+
+  <div class="field">
+    <label class="field__label" for="address-1-{{ form_id }}">{{ 'customer.addresses.address1' | t }}</label>
+    <input type="text" class="input" id="address-1-{{ form_id }}" name="address[address1]"
+           value="{{ address.address1 }}" autocomplete="address-line1">
+  </div>
+
+  <div class="field">
+    <label class="field__label" for="address-2-{{ form_id }}">{{ 'customer.addresses.address2' | t }}</label>
+    <input type="text" class="input" id="address-2-{{ form_id }}" name="address[address2]"
+           value="{{ address.address2 }}" autocomplete="address-line2">
+  </div>
+
+  <div class="address-form__row">
+    <div class="field">
+      <label class="field__label" for="address-city-{{ form_id }}">{{ 'customer.addresses.city' | t }}</label>
+      <input type="text" class="input" id="address-city-{{ form_id }}" name="address[city]"
+             value="{{ address.city }}" autocomplete="address-level2" autocapitalize="words">
+    </div>
+    <div class="field">
+      <label class="field__label" for="address-zip-{{ form_id }}">{{ 'customer.addresses.zip' | t }}</label>
+      {%- comment -%}
+        inputmode numeric rather than type number: an Indian PIN code is a
+        string of digits, not a quantity, and type number brings spinners and
+        drops leading zeros.
+      {%- endcomment -%}
+      <input type="text" class="input" id="address-zip-{{ form_id }}" name="address[zip]"
+             value="{{ address.zip }}" autocomplete="postal-code" inputmode="numeric" autocapitalize="characters">
+    </div>
+  </div>
+
+  <div class="address-form__row">
+    <div class="field">
+      <label class="field__label" for="address-country-{{ form_id }}">{{ 'customer.addresses.country' | t }}</label>
+      <select class="select" id="address-country-{{ form_id }}" name="address[country]"
+              autocomplete="country" data-address-country data-province-target="address-province-{{ form_id }}"
+              data-default="{{ address.country }}">
+        {{ country_option_tags }}
+      </select>
+    </div>
+    <div class="field" data-province-wrapper>
+      <label class="field__label" for="address-province-{{ form_id }}">{{ 'customer.addresses.province' | t }}</label>
+      <select class="select" id="address-province-{{ form_id }}" name="address[province]"
+              autocomplete="address-level1" data-default="{{ address.province }}"></select>
+    </div>
+  </div>
+
+  <div class="field">
+    <label class="field__label" for="address-phone-{{ form_id }}">{{ 'customer.addresses.phone' | t }}</label>
+    <input type="tel" class="input" id="address-phone-{{ form_id }}" name="address[phone]"
+           value="{{ address.phone }}" autocomplete="tel" inputmode="tel">
+  </div>
+
+  <label class="checkbox">
+    <input type="checkbox" name="address[default]" value="1" {% if address.id == customer.default_address.id %}checked{% endif %}>
+    <span>{{ 'customer.addresses.set_default' | t }}</span>
+  </label>
+</div>

@@ -1,0 +1,41 @@
+{{ 'component-customer.css' | asset_url | stylesheet_tag }}
+
+{%- comment -%}
+  Reached from an account invitation. Two submits on one form: activate, or
+  decline. Both post to Shopify.
+{%- endcomment -%}
+
+<div class="customer page-width page-width--narrow">
+  <h1 class="customer__title">{{ 'customer.activate.title' | t }}</h1>
+  <p class="customer__subtitle">{{ 'customer.activate.subtitle' | t }}</p>
+
+  <div class="customer__panel">
+    {%- form 'activate_customer_password', novalidate: 'novalidate' -%}
+      {% render 'form-errors', form: form %}
+
+      <div class="field">
+        <label class="field__label" for="activate-password">{{ 'customer.activate.password' | t }}</label>
+        <input type="password" class="input" id="activate-password" name="customer[password]"
+               autocomplete="new-password" enterkeyhint="next" required>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="activate-confirm">{{ 'customer.activate.confirm' | t }}</label>
+        <input type="password" class="input" id="activate-confirm" name="customer[password_confirmation]"
+               autocomplete="new-password" enterkeyhint="go" required>
+      </div>
+
+      <button type="submit" class="btn btn--primary customer__submit">
+        {{ 'customer.activate.submit' | t }}
+      </button>
+
+      {%- comment -%}
+        name="decline" is what tells Shopify this submit declines rather than
+        activates. It is a real submit button, not a link.
+      {%- endcomment -%}
+      <button type="submit" name="decline" class="customer__link">
+        {{ 'customer.activate.decline' | t }}
+      </button>
+    {%- endform -%}
+  </div>
+</div>

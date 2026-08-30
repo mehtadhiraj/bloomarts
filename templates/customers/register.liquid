@@ -1,0 +1,58 @@
+{{ 'component-customer.css' | asset_url | stylesheet_tag }}
+
+{%- comment -%}
+  Create an account.
+
+  Shopify owns the record. This form posts name, email and password to
+  Shopify, which validates them, hashes the password and creates the
+  customer. Nothing is written to the theme or the repository.
+{%- endcomment -%}
+
+<div class="customer page-width page-width--narrow">
+  <h1 class="customer__title">{{ 'customer.register.title' | t }}</h1>
+  <p class="customer__subtitle">{{ 'customer.register.subtitle' | t }}</p>
+
+  <div class="customer__panel">
+    {%- form 'create_customer', novalidate: 'novalidate' -%}
+      {% render 'form-errors', form: form %}
+
+      <div class="field">
+        <label class="field__label" for="register-first">{{ 'customer.register.first_name' | t }}</label>
+        <input type="text" class="input" id="register-first" name="customer[first_name]"
+               autocomplete="given-name" autocapitalize="words" enterkeyhint="next">
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="register-last">{{ 'customer.register.last_name' | t }}</label>
+        <input type="text" class="input" id="register-last" name="customer[last_name]"
+               autocomplete="family-name" autocapitalize="words" enterkeyhint="next">
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="register-email">{{ 'customer.register.email' | t }}</label>
+        <input type="email" class="input" id="register-email" name="customer[email]"
+               autocomplete="email" autocapitalize="off" autocorrect="off" spellcheck="false"
+               inputmode="email" enterkeyhint="next" required>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="register-password">{{ 'customer.register.password' | t }}</label>
+        {%- comment -%}
+          new-password, not current-password: it is what tells a password
+          manager to offer to generate and save one.
+        {%- endcomment -%}
+        <input type="password" class="input" id="register-password" name="customer[password]"
+               autocomplete="new-password" enterkeyhint="go" required>
+      </div>
+
+      <button type="submit" class="btn btn--primary customer__submit">
+        {{ 'customer.register.submit' | t }}
+      </button>
+    {%- endform -%}
+
+    <p class="customer__aside">
+      {{ 'customer.register.has_account' | t }}
+      <a href="{{ routes.account_login_url }}">{{ 'customer.register.log_in' | t }}</a>
+    </p>
+  </div>
+</div>

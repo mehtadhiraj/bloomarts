@@ -1,0 +1,275 @@
+/* ==========================================================================
+   Customer account pages
+
+   Login, register, account, orders, addresses. Narrow measure, one column,
+   the same field and button primitives as the rest of the theme — these are
+   forms, and a form page that invents its own controls is a form page people
+   get wrong.
+   ========================================================================== */
+
+.customer {
+  padding-block: var(--space-xl);
+}
+
+.customer__title {
+  margin: 0 0 var(--space-3xs);
+  font-size: var(--text-2xl);
+}
+
+.customer__subtitle {
+  margin: 0 0 var(--space-md);
+  color: var(--color-text-muted);
+}
+
+.customer__panel > form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.customer__submit {
+  width: 100%;
+  margin-top: var(--space-2xs);
+}
+
+@media (min-width: 480px) {
+  .customer__submit {
+    width: auto;
+    min-width: 12rem;
+  }
+}
+
+.customer__link {
+  align-self: flex-start;
+  /* A text link still has to be a 44px target. */
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-min);
+  font-size: var(--text-sm);
+}
+
+.customer__aside {
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-border);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.customer__notice {
+  margin: 0 0 var(--space-md);
+  padding: var(--space-2xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  background-color: color-mix(in srgb, var(--brand-sage) 28%, var(--color-background));
+  color: var(--color-text);
+}
+
+/* A label wrapping its own input, so the whole row is the target rather than
+   the 16px box alone. */
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  min-height: var(--tap-min);
+  cursor: pointer;
+}
+
+.checkbox input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--color-accent);
+  flex: 0 0 auto;
+}
+
+/* --------------------------------------------------------------------------
+   Errors
+   -------------------------------------------------------------------------- */
+
+.form-errors {
+  display: flex;
+  gap: var(--space-2xs);
+  padding: var(--space-2xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  /* Sale red rather than a red of its own, so the one alarming colour in the
+     theme stays the one alarming colour. */
+  background-color: color-mix(in srgb, var(--color-sale) 12%, var(--color-background));
+  border: 1px solid color-mix(in srgb, var(--color-sale) 40%, transparent);
+  color: var(--color-sale-text, var(--color-text));
+}
+
+.form-errors__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3xs);
+  font-size: var(--text-sm);
+}
+
+/* --------------------------------------------------------------------------
+   Account layout
+   -------------------------------------------------------------------------- */
+
+.customer__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2xs);
+  margin-bottom: var(--space-md);
+}
+
+.customer__grid {
+  display: grid;
+  gap: var(--space-lg);
+}
+
+@media (min-width: 768px) {
+  .customer__grid {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+.customer__card {
+  padding: var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background-color: var(--color-surface, var(--color-background));
+}
+
+.customer__card-title {
+  margin: 0 0 var(--space-2xs);
+  font-size: var(--text-lg);
+}
+
+.customer__address {
+  margin: 0;
+  font-style: normal;
+  line-height: var(--leading-loose, 1.7);
+  color: var(--color-text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   Orders
+
+   A table on a wide screen, and a stack of labelled rows on a phone. The
+   labels come from data-label rather than being repeated in the markup, so
+   there is one source for each column heading.
+   -------------------------------------------------------------------------- */
+
+.orders {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.orders th,
+.orders td {
+  padding: var(--space-2xs) var(--space-2xs) var(--space-2xs) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.orders th {
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+@media (max-width: 767px) {
+  .orders thead {
+    /* Not display: none — that removes it from the accessibility tree along
+       with the visual layout, and the row labels below are only meaningful
+       because these headings still exist for a screen reader. */
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .orders,
+  .orders tbody,
+  .orders tr,
+  .orders td {
+    display: block;
+    width: 100%;
+  }
+
+  .orders tr {
+    padding-block: var(--space-2xs);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .orders td {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    border: 0;
+    padding-block: var(--space-3xs);
+  }
+
+  .orders td::before {
+    content: attr(data-label);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Addresses
+   -------------------------------------------------------------------------- */
+
+.address-list {
+  display: grid;
+  gap: var(--space-md);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 600px) {
+  .address-list {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  }
+}
+
+.address-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs);
+  margin-top: var(--space-2xs);
+}
+
+.address-card__badge {
+  display: inline-block;
+  margin-bottom: var(--space-3xs);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.address-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+.address-form__row {
+  display: grid;
+  gap: var(--space-sm);
+}
+
+@media (min-width: 600px) {
+  .address-form__row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

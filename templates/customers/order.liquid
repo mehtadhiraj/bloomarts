@@ -1,0 +1,93 @@
+{{ 'component-customer.css' | asset_url | stylesheet_tag }}
+
+{%- comment -%}
+  A single order. Read-only, and read entirely from Shopify's order object.
+{%- endcomment -%}
+
+<div class="customer page-width">
+  <div class="customer__header">
+    <div>
+      <h1 class="customer__title">{{ 'customer.order.title' | t: name: order.name }}</h1>
+      <p class="customer__subtitle">
+        {{ 'customer.order.placed_on' | t: date: order.created_at | date: format: 'date' }}
+      </p>
+    </div>
+    <a href="{{ routes.account_url }}" class="customer__link">{{ 'customer.order.back' | t }}</a>
+  </div>
+
+  {%- if order.cancelled -%}
+    <p class="customer__notice" role="status">
+      {{ 'customer.order.cancelled' | t: date: order.cancelled_at | date: format: 'date' }}
+      {%- if order.cancel_reason %} {{ 'customer.order.cancelled_reason' | t: reason: order.cancel_reason_label }}{% endif -%}
+    </p>
+  {%- endif -%}
+
+  <table class="orders">
+    <thead>
+      <tr>
+        <th scope="col">{{ 'customer.order.product' | t }}</th>
+        <th scope="col">{{ 'customer.order.price' | t }}</th>
+        <th scope="col">{{ 'customer.order.quantity' | t }}</th>
+        <th scope="col">{{ 'customer.order.total' | t }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {%- for line_item in order.line_items -%}
+        <tr>
+          <td data-label="{{ 'customer.order.product' | t }}">
+            <a href="{{ line_item.product.url }}">{{ line_item.title }}</a>
+            {%- comment -%}
+              Line item properties are the customization the shopper chose.
+              Leaving them off an order page would hide the one thing that
+              makes the piece theirs.
+            {%- endcomment -%}
+            {%- if line_item.properties.size > 0 -%}
+              <ul class="form-errors__list" role="list">
+                {%- for property in line_item.properties -%}
+                  {%- if property.last != blank and property.first[0] != '_' -%}
+                    <li>{{ property.first }}: {{ property.last }}</li>
+                  {%- endif -%}
+                {%- endfor -%}
+              </ul>
+            {%- endif -%}
+          </td>
+          <td data-label="{{ 'customer.order.price' | t }}">{{ line_item.price | money }}</td>
+          <td data-label="{{ 'customer.order.quantity' | t }}">{{ line_item.quantity }}</td>
+          <td data-label="{{ 'customer.order.total' | t }}">{{ line_item.line_price | money }}</td>
+        </tr>
+      {%- endfor -%}
+    </tbody>
+    <tfoot>
+      <tr>
+        <td data-label="{{ 'customer.order.subtotal' | t }}" colspan="3">{{ 'customer.order.subtotal' | t }}</td>
+        <td data-label="{{ 'customer.order.subtotal' | t }}">{{ order.line_items_subtotal_price | money }}</td>
+      </tr>
+      <tr>
+        <td data-label="{{ 'customer.order.shipping' | t }}" colspan="3">{{ 'customer.order.shipping' | t }}</td>
+        <td data-label="{{ 'customer.order.shipping' | t }}">{{ order.shipping_price | money }}</td>
+      </tr>
+      <tr>
+        <td data-label="{{ 'customer.order.tax' | t }}" colspan="3">{{ 'customer.order.tax' | t }}</td>
+        <td data-label="{{ 'customer.order.tax' | t }}">{{ order.tax_price | money }}</td>
+      </tr>
+      <tr>
+        <td data-label="{{ 'customer.order.total' | t }}" colspan="3"><strong>{{ 'customer.order.total' | t }}</strong></td>
+        <td data-label="{{ 'customer.order.total' | t }}"><strong>{{ order.total_price | money }}</strong></td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <div class="customer__grid">
+    <section class="customer__card" aria-labelledby="billing-heading">
+      <h2 class="customer__card-title" id="billing-heading">{{ 'customer.order.billing_address' | t }}</h2>
+      <p class="customer__subtitle">{{ 'customer.order.payment_status' | t }}: {{ order.financial_status_label }}</p>
+      <address class="customer__address">{{ order.billing_address | format_address }}</address>
+    </section>
+
+    <section class="customer__card" aria-labelledby="shipping-heading">
+      <h2 class="customer__card-title" id="shipping-heading">{{ 'customer.order.shipping_address' | t }}</h2>
+      <p class="customer__subtitle">{{ 'customer.order.fulfillment_status' | t }}: {{ order.fulfillment_status_label }}</p>
+      <address class="customer__address">{{ order.shipping_address | format_address }}</address>
+    </section>
+  </div>
+</div>

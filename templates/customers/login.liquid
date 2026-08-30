@@ -1,0 +1,122 @@
+{{ 'component-customer.css' | asset_url | stylesheet_tag }}
+
+{%- comment -%}
+  Log in, and password recovery.
+
+  Both live on this template because Shopify drives the switch between them
+  itself: #recover in the URL, or a failed recovery, and `recover_password`
+  is set. Two templates could not see each other's state.
+
+  Nothing here stores anything. The customer_login form tag posts to Shopify,
+  which owns the customer record, hashes the password and issues the session.
+  The theme renders fields and reads back errors — it never sees a stored
+  password and has nowhere to keep one.
+
+  (Written in prose deliberately. A Liquid tag inside a comment body opens a
+  block that never closes and takes the whole file down.)
+{%- endcomment -%}
+
+<div class="customer page-width page-width--narrow">
+  {%- comment -%}
+    Shown when Shopify has just accepted a recovery request. It is a success
+    message, so it is announced rather than left for the eye to find.
+  {%- endcomment -%}
+  {%- if form.posted_successfully? -%}
+    <p class="customer__notice" role="status">
+      {{ 'customer.login.recover_sent' | t }}
+    </p>
+  {%- endif -%}
+
+  <div class="customer__panel" data-customer-panel="login" {% if recover_password %}hidden{% endif %}>
+    <h1 class="customer__title">{{ 'customer.login.title' | t }}</h1>
+    <p class="customer__subtitle">{{ 'customer.login.subtitle' | t }}</p>
+
+    {%- form 'customer_login', novalidate: 'novalidate' -%}
+      {% render 'form-errors', form: form %}
+
+      <div class="field">
+        <label class="field__label" for="customer-email">{{ 'customer.login.email' | t }}</label>
+        <input
+          type="email"
+          class="input"
+          id="customer-email"
+          name="customer[email]"
+          autocomplete="email"
+          autocapitalize="off"
+          autocorrect="off"
+          spellcheck="false"
+          inputmode="email"
+          enterkeyhint="next"
+          required
+        >
+      </div>
+
+      {%- if form.password_needed -%}
+        <div class="field">
+          <label class="field__label" for="customer-password">{{ 'customer.login.password' | t }}</label>
+          <input
+            type="password"
+            class="input"
+            id="customer-password"
+            name="customer[password]"
+            autocomplete="current-password"
+            enterkeyhint="go"
+            required
+          >
+        </div>
+      {%- endif -%}
+
+      <button type="submit" class="btn btn--primary customer__submit">
+        {{ 'customer.login.submit' | t }}
+      </button>
+
+      {%- comment -%}
+        A button, not a link. It changes state on this page rather than
+        navigating, and only falls back to the #recover URL if the script
+        never runs.
+      {%- endcomment -%}
+      <a href="#recover" class="customer__link" data-customer-toggle="recover">
+        {{ 'customer.login.forgot' | t }}
+      </a>
+    {%- endform -%}
+
+    <p class="customer__aside">
+      {{ 'customer.login.no_account' | t }}
+      <a href="{{ routes.account_register_url }}">{{ 'customer.login.create' | t }}</a>
+    </p>
+  </div>
+
+  <div class="customer__panel" data-customer-panel="recover" {% unless recover_password %}hidden{% endunless %}>
+    <h1 class="customer__title">{{ 'customer.login.recover_title' | t }}</h1>
+    <p class="customer__subtitle">{{ 'customer.login.recover_subtitle' | t }}</p>
+
+    {%- form 'recover_customer_password', novalidate: 'novalidate' -%}
+      {% render 'form-errors', form: form %}
+
+      <div class="field">
+        <label class="field__label" for="recover-email">{{ 'customer.login.email' | t }}</label>
+        <input
+          type="email"
+          class="input"
+          id="recover-email"
+          name="email"
+          autocomplete="email"
+          autocapitalize="off"
+          autocorrect="off"
+          spellcheck="false"
+          inputmode="email"
+          enterkeyhint="send"
+          required
+        >
+      </div>
+
+      <button type="submit" class="btn btn--primary customer__submit">
+        {{ 'customer.login.recover_submit' | t }}
+      </button>
+
+      <a href="{{ routes.account_login_url }}" class="customer__link" data-customer-toggle="login">
+        {{ 'customer.login.cancel' | t }}
+      </a>
+    {%- endform -%}
+  </div>
+</div>

@@ -26,7 +26,7 @@
     },
     "search": {
       "title": "Search",
-      "placeholder": "Search concrete, clay, resin\u2026",
+      "placeholder": "Search concrete, clay, resin…",
       "submit": "Search",
       "clear": "Clear search",
       "results_for": "Results for \"{{ terms }}\"",
@@ -48,7 +48,7 @@
       "label": "Email address",
       "placeholder": "you@example.com",
       "submit": "Subscribe",
-      "success": "Thanks \u2014 you're on the list.",
+      "success": "Thanks — you're on the list.",
       "error": "Please enter a valid email address."
     },
     "social": {
@@ -66,7 +66,7 @@
   "products": {
     "product": {
       "add_to_cart": "Add to cart",
-      "adding": "Adding\u2026",
+      "adding": "Adding…",
       "added_to_cart": "Added to cart",
       "add_error": "Sorry, we couldn't add that. Please try again.",
       "sold_out": "Sold out",
@@ -158,7 +158,7 @@
         "other": "{{ count }} items"
       },
       "note": "Order note",
-      "note_placeholder": "Delivery instructions, gift notes\u2026",
+      "note_placeholder": "Delivery instructions, gift notes…",
       "continue_shopping": "Continue shopping"
     }
   },
@@ -169,7 +169,99 @@
       "addresses": "Addresses",
       "log_out": "Log out",
       "log_in": "Log in",
-      "register": "Create account"
+      "register": "Create account",
+      "welcome": "Hello, {{ name }}",
+      "details": "Account details",
+      "view_addresses": "View addresses",
+      "no_orders": "You have not placed any orders yet.",
+      "start_shopping": "Start shopping"
+    },
+    "login": {
+      "title": "Log in",
+      "subtitle": "Sign in to see your orders and saved addresses.",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Log in",
+      "forgot": "Forgot your password?",
+      "no_account": "New here?",
+      "create": "Create an account",
+      "recover_title": "Reset your password",
+      "recover_subtitle": "Enter your email and we will send you a link to set a new one.",
+      "recover_submit": "Send reset link",
+      "recover_sent": "We have sent you an email with a link to reset your password.",
+      "cancel": "Back to log in"
+    },
+    "register": {
+      "title": "Create an account",
+      "subtitle": "Save your details so checkout is quicker next time.",
+      "first_name": "First name",
+      "last_name": "Last name",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Create account",
+      "has_account": "Already have an account?",
+      "log_in": "Log in"
+    },
+    "activate": {
+      "title": "Activate your account",
+      "subtitle": "Choose a password to finish setting up your account.",
+      "password": "Password",
+      "confirm": "Confirm password",
+      "submit": "Activate account",
+      "decline": "Decline invitation"
+    },
+    "orders": {
+      "title": "Order history",
+      "order": "Order",
+      "date": "Date",
+      "payment": "Payment",
+      "fulfillment": "Fulfilment",
+      "total": "Total",
+      "view": "View order"
+    },
+    "order": {
+      "title": "Order {{ name }}",
+      "placed_on": "Placed on {{ date }}",
+      "cancelled": "Cancelled on {{ date }}",
+      "cancelled_reason": "Reason: {{ reason }}",
+      "product": "Product",
+      "sku": "SKU",
+      "price": "Price",
+      "quantity": "Quantity",
+      "total": "Total",
+      "subtotal": "Subtotal",
+      "discount": "Discount",
+      "shipping": "Shipping",
+      "tax": "Tax",
+      "billing_address": "Billing address",
+      "shipping_address": "Shipping address",
+      "payment_status": "Payment status",
+      "fulfillment_status": "Fulfilment status",
+      "track": "Track shipment",
+      "back": "Back to account"
+    },
+    "addresses": {
+      "title": "Addresses",
+      "add": "Add a new address",
+      "edit": "Edit",
+      "delete": "Delete",
+      "delete_confirm": "Delete this address?",
+      "default": "Default address",
+      "set_default": "Set as default address",
+      "first_name": "First name",
+      "last_name": "Last name",
+      "company": "Company",
+      "address1": "Address",
+      "address2": "Apartment, suite, etc.",
+      "city": "City",
+      "country": "Country",
+      "province": "State",
+      "zip": "PIN code",
+      "phone": "Phone",
+      "save": "Save address",
+      "cancel": "Cancel",
+      "none": "You have not saved an address yet.",
+      "back": "Back to account"
     }
   },
   "templates": {

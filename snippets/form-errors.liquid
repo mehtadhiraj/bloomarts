@@ -1,0 +1,27 @@
+{%- comment -%}
+  Shopify's form errors, rendered once and consistently.
+
+  role="alert" and tabindex="-1" together: the message is announced when it
+  appears, and JS can move focus to it so a keyboard or screen reader user is
+  taken to the problem rather than left at the bottom of a submitted form.
+
+  Accepts: form {Object}
+{%- endcomment -%}
+
+{%- if form.errors -%}
+  <div class="form-errors" role="alert" tabindex="-1" data-form-errors>
+    {% render 'icon', icon: 'alert', size: 18 %}
+    <ul class="form-errors__list" role="list">
+      {%- for field in form.errors -%}
+        <li>
+          {%- if field == 'form' -%}
+            {{ form.errors.messages[field] }}
+          {%- else -%}
+            {{ form.errors.translated_fields[field] | capitalize }}
+            {{ form.errors.messages[field] }}
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+{%- endif -%}

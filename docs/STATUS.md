@@ -497,6 +497,35 @@ Sync timing is per-file and uneven. A brand-new section file can lag behind the
 template that references it, so a section missing right after a push may just
 be timing. Re-check before concluding.
 
+## 6c. Customer accounts
+
+All seven classic customer templates now exist — `login`, `register`,
+`account`, `order`, `addresses`, `reset_password`, `activate_account` — plus
+`snippets/form-errors.liquid`, `snippets/address-fields.liquid`,
+`assets/component-customer.css` and `assets/customer-addresses.js`.
+
+**No customer data lives in the theme.** Every form is a Shopify `{%- raw -%}{% form %}{%- endraw -%}` tag
+posting to Shopify, which owns the customer record, hashes the password,
+issues the session and stores addresses and order history. The theme renders
+fields and reads back `form.errors`. There is nothing to store here and
+nowhere to store it.
+
+**Why they were built:** Shopify's *new* customer accounts route login through
+`shop.app/accounts/bounce`, and that host is blocked on the merchant's network
+— their resolver returns a Reliance Jio address (`49.44.79.236`) where
+1.1.1.1 and 8.8.8.8 both return Shopify's (`23.227.39.20`), and the connection
+fails even when DNS is bypassed. Classic accounts render sign-in inside the
+theme on the store's own domain and never touch `shop.app`.
+
+**Switching costs something.** Customers created under new accounts have no
+password, because that flow never asked for one. After switching they must use
+*Forgot your password* once to set one. Worth an email before flipping the
+setting rather than after.
+
+`customer-addresses.js` is progressive enhancement throughout: without it the
+edit forms sit open under each address instead of behind a toggle, and the
+province select is unfiltered rather than uneditable.
+
 ## 7. Open decisions blocking work
 
 | # | Decision needed | Blocks |
