@@ -71,11 +71,22 @@ different one.
 On any product, scroll to **Metafields → Customization fields**, and add
 entries in the order they should appear.
 
-A product with entries shows **only** those. A product with none falls back to
-the customization blocks in the theme editor, which is the sensible default for
-a catalogue where most products share one set of options. A product showing
-both its own fields and the theme's defaults would be worse than either, so it
-is one or the other.
+**A product with nothing configured shows nothing** — no fields, no "Make it
+yours" heading. The theme ships no customization fields of its own, so what a
+shopper is asked for is exactly what is set here and nowhere else.
+
+### Where the panel appears
+
+The product template has a **Customization** block in the theme editor. It
+holds no field definitions — it is only a *position*, deciding whether
+personalising comes before or after the quantity. Its optional **Heading**
+overrides the translated default.
+
+The theme can still define fields for the whole catalogue, via the individual
+Colour swatches / Dropdown / Short text / Long text / File upload blocks. That
+is for a catalogue where every product genuinely takes the same options.
+Nothing ships using them, and a product's own list wins outright — showing both
+would be worse than either.
 
 ---
 

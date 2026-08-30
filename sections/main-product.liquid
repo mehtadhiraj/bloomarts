@@ -94,36 +94,52 @@
                 </div>
               {%- endunless -%}
 
+            {%- comment -%}
+              The admin-driven panel. This block carries no field definitions
+              of its own — it is a *position*, so the merchant decides in the
+              theme editor whether personalising comes before or after the
+              quantity, while what is actually asked for comes from the
+              product in Shopify. A product with nothing configured renders
+              nothing here, heading included.
+            {%- endcomment -%}
+            {%- when 'customization' -%}
+              {%- if use_product_fields -%}
+                {%- unless customization_seen -%}
+                  {%- assign customization_seen = true -%}
+                  <h2 class="product__customization-title" {{ block.shopify_attributes }}>
+                    {% render 'brand-motif', motif: 'heart', size: 16, class: 'motif--inline' %}
+                    {%- if block.settings.heading != blank -%}
+                      {{ block.settings.heading }}
+                    {%- else -%}
+                      {{ 'products.customization.title' | t }}
+                    {%- endif -%}
+                  </h2>
+                {%- endunless -%}
+
+                {%- for entry in product_fields -%}
+                  {% render 'product-customization-entry',
+                     entry: entry,
+                     index: forloop.index,
+                     section_id: section.id %}
+                {%- endfor -%}
+              {%- endif -%}
+
+            {%- comment -%}
+              The theme-level fields. Still supported, because a catalogue
+              where every product genuinely takes the same options should not
+              have to repeat itself per product — but nothing ships using
+              them, and a product's own list wins outright. Showing both would
+              be worse than either.
+            {%- endcomment -%}
             {%- when 'swatch_property', 'text_property', 'textarea_property', 'select_property', 'file_property' -%}
-              {%- comment -%}
-                Customization blocks read as one panel under a single
-                heading, so personalising is visibly a distinct step rather
-                than more variant controls.
-              {%- endcomment -%}
-              {%- unless customization_seen -%}
-                {%- assign customization_seen = true -%}
-                <h2 class="product__customization-title">
-                  {% render 'brand-motif', motif: 'heart', size: 16, class: 'motif--inline' %}
-                  {{ 'products.customization.title' | t }}
-                </h2>
-
-                {%- comment -%}
-                  The admin-defined list is emitted once, at wherever the
-                  merchant put the first customization block, so ordering
-                  relative to price and quantity still comes from the theme
-                  editor.
-                {%- endcomment -%}
-                {%- if use_product_fields -%}
-                  {%- for entry in product_fields -%}
-                    {% render 'product-customization-entry',
-                       entry: entry,
-                       index: forloop.index,
-                       section_id: section.id %}
-                  {%- endfor -%}
-                {%- endif -%}
-              {%- endunless -%}
-
               {%- unless use_product_fields -%}
+                {%- unless customization_seen -%}
+                  {%- assign customization_seen = true -%}
+                  <h2 class="product__customization-title">
+                    {% render 'brand-motif', motif: 'heart', size: 16, class: 'motif--inline' %}
+                    {{ 'products.customization.title' | t }}
+                  </h2>
+                {%- endunless -%}
                 {%- comment -%}
                   Precomputed: the render tag takes variables, not filter
                   expressions. Inlining "'custom-' | append: block.id" here
@@ -248,6 +264,18 @@
       ]
     },
     { "type": "price", "name": "Price", "limit": 1, "settings": [] },
+    {
+      "type": "customization",
+      "name": "Customization",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Fields come from each product's Customization fields metafield in Shopify. This block only decides where they appear."
+        },
+        { "type": "text", "id": "heading", "label": "Heading", "info": "Leave empty to use the translated default." }
+      ]
+    },
     { "type": "variant_picker", "name": "Variant picker", "limit": 1, "settings": [] },
     { "type": "quantity", "name": "Quantity", "limit": 1, "settings": [] },
     { "type": "buy_buttons", "name": "Buy buttons", "limit": 1, "settings": [] },

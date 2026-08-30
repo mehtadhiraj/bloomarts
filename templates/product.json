@@ -13,58 +13,13 @@
           "type": "price",
           "settings": {}
         },
+        "customization": {
+          "type": "customization",
+          "settings": {}
+        },
         "variant-picker": {
           "type": "variant_picker",
           "settings": {}
-        },
-        "custom-colour": {
-          "type": "swatch_property",
-          "settings": {
-            "label": "Pour colour",
-            "property_name": "Pour colour",
-            "values": "Charcoal, Bone, Sage, Rust, Sea Glass",
-            "hint": "Pigment is mixed by hand, so expect slight variation between pieces.",
-            "required": false
-          }
-        },
-        "custom-base": {
-          "type": "select_property",
-          "settings": {
-            "label": "Base finish",
-            "property_name": "Base finish",
-            "values": "Cork, Felt, None",
-            "placeholder": "Choose a base",
-            "required": true
-          }
-        },
-        "custom-engraving": {
-          "type": "text_property",
-          "settings": {
-            "label": "Engraving",
-            "property_name": "Engraving",
-            "max_length": 25,
-            "required": false
-          }
-        },
-        "custom-message": {
-          "type": "textarea_property",
-          "settings": {
-            "label": "Gift message",
-            "property_name": "Gift message",
-            "max_length": 200,
-            "hint": "Written on a card and packed with the piece.",
-            "required": false
-          }
-        },
-        "custom-upload": {
-          "type": "file_property",
-          "settings": {
-            "label": "Reference image",
-            "property_name": "Reference image",
-            "accept": "image/jpeg,image/png,application/pdf",
-            "max_size_mb": 5,
-            "required": false
-          }
         },
         "quantity": {
           "type": "quantity",
@@ -89,7 +44,7 @@
           "type": "collapsible",
           "settings": {
             "heading": "Shipping & returns",
-            "content": "<p>Made to order in 5\u20137 working days, then shipped in 2\u20134. Personalised pieces cannot be returned unless they arrive damaged.</p>"
+            "content": "<p>Made to order in 5–7 working days, then shipped in 2–4. Personalised pieces cannot be returned unless they arrive damaged.</p>"
           }
         }
       },
@@ -97,11 +52,7 @@
         "title",
         "price",
         "variant-picker",
-        "custom-colour",
-        "custom-base",
-        "custom-engraving",
-        "custom-message",
-        "custom-upload",
+        "customization",
         "quantity",
         "buy",
         "description",

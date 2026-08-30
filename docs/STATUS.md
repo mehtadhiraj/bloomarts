@@ -119,9 +119,20 @@ blog/article → structured data + breadcrumbs → page loader → CSS bundling.
 ## 4. Product customization
 
 Customization options are **configured in the Shopify admin, per product** —
-see `docs/CUSTOMIZATION-FIELDS.md` for the two definitions to create. A
-product's own field list replaces the theme-editor blocks entirely; a product
-without one falls back to them.
+see `docs/CUSTOMIZATION-FIELDS.md` for the two definitions to create. The theme
+ships none of its own: a product with nothing configured renders no fields and
+no heading.
+
+The product template carries a **Customization** block that holds no field
+definitions at all — it is only a position, so the theme editor decides where
+the panel sits and the admin decides what is in it. The per-field block types
+still exist for a catalogue that genuinely shares one set of options, but
+nothing ships using them and a product's own list wins outright.
+
+This coupling was a real bug for one commit: the admin-driven fields rendered
+from *inside* the loop over the theme-editor customization blocks, so removing
+those blocks — the obvious thing to do once the admin path existed — would have
+silently taken the admin fields with them.
 
 Nothing about an option lives in the theme any more: not the label, not the
 values, not the swatch colours. A swatch value carries its own colour as
