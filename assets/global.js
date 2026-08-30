@@ -680,23 +680,30 @@
     return adopted;
   }
 
+  /* Toggled, not added once: the band this sits in sweeps out and back as you
+     scroll past and return, and a one-shot draw would play to an empty screen
+     and never again. */
+  function watchArtwork(svg) {
+    if (!('IntersectionObserver' in window)) {
+      svg.classList.add('is-drawn');
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => svg.classList.toggle('is-drawn', entry.isIntersecting),
+      { threshold: 0.25 }
+    );
+    observer.observe(svg);
+  }
+
   function setupInlineArt() {
+    /* The theme's own illustration is already inline markup — it only needs
+       the observer that starts it. */
+    document.querySelectorAll('[data-inline-svg] .studio-art').forEach(watchArtwork);
+
     document.querySelectorAll('[data-inline-svg] img').forEach((img) => {
       inlineSvg(img)
         .then((svg) => {
-          if (!svg) return;
-          if (!('IntersectionObserver' in window)) {
-            svg.classList.add('is-drawn');
-            return;
-          }
-          // Toggled, not added once: the band this sits in sweeps out and
-          // back as you scroll past and return, and a one-shot draw would
-          // play to an empty screen and never again.
-          const observer = new IntersectionObserver(
-            ([entry]) => svg.classList.toggle('is-drawn', entry.isIntersecting),
-            { threshold: 0.25 }
-          );
-          observer.observe(svg);
+          if (svg) watchArtwork(svg);
         })
         .catch(() => {
           /* The <img> is still there and still correct. An animation is not

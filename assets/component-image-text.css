@@ -419,3 +419,26 @@
 .simplify-motion .editorial-art.is-drawn [data-art-part="1"] {
   animation: art-bee-in 900ms var(--ease-out) both;
 }
+
+/* --------------------------------------------------------------------------
+   When the media is the illustration rather than a photograph
+
+   The scrim exists to put a known background behind text that would otherwise
+   sit on an unknown photo. The illustration is line art on a transparent
+   ground, so the text is already over the page colour — and the scrim was
+   only bleaching the left half of the drawing.
+
+   The inset does the job the scrim was doing for layout: it keeps the bee out
+   of the column the copy occupies, rather than veiling it once it is there.
+   -------------------------------------------------------------------------- */
+
+@media (min-width: 768px) {
+  .image-text--editorial .image-text__media:has(.studio-art)::after {
+    content: none;
+  }
+
+  .image-text--editorial .image-text__media:has(.studio-art) {
+    padding-inline-start: 14%;
+    padding-block: var(--space-lg);
+  }
+}

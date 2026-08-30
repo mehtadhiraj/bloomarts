@@ -1,4 +1,7 @@
 {{ 'component-image-text.css' | asset_url | stylesheet_tag }}
+{%- if section.settings.art_source == 'illustration' -%}
+  {{ 'component-studio-art.css' | asset_url | stylesheet_tag }}
+{%- endif -%}
 
 {%- comment -%}
   Editorial image with text.
@@ -38,12 +41,21 @@
 <section class="section image-text image-text--editorial">
   <div class="image-text__inner image-text__inner--{{ section.settings.layout }}">
     <div class="image-text__media" data-editorial="media" data-inline-svg>
-      {% render 'responsive-image',
-         image: section.settings.image,
-         sizes: '(min-width: 768px) 62vw, 100vw',
-         widths: '600,800,1000,1200,1600,2000',
-         alt: section.settings.image_alt,
-         class: 'image-text__image' %}
+      {%- if section.settings.art_source == 'illustration' -%}
+        {%- comment -%}
+          Rendered inline, not fetched. It is theme markup rather than an
+          upload, so there is nothing to download, nothing to sanitise, and
+          its colours come from the brand tokens.
+        {%- endcomment -%}
+        {% render 'studio-artwork', alt: section.settings.image_alt %}
+      {%- else -%}
+        {% render 'responsive-image',
+           image: section.settings.image,
+           sizes: '(min-width: 768px) 62vw, 100vw',
+           widths: '600,800,1000,1200,1600,2000',
+           alt: section.settings.image_alt,
+           class: 'image-text__image' %}
+      {%- endif -%}
     </div>
 
     <div class="image-text__content" data-editorial="text">
@@ -86,6 +98,17 @@
 {
   "name": "Image with text",
   "settings": [
+    {
+      "type": "select",
+      "id": "art_source",
+      "label": "Artwork",
+      "info": "The illustration is drawn by the theme, so it follows the brand colours and animates part by part.",
+      "options": [
+        { "value": "image", "label": "Uploaded image" },
+        { "value": "illustration", "label": "Bee illustration" }
+      ],
+      "default": "image"
+    },
     {
       "type": "image_picker",
       "id": "image",

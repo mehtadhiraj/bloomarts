@@ -1,0 +1,189 @@
+/* ==========================================================================
+   Studio illustration
+
+   Colour first: not one hex value lives in the SVG markup. Every fill and
+   stroke resolves to a brand token here, so changing the palette in theme
+   settings repaints the drawing. That is impossible with an exported bitmap,
+   and it is half the reason the artwork was rebuilt as paths.
+
+   Then motion. The bee arrives, paints the two halves of the heart with the
+   brush it is already holding, and the sprig grows where the brush finishes.
+   The order is the order a hand would work in, which is what makes it read
+   as painting rather than as parts appearing.
+   ========================================================================== */
+
+.studio-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.art-body { fill: var(--brand-amber); }
+.art-stripe { fill: var(--brand-brown); }
+.art-ink { stroke: var(--brand-brown); }
+.art-ink-fill { fill: var(--brand-brown); }
+.art-stem { stroke: var(--brand-olive); }
+.art-leaf { fill: var(--brand-olive); }
+.art-leaf--light { fill: var(--brand-sage); }
+.art-heart--left { stroke: var(--brand-coral); }
+.art-heart--right { stroke: var(--brand-amber); }
+
+/* A tint of the brand coral rather than a pink of its own, so the cheeks
+   follow the palette instead of drifting away from it. */
+.art-blush { fill: color-mix(in srgb, var(--brand-coral) 40%, #fff); }
+
+/* Only the parts this stylesheet animates, and named one by one rather than
+   with a wildcard.
+
+   fill-box is needed so a CSS rotation turns a part about itself instead of
+   about the corner of the canvas — but it also reinterprets the origin of any
+   `transform` attribute already on the element. A blanket rule caught the
+   abdomen and every leaf, all of which carry `rotate(a cx cy)` in the markup,
+   and threw them across the drawing. Static rotation belongs on a wrapper
+   <g>; animated transforms belong here. No element gets both. */
+.studio-art .art-bee,
+.studio-art .art-wing,
+.studio-art .art-antenna,
+.studio-art .art-leaf {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* --------------------------------------------------------------------------
+   Motion
+
+   Everything is inside the no-preference guard, including the hidden start
+   states. If the animation cannot run, the drawing is simply complete —
+   never a half-painted heart waiting on an animation that will not arrive.
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  html:not(.reduce-motion) .studio-art .art-heart,
+  html:not(.reduce-motion) .studio-art .art-stem,
+  html:not(.reduce-motion) .studio-art .art-wing {
+    /* pathLength="100" in the markup is what makes this exact: 100 is an
+       undrawn stroke and 0 a finished one, whatever the curve measures. */
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+  }
+
+  html:not(.reduce-motion) .studio-art .art-leaf,
+  html:not(.reduce-motion) .studio-art .art-bee {
+    opacity: 0;
+  }
+
+  /* ---- The sequence ---- */
+
+  html:not(.reduce-motion) .studio-art.is-drawn .art-bee {
+    animation:
+      art-fly-in 900ms var(--ease-out) both,
+      art-hover 5s ease-in-out 900ms infinite;
+  }
+
+  html:not(.reduce-motion) .studio-art.is-drawn .art-wing {
+    animation:
+      art-draw 450ms linear 150ms both,
+      art-flap 260ms ease-in-out 700ms infinite;
+  }
+
+  /* The lower wing beats slightly out of phase with the upper one — two
+     wings on exactly the same beat read as one shape. */
+  html:not(.reduce-motion) .studio-art.is-drawn .art-wing--lower {
+    animation-delay: 220ms, 780ms;
+  }
+
+  html:not(.reduce-motion) .studio-art.is-drawn .art-antenna path {
+    animation: art-draw 400ms linear 300ms both;
+  }
+
+  html:not(.reduce-motion) .studio-art.is-drawn .art-antenna {
+    animation: art-wobble 3.2s ease-in-out 900ms infinite;
+  }
+
+  html:not(.reduce-motion) .studio-art.is-drawn .art-antenna--right {
+    animation-delay: 1100ms;
+  }
+
+  /* Coral first, then amber — the brush paints one half and comes back for
+     the other. They overlap by 100ms so the second starts as the first
+     finishes, rather than after a beat of nothing. */
+  html:not(.reduce-motion) .studio-art.is-drawn .art-heart--left {
+    animation: art-draw 750ms var(--ease-out) 600ms both;
+  }
+
+  html:not(.reduce-motion) .studio-art.is-drawn .art-heart--right {
+    animation: art-draw 750ms var(--ease-out) 1250ms both;
+  }
+
+  html:not(.reduce-motion) .studio-art.is-drawn .art-stem {
+    animation: art-draw 400ms linear 1900ms both;
+  }
+
+  html:not(.reduce-motion) .studio-art.is-drawn .art-leaf {
+    animation: art-leaf-in 340ms var(--ease-out) both;
+  }
+
+  /* Leaves unfurl along the stem rather than all at once. */
+  /* Each leaf is the only ellipse inside its own wrapper <g>, so the stagger
+     keys off the wrapper's position among the sprig's groups. */
+  .studio-art.is-drawn .art-sprig g:nth-of-type(1) .art-leaf { animation-delay: 2000ms; }
+  .studio-art.is-drawn .art-sprig g:nth-of-type(2) .art-leaf { animation-delay: 2070ms; }
+  .studio-art.is-drawn .art-sprig g:nth-of-type(3) .art-leaf { animation-delay: 2140ms; }
+  .studio-art.is-drawn .art-sprig g:nth-of-type(4) .art-leaf { animation-delay: 2210ms; }
+  .studio-art.is-drawn .art-sprig g:nth-of-type(5) .art-leaf { animation-delay: 2280ms; }
+}
+
+/* The idle loops are the only things here that never stop. On a small or
+   low-powered device that is exactly what the motion brake is for — the
+   entrance still plays, but nothing runs forever afterwards. */
+.simplify-motion .studio-art.is-drawn .art-bee {
+  animation: art-fly-in 900ms var(--ease-out) both;
+}
+
+.simplify-motion .studio-art.is-drawn .art-wing {
+  animation: art-draw 450ms linear 150ms both;
+}
+
+.simplify-motion .studio-art.is-drawn .art-antenna {
+  animation: none;
+}
+
+@keyframes art-draw {
+  from { stroke-dashoffset: 100; }
+  to   { stroke-dashoffset: 0; }
+}
+
+/* In from the lower left, the way the brush is pointing. */
+@keyframes art-fly-in {
+  from {
+    opacity: 0;
+    transform: translate(-38px, 26px) rotate(-7deg);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0);
+  }
+}
+
+@keyframes art-hover {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50%      { transform: translateY(-9px) rotate(1.1deg); }
+}
+
+/* A beat, not a spin: the wing scales on its short axis, which is what a
+   wing does when seen from the side. */
+@keyframes art-flap {
+  0%, 100% { transform: rotate(0) scaleY(1); }
+  50%      { transform: rotate(-9deg) scaleY(0.82); }
+}
+
+@keyframes art-wobble {
+  0%, 100% { transform: rotate(0); }
+  50%      { transform: rotate(4deg); }
+}
+
+@keyframes art-leaf-in {
+  from { opacity: 0; transform: scale(0.4); }
+  to   { opacity: 1; transform: scale(1); }
+}

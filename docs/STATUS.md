@@ -183,12 +183,37 @@ SMIL `animate`/`set`, every `on*` attribute, any `href` that is not a local
 fragment, and any `javascript:` value. That guarantee should not be quietly
 traded away for an animation.
 
-**The studio artwork is raster, not vector.** The file is three `<image>`
-elements holding base64 PNGs, wrapped in masks — zero paths, circles or
-polygons. Part-level animation still works, because each of the three groups
-is one bitmap, but anything that needs real geometry (a stroke drawing itself,
-wings that flap, the heart's two brush strokes arriving separately) is not
-possible from this file. That needs a true vector export.
+**The studio artwork is now hand-authored vector**, in
+`snippets/studio-artwork.liquid`, selected by the section's **Artwork**
+setting. Every `.svg` the merchant had — including the one named
+`bee-vector-svg.svg` — was a PNG in an `<svg>` wrapper: zero paths, circles or
+polygons, and one of them 2.4 MB. A bitmap has no parts, so nothing inside it
+can be animated, recoloured or scaled.
+
+Not one hex value lives in the SVG markup; every fill and stroke resolves to a
+brand token in `component-studio-art.css`, so changing the palette repaints the
+drawing. Stroked paths carry `pathLength="100"`, which makes the draw-on exact
+and resolution-independent — dashoffset 100 is undrawn, 0 is finished,
+whatever the curve actually measures.
+
+Sequence: the bee flies in with the brush it is holding, paints the coral half
+of the heart, then the amber half, then the sprig grows where the brush
+finished. Wings beat out of phase with each other and the antennae wobble; both
+idle loops are dropped under `simplify-motion`, since they are the only things
+that never stop.
+
+Two traps, both hit and both worth knowing:
+
+- **`transform-box: fill-box` must be applied to named parts, never with a
+  wildcard.** It also reinterprets the origin of any `transform` attribute
+  already on the element, so a blanket rule caught the abdomen and every leaf —
+  all of which carry `rotate(a cx cy)` — and threw them across the canvas.
+  Static rotation goes on a wrapper `<g>`; animated transforms go on the child.
+  No element gets both.
+- **The editorial scrim has to be switched off for line art.** It exists to put
+  a known background behind text over an unknown photo; over transparent
+  artwork it just bleaches the drawing. The media is inset instead, which keeps
+  the bee out of the copy's column rather than veiling it once it is there.
 
 Top-level `<g>` elements are numbered `data-art-part="1..n"` — no assumption
 about ids the merchant's export tool may not have written. For the studio

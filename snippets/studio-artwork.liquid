@@ -1,0 +1,143 @@
+{%- comment -%}
+  The studio illustration, hand-authored as real vector paths.
+
+  Every export the merchant had was a PNG wrapped in an <svg>, which is what
+  image generators and most "save as SVG" buttons produce. A bitmap has no
+  parts, so nothing inside it can be animated, recoloured or scaled — this
+  exists so it can be all three.
+
+  Nothing here is a hex value. Fills and strokes are set in CSS from the
+  brand tokens, so changing the palette in theme settings repaints the
+  drawing. That is the whole reason this is markup and not an image.
+
+  Stroked paths carry pathLength="100". It makes the drawing animation
+  exact and resolution-independent: dasharray 100 / dashoffset 100 is a
+  fully undrawn stroke and 0 is a finished one, whatever the real length of
+  the curve happens to be.
+
+  Accepts: alt {String} — describes the artwork. Blank means decorative.
+{%- endcomment -%}
+
+<svg
+  class="studio-art"
+  viewBox="0 0 480 300"
+  preserveAspectRatio="xMidYMid meet"
+  fill="none"
+  {% if alt != blank %}
+    role="img" aria-label="{{ alt | escape }}"
+  {% else %}
+    aria-hidden="true" focusable="false"
+  {% endif %}
+>
+  {%- comment -%} ---------- Bee, wings, face and brush ---------- {%- endcomment -%}
+  <g class="art-bee">
+    {%- comment -%}
+      The brush first, so it sits behind the body — it is held, not laid on
+      top. Handle, ferrule, then the loaded tip.
+    {%- endcomment -%}
+    <g class="art-brush">
+      <path class="art-ink" d="M 168 176 L 292 242" stroke-width="15" stroke-linecap="round" />
+      <path class="art-ink" d="M 288 240 L 306 250" stroke-width="21" stroke-linecap="round" />
+      <path class="art-ink-fill" d="M 304 247 C 326 242, 344 254, 336 268 C 327 283, 296 275, 292 259 Z" />
+    </g>
+
+    {%- comment -%}
+      Wings are outlines rather than filled shapes, matching the drawn look.
+      Both start at the same root so they hinge where a wing would.
+    {%- endcomment -%}
+    <g class="art-bee__wings">
+      <path
+        class="art-ink art-wing art-wing--upper"
+        d="M 154 128 C 122 78, 58 66, 46 100 C 34 134, 104 150, 154 128 Z"
+        stroke-width="7"
+        stroke-linejoin="round"
+        pathLength="100"
+      />
+      <path
+        class="art-ink art-wing art-wing--lower"
+        d="M 152 136 C 128 116, 84 112, 78 132 C 72 154, 122 156, 152 136 Z"
+        stroke-width="7"
+        stroke-linejoin="round"
+        pathLength="100"
+      />
+    </g>
+
+    {%- comment -%}
+      The abdomen and its stripes share one rotation, so the stripes stay
+      square to the body instead of being redrawn at an angle. The clip keeps
+      them inside the ellipse.
+    {%- endcomment -%}
+    <g class="art-bee__body" transform="rotate(-34 128 168)">
+      <clipPath id="bloom-art-abdomen">
+        <ellipse cx="128" cy="168" rx="58" ry="42" />
+      </clipPath>
+      <ellipse class="art-body" cx="128" cy="168" rx="58" ry="42" />
+      <g clip-path="url(#bloom-art-abdomen)">
+        <rect class="art-stripe" x="70" y="120" width="20" height="96" />
+        <rect class="art-stripe" x="104" y="120" width="17" height="96" />
+        <rect class="art-stripe" x="136" y="120" width="17" height="96" />
+      </g>
+    </g>
+
+    <circle class="art-body" cx="190" cy="118" r="46" />
+
+    <g class="art-bee__face">
+      <path class="art-ink" d="M 165 113 Q 174 101 183 113" stroke-width="6" stroke-linecap="round" />
+      <path class="art-ink" d="M 197 113 Q 206 101 215 113" stroke-width="6" stroke-linecap="round" />
+      <path class="art-ink" d="M 172 130 Q 190 151 208 130" stroke-width="6" stroke-linecap="round" />
+      <ellipse class="art-blush" cx="159" cy="133" rx="10" ry="6.5" />
+      <ellipse class="art-blush" cx="221" cy="133" rx="10" ry="6.5" />
+    </g>
+
+    {%- comment -%}
+      Each antenna is its own group so it can draw on and then wobble about
+      the point where it meets the head.
+    {%- endcomment -%}
+    <g class="art-antenna art-antenna--left">
+      <path class="art-ink" d="M 176 77 C 170 53, 178 37, 192 31" stroke-width="6" stroke-linecap="round" pathLength="100" />
+      <circle class="art-ink-fill" cx="196" cy="29" r="9" />
+    </g>
+    <g class="art-antenna art-antenna--right">
+      <path class="art-ink" d="M 200 74 C 206 51, 222 41, 237 38" stroke-width="6" stroke-linecap="round" pathLength="100" />
+      <circle class="art-ink-fill" cx="241" cy="37" r="9" />
+    </g>
+  </g>
+
+  {%- comment -%}
+    ---------- The heart ----------
+
+    Two strokes, not a filled heart. Both start at the bottom point, where the
+    brush is, and sweep up and over their own lobe — so drawing them from
+    dashoffset 100 to 0 reads as the brush painting them, in the order a hand
+    would.
+  {%- endcomment -%}
+  <path
+    class="art-heart art-heart--left"
+    d="M 368 232 C 328 202, 300 164, 311 136 C 321 112, 355 112, 368 136"
+    stroke-width="26"
+    stroke-linecap="round"
+    pathLength="100"
+  />
+  <path
+    class="art-heart art-heart--right"
+    d="M 368 232 C 408 202, 436 164, 425 136 C 415 112, 381 112, 368 136"
+    stroke-width="26"
+    stroke-linecap="round"
+    pathLength="100"
+  />
+
+  {%- comment -%} ---------- Leaf sprig ---------- {%- endcomment -%}
+  <g class="art-sprig">
+    <path class="art-stem" d="M 374 282 C 402 274, 432 262, 462 240" stroke-width="5" stroke-linecap="round" pathLength="100" />
+    {%- comment -%}
+      The rotation sits on a wrapper, never on the leaf itself. The leaf is
+      scaled by CSS, and an element carrying both a transform attribute and an
+      animated CSS transform loses the attribute.
+    {%- endcomment -%}
+    <g transform="rotate(-20 392 288)"><ellipse class="art-leaf" cx="392" cy="288" rx="15" ry="8" /></g>
+    <g transform="rotate(-62 407 258)"><ellipse class="art-leaf art-leaf--light" cx="407" cy="258" rx="14" ry="7.5" /></g>
+    <g transform="rotate(-24 421 277)"><ellipse class="art-leaf" cx="421" cy="277" rx="15" ry="8" /></g>
+    <g transform="rotate(-62 436 248)"><ellipse class="art-leaf art-leaf--light" cx="436" cy="248" rx="14" ry="7.5" /></g>
+    <g transform="rotate(-30 449 266)"><ellipse class="art-leaf" cx="449" cy="266" rx="15" ry="8" /></g>
+  </g>
+</svg>
