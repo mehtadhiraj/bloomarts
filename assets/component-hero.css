@@ -1,9 +1,10 @@
 /* ==========================================================================
    Hero
 
-   Mobile stacks image over text. Text is overlaid only from 768px, where
-   there is room for a readable measure and a scrim that does not swallow
-   the photograph.
+   The copy is overlaid on the image at every size. On a phone that means the
+   hero is one screen rather than a screen of picture followed by a screen of
+   words — and the scrim below is what makes it safe, since it puts a known
+   background behind the text whatever photograph the merchant picks.
    ========================================================================== */
 
 .hero {
@@ -39,9 +40,27 @@
 .hero--full { --hero-height: 100svh; }
 
 .hero__content {
-  padding-block: var(--space-md);
-  background-color: var(--color-background);
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  padding-block: var(--space-lg);
+  color: var(--brand-cream);
+
+  /* Same contrast floor as the desktop scrim, and for the same reason: over a
+     worst-case white photograph, brown at 0.75 still gives cream text about
+     5.4:1. Full strength covers the middle, where the copy sits, and eases
+     off at the very top and bottom so the image is still an image. */
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--brand-brown) calc(var(--hero-overlay, 75) * 0.8%), transparent) 0%,
+    color-mix(in srgb, var(--brand-brown) calc(var(--hero-overlay, 75) * 1%), transparent) 10%,
+    color-mix(in srgb, var(--brand-brown) calc(var(--hero-overlay, 75) * 1%), transparent) 90%,
+    color-mix(in srgb, var(--brand-brown) calc(var(--hero-overlay, 75) * 0.7%), transparent) 100%
+  );
 }
+
 
 .hero__content-inner {
   display: flex;
@@ -63,7 +82,15 @@
 .hero__text {
   margin: 0;
   max-width: 46ch;
-  color: var(--color-text-muted);
+}
+
+/* After .hero__text, not before it. The copy sits on the scrim at every size
+   now, so muted brown would be unreadable — and an earlier rule would simply
+   have lost to the later one. Cream at 88% keeps the hierarchy without
+   dropping below AA. */
+.hero__subheading,
+.hero__text {
+  color: color-mix(in srgb, var(--brand-cream) 88%, transparent);
 }
 
 .hero__button {
@@ -89,16 +116,9 @@
   .hero--full { --hero-height: 100svh; }
 
   .hero__content {
-    position: absolute;
-    inset: 0;
-    /* Above .hero__motifs — see the z-index note there. */
-    z-index: 1;
-    display: flex;
-    /* Centred, not bottom-aligned. The copy sat low enough that the button
-       nearly touched the fold. */
-    align-items: center;
+    /* Position, overlay and colour are already set for every size. Only the
+       breathing room and the exact scrim shape change here. */
     padding-block: var(--space-xl);
-    color: var(--brand-cream);
 
     /* The scrim exists to make the text legible over an image nobody has
        seen yet.
