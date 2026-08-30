@@ -370,28 +370,34 @@
        two lines feel like one continuous hand. */
     animation-timing-function: linear;
     animation-fill-mode: both;
-    animation-duration: calc(1050ms * var(--motion-scale));
-    animation-delay: calc(200ms * var(--motion-scale));
+    animation-duration: calc(800ms * var(--motion-scale));
+    animation-delay: calc(400ms * var(--motion-scale));
   }
 
   html:not(.reduce-motion) .handwrite--first {
-    animation-duration: calc(1050ms * var(--motion-scale));
-    animation-delay: calc(200ms * var(--motion-scale));
+    animation-duration: calc(800ms * var(--motion-scale));
+    /* 400ms rather than the 200ms it was. The whole intro is pinned to
+       2000ms and the two lines to 800 and 900, so the lead-in is the only
+       number left free — and spending it here keeps the 100ms overlap. The
+       alternative, holding the lead-in at 200ms, puts a 100ms *gap* between
+       the lines instead, which is the pause this timing exists to avoid. */
+    animation-delay: calc(400ms * var(--motion-scale));
   }
 
   html:not(.reduce-motion) .handwrite--second {
     /* Great Vibes covers far more distance per character than Lora, so it
-       needs longer to read at the same writing speed. The 1.47 ratio against
-       the first line is the writing speed; both were scaled together to keep
-       it, rather than just shortening the total.
+       needs longer to read at the same writing speed. At 800/900 the ratio
+       is 1.125, so this line does write faster than the first — that is a
+       deliberate choice of the timings, not an oversight. Restoring an even
+       hand would mean roughly 1180ms here.
 
        It starts 100ms BEFORE the first line finishes. Butting the two
        exactly end-to-end still reads as a stop, because the last stroke of
        one and the first of the next need to overlap slightly to feel like
        one hand continuing. That overlap is held at 100ms rather than scaled,
        since it is a perceptual threshold and not part of the pace. */
-    animation-duration: calc(1550ms * var(--motion-scale));
-    animation-delay: calc(1150ms * var(--motion-scale));
+    animation-duration: calc(900ms * var(--motion-scale));
+    animation-delay: calc(1100ms * var(--motion-scale));
   }
 }
 
