@@ -83,11 +83,15 @@
       "type": "image-with-text",
       "settings": {
         "image_alt": "",
-        "heading": "Made slowly, on purpose",
+        "heading": "Made slowly,",
         "text": "<p>Bloom Arts is a two-person studio. Concrete cures for seven days before it is sealed, stoneware is fired twice, resin is poured in layers over three days. None of it can be rushed, which is why batches are small and colour shifts a little between pieces.</p>",
         "button_label": "Inside the studio",
         "button_link": "",
-        "layout": "text-first"
+        "layout": "text-first",
+        "eyebrow": "The studio",
+        "script_accent": "on purpose",
+        "stat_value": "7 days",
+        "stat_label": "for concrete to cure before it is sealed"
       }
     },
     "all_products": {

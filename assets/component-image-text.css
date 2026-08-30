@@ -1,33 +1,140 @@
 /* ==========================================================================
-   Image with text
+   Image with text — editorial
+
+   The image runs edge to edge and the text sits over it. Two things make
+   that safe rather than merely dramatic:
+
+   1. The text is never over bare photograph. The image carries a scrim that
+      is fully the page colour at its inner edge and gone by the time the
+      photograph is doing any work, so the overlap band always has a known
+      background behind it. Contrast does not depend on which image the
+      merchant picked.
+
+   2. The overlap only exists from 768px. On a phone the text sits in a
+      solid panel that laps the bottom of the image, which keeps the same
+      layered look without ever putting body copy on an unknown photo.
+
+   Direction is a custom property rather than duplicated rules, so flipping
+   the layout in the theme editor flips the entrance with it — the image
+   always arrives from its own side.
    ========================================================================== */
 
-.image-text__inner {
+.image-text--editorial {
+  /* Edge to edge means edge to edge: no gutters, no block padding. */
+  padding-block: 0;
+  overflow: clip;
+}
+
+.image-text--editorial .image-text__inner {
   display: grid;
-  gap: var(--space-md);
-  align-items: center;
+  position: relative;
+  /* No gap. The two children deliberately share grid cells, and a gap
+     between overlapping areas only pushes them apart — it was why the text
+     stopped short of the image instead of crossing onto it. */
+  gap: 0;
+
+  /* Image right, text left. */
+  --media-from: 16%;
+  --media-to: -16%;
+  --text-from: -16%;
+  --text-to: 16%;
 }
 
-.image-text__image {
+.image-text--editorial .image-text__inner--image-first {
+  --media-from: -16%;
+  --media-to: 16%;
+  --text-from: 16%;
+  --text-to: -16%;
+}
+
+.image-text--editorial .image-text__media {
+  position: relative;
+  /* The floor of the stack, as asked. The text sits above it. */
+  z-index: 0;
+  margin: 0;
+  /* An explicit height, not a minimum. With only a minimum the band's height
+     came from the image's own proportions — so a portrait photo made a very
+     tall band and object-fit: cover never cropped anything. The height is the
+     design decision here; the crop follows from it. */
+  height: clamp(360px, 62vh, 680px);
+}
+
+.image-text--editorial .image-text__image {
   width: 100%;
-  height: auto;
-  aspect-ratio: 1 / 1;
+  height: 100%;
+  /* The band's height is a function of the viewport, so the crop has to
+     happen here rather than at the CDN. */
   object-fit: cover;
-  border-radius: var(--radius);
+  aspect-ratio: auto;
+  border-radius: 0;
   background-color: var(--color-border);
+  display: block;
 }
 
-.image-text__content {
+.image-text--editorial .image-text__content {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
   align-items: flex-start;
+  gap: var(--space-sm);
   min-width: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Type
+   -------------------------------------------------------------------------- */
+
+.image-text__eyebrow {
+  margin: 0;
 }
 
 .image-text__heading {
   margin: 0;
-  font-size: var(--text-xl);
+  font-size: var(--text-2xl);
+  line-height: 1.05;
+  /* The accent sits on its own line under the heading. */
+  display: flex;
+  flex-direction: column;
+}
+
+.image-text__script {
+  /* Pulled up into the heading's leading so the handwritten line reads as
+     part of the same phrase rather than a second heading. */
+  margin-block-start: -0.15em;
+  font-size: 1.5em;
+  line-height: 1;
+  /* Coral rather than the amber accent: amber is the button colour, and
+     the accent line should not read as something to click. */
+  color: var(--brand-coral);
+}
+
+.image-text__body {
+  max-width: 46ch;
+}
+
+/* A single number set large is the cheapest way to give a block of prose a
+   focal point, and it is merchant-editable rather than decoration. */
+.image-text__stat {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2xs);
+  margin: 0;
+  padding-block-start: var(--space-2xs);
+  border-block-start: 1px solid var(--color-border);
+  max-width: 34ch;
+}
+
+.image-text__stat-value {
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.image-text__stat-label {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
 }
 
 .image-text__button {
@@ -40,20 +147,109 @@
   }
 }
 
+/* --------------------------------------------------------------------------
+   Mobile — a panel that laps the image rather than sitting on it
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 767px) {
+  .image-text--editorial .image-text__content {
+    margin-inline: calc(var(--gutter) + var(--safe-left)) calc(var(--gutter) + var(--safe-right));
+    /* The lap. Enough to read as layered, not enough to swallow the image. */
+    margin-block-start: calc(var(--space-lg) * -1);
+    margin-block-end: var(--space-lg);
+    padding: var(--space-md);
+    background-color: var(--color-background);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Desktop — the overlap
+   -------------------------------------------------------------------------- */
+
 @media (min-width: 768px) {
-  .image-text__inner {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: var(--space-xl);
+  .image-text--editorial .image-text__inner {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    align-items: center;
   }
 
+  /* Centre to the right edge. Row 1 for both children: they share the cell,
+     which is what puts the text over the image. */
+  .image-text--editorial .image-text__media {
+    grid-area: 1 / 6 / 2 / -1;
+    height: clamp(460px, 76vh, 820px);
+  }
+
+  .image-text--editorial .image-text__inner--image-first .image-text__media {
+    grid-area: 1 / 1 / 2 / 8;
+  }
+
+  /* Left edge to two thirds across, so it genuinely crosses onto the image
+     rather than stopping at its edge. */
+  .image-text--editorial .image-text__content {
+    grid-area: 1 / 1 / 2 / 9;
+    padding-inline: calc(var(--gutter) + var(--safe-left)) var(--space-md);
+    padding-block: var(--space-lg);
+    gap: var(--space-md);
+  }
+
+  .image-text--editorial .image-text__inner--image-first .image-text__content {
+    grid-area: 1 / 5 / 2 / -1;
+    padding-inline: var(--space-md) calc(var(--gutter) + var(--safe-right));
+    align-items: flex-start;
+  }
+
+  /* The scrim. Opaque page colour where the text lands, gone before the
+     photograph has anything to say — so the image appears to dissolve into
+     the page rather than being covered by a panel. */
+  .image-text--editorial .image-text__media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      to right,
+      var(--color-background) 0%,
+      var(--color-background) 7%,
+      color-mix(in srgb, var(--color-background) 55%, transparent) 26%,
+      transparent 54%
+    );
+  }
+
+  .image-text--editorial .image-text__inner--image-first .image-text__media::after {
+    background: linear-gradient(
+      to left,
+      var(--color-background) 0%,
+      var(--color-background) 7%,
+      color-mix(in srgb, var(--color-background) 55%, transparent) 26%,
+      transparent 54%
+    );
+  }
+
+  /* Deliberately larger than the global heading scale. The overlap only
+     reads as one composition if the type is big enough to reach the image;
+     at --text-3xl the heading stopped a third of the way across and the two
+     halves looked merely adjacent. */
   .image-text__heading {
-    font-size: var(--text-2xl);
+    font-size: clamp(2.75rem, 6.4vw, 6rem);
   }
 
-  /* Only reordered on desktop. On mobile the image always comes first,
-     matching the DOM, so reading order and visual order never diverge on a
-     screen reader. */
-  .image-text__inner--text-first .image-text__media {
-    order: 2;
+  .image-text__stat-value {
+    font-size: var(--text-3xl);
+  }
+}
+
+@media (min-width: 1024px) {
+  /* The overlap band widens with the viewport: the image holds its half and
+     the text reaches further across it. */
+  .image-text--editorial .image-text__content {
+    grid-area: 1 / 1 / 2 / 9;
+    padding-inline-end: var(--space-lg);
+  }
+
+  .image-text--editorial .image-text__inner--image-first .image-text__content {
+    grid-area: 1 / 5 / 2 / -1;
+    padding-inline-start: var(--space-lg);
   }
 }

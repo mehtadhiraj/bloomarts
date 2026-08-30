@@ -638,3 +638,79 @@
     display: none;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Editorial sweep
+
+   The image and the text cross the section in opposite directions, and they
+   do it as one continuous scroll-linked movement rather than an entrance
+   that fires once: the image arrives from its own side, both settle in the
+   middle of the section's travel, and they leave the way the other one came
+   in.
+
+   Scrolling back up plays it backwards for free. That is the whole reason
+   this is a scroll-driven animation and not an IntersectionObserver — a
+   class toggled on intersection has no notion of a halfway point, so
+   reversing it means writing the reversal by hand and getting it wrong at
+   the boundaries.
+
+   The range runs entry 0% to exit 100% — the element's entire life in the
+   viewport — with the settled state held across the middle 40% so the
+   section is legible for most of the time it is on screen rather than
+   permanently in motion.
+
+   Directions come from custom properties set on the section, so the theme
+   editor's image-position setting flips the animation with the layout.
+   -------------------------------------------------------------------------- */
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    [data-scroll-effects="subtle"]:not(.simplify-motion) [data-editorial="media"],
+    [data-scroll-effects="rich"]:not(.simplify-motion) [data-editorial="media"] {
+      animation: editorial-sweep-media linear both;
+      animation-timeline: view();
+      animation-range: entry 0% exit 100%;
+    }
+
+    [data-scroll-effects="subtle"]:not(.simplify-motion) [data-editorial="text"],
+    [data-scroll-effects="rich"]:not(.simplify-motion) [data-editorial="text"] {
+      animation: editorial-sweep-text linear both;
+      animation-timeline: view();
+      animation-range: entry 0% exit 100%;
+    }
+  }
+}
+
+/* Transform and opacity only — both compositor properties, so a full-bleed
+   image moving across the viewport costs no layout and no paint. */
+@keyframes editorial-sweep-media {
+  0% {
+    transform: translate3d(var(--media-from, 16%), 0, 0);
+    opacity: 0;
+  }
+  30%,
+  70% {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(var(--media-to, -16%), 0, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes editorial-sweep-text {
+  0% {
+    transform: translate3d(var(--text-from, -16%), 0, 0);
+    opacity: 0;
+  }
+  30%,
+  70% {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(var(--text-to, 16%), 0, 0);
+    opacity: 0;
+  }
+}

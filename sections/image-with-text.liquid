@@ -1,30 +1,66 @@
 {{ 'component-image-text.css' | asset_url | stylesheet_tag }}
 
-<section class="section defer-render image-text">
-  <div class="page-width">
-    <div class="image-text__inner image-text__inner--{{ section.settings.layout }}" data-reveal-group>
-      <div class="image-text__media parallax-media" data-reveal="scale">
-        {% render 'responsive-image',
-           image: section.settings.image,
-           ratio: 1,
-           sizes: '(min-width: 768px) 45vw, 100vw',
-           alt: section.settings.image_alt,
-           class: 'image-text__image' %}
-      </div>
+{%- comment -%}
+  Editorial image with text.
 
-      <div class="image-text__content" data-scroll-enter>
-        {%- if section.settings.heading != blank -%}
-          <h2 class="image-text__heading" data-scroll-reveal="wipe">{{ section.settings.heading }}</h2>
-        {%- endif -%}
-        {%- if section.settings.text != blank -%}
-          <div class="rte text-muted">{{ section.settings.text }}</div>
-        {%- endif -%}
-        {%- if section.settings.button_label != blank and section.settings.button_link != blank -%}
-          <a href="{{ section.settings.button_link }}" class="btn btn--secondary image-text__button">
-            {{ section.settings.button_label }}
-          </a>
-        {%- endif -%}
-      </div>
+  Full bleed on purpose: no page-width wrapper and no block padding, so the
+  image runs to the edges of the section on every side. The text sits over
+  it in a higher stacking layer.
+
+  The image carries no `ratio`, so the CDN serves it uncropped and the box
+  crops it in CSS instead. That is the right way round here — this is a
+  lifestyle image filling a band whose height changes with the viewport, so
+  the crop has to be decided at render time, not at request time.
+
+  The old per-element reveals are gone from this section. The sweep below is
+  a single scroll-linked movement across the whole section; layering the
+  generic reveals on top of it would mean two systems animating the same
+  elements against each other.
+{%- endcomment -%}
+
+<section class="section image-text image-text--editorial defer-render">
+  <div class="image-text__inner image-text__inner--{{ section.settings.layout }}">
+    <div class="image-text__media parallax-media" data-editorial="media">
+      {% render 'responsive-image',
+         image: section.settings.image,
+         sizes: '(min-width: 768px) 62vw, 100vw',
+         widths: '600,800,1000,1200,1600,2000',
+         alt: section.settings.image_alt,
+         class: 'image-text__image' %}
+    </div>
+
+    <div class="image-text__content" data-editorial="text">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="eyebrow image-text__eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.heading != blank -%}
+        <h2 class="image-text__heading">
+          <span class="image-text__heading-line">{{ section.settings.heading }}</span>
+          {%- if section.settings.script_accent != blank -%}
+            <span class="script image-text__script">{{ section.settings.script_accent }}</span>
+          {%- endif -%}
+        </h2>
+      {%- endif -%}
+
+      {%- if section.settings.text != blank -%}
+        <div class="rte image-text__body">{{ section.settings.text }}</div>
+      {%- endif -%}
+
+      {%- if section.settings.stat_value != blank -%}
+        <p class="image-text__stat">
+          <span class="image-text__stat-value">{{ section.settings.stat_value }}</span>
+          {%- if section.settings.stat_label != blank -%}
+            <span class="image-text__stat-label">{{ section.settings.stat_label }}</span>
+          {%- endif -%}
+        </p>
+      {%- endif -%}
+
+      {%- if section.settings.button_label != blank and section.settings.button_link != blank -%}
+        <a href="{{ section.settings.button_link }}" class="btn btn--secondary image-text__button">
+          {{ section.settings.button_label }}
+        </a>
+      {%- endif -%}
     </div>
   </div>
 </section>
@@ -46,15 +82,42 @@
     },
     {
       "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "info": "A short label above the heading.",
+      "default": "The studio"
+    },
+    {
+      "type": "text",
       "id": "heading",
       "label": "Heading",
-      "default": "Made slowly, on purpose"
+      "default": "Made slowly,"
+    },
+    {
+      "type": "text",
+      "id": "script_accent",
+      "label": "Heading accent",
+      "info": "Set in the handwritten face, on its own line under the heading.",
+      "default": "on purpose"
     },
     {
       "type": "richtext",
       "id": "text",
       "label": "Text",
       "default": "<p>Concrete cures for seven days before it is sealed. Stoneware is fired twice. Resin is poured in layers over three. None of it can be rushed, which is why batches are small and why colour shifts a little between pieces.</p>"
+    },
+    {
+      "type": "text",
+      "id": "stat_value",
+      "label": "Highlight",
+      "info": "A short number or phrase set large beside the text. Leave empty to hide.",
+      "default": "7 days"
+    },
+    {
+      "type": "text",
+      "id": "stat_label",
+      "label": "Highlight label",
+      "default": "for concrete to cure before it is sealed"
     },
     {
       "type": "text",
@@ -71,17 +134,18 @@
       "type": "select",
       "id": "layout",
       "label": "Image position (desktop)",
+      "info": "The entrance direction follows the image: it always arrives from its own side.",
       "options": [
         {
-          "value": "image-first",
-          "label": "Image first"
+          "value": "text-first",
+          "label": "Image right, text left"
         },
         {
-          "value": "text-first",
-          "label": "Text first"
+          "value": "image-first",
+          "label": "Image left, text right"
         }
       ],
-      "default": "image-first"
+      "default": "text-first"
     }
   ],
   "presets": [

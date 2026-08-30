@@ -169,6 +169,27 @@ exercised on every build rather than shipping unrendered.
 
 ## 5. Animation, scroll effects and 3D
 
+**Editorial image-with-text.** The studio section is full bleed: no gutters,
+no block padding, image from the centre to the right edge at `z-index: 0`,
+text over it at `z-index: 1`. Contrast does not depend on which photo the
+merchant picks — the image carries a scrim that is fully the page colour at
+its inner edge and gone before the photograph is doing any work, so the
+overlap band always has a known background behind it. Below 768px the overlap
+becomes a solid panel lapping the bottom of the image instead, so body copy is
+never on an unknown photograph on a phone.
+
+The two halves cross the section in opposite directions as one scroll-linked
+movement: the image arrives from its own side, both hold across the middle 40%
+of the section's travel, and they leave the way the other came in. Scrolling
+back up plays it backwards for free — the reason it is `animation-timeline:
+view()` and not an IntersectionObserver, which has no notion of a halfway
+point and would need the reversal written by hand. Directions are custom
+properties, so the theme editor's image-position setting flips the animation
+with the layout.
+
+Measured across the range at 1512px: media `+111px → 0 → -140px` with opacity
+`0.2 → 1 → 0`, text `-117px → 0 → +120px`.
+
 Client reference: **momentolegal.com** — inspected; uses Lenis smooth scroll,
 `data-reveal` attributes, blur-to-sharp text resolve, gradient text wipes,
 oversized ghost display type, and an intro splash loader.
