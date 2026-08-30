@@ -647,3 +647,35 @@ body.button-lift .btn--primary {
   .hide-mobile { display: revert; }
   .hide-desktop { display: none !important; }
 }
+
+/* --------------------------------------------------------------------------
+   Section call to action
+
+   A single centred button following a section. Used after the pinned ones,
+   where the button cannot live inside the section itself without landing a
+   viewport short of the bottom.
+   -------------------------------------------------------------------------- */
+
+.section-cta {
+  /* Positioned deliberately. The sections this follows pin a sticky child,
+     and a sticky element is positioned — so without this the button would be
+     painted underneath the section it is supposed to sit below. */
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  padding-block: var(--space-lg);
+  padding-inline: calc(var(--gutter) + var(--safe-left)) calc(var(--gutter) + var(--safe-right));
+  background-color: var(--color-background);
+}
+
+.section-cta .btn {
+  width: 100%;
+}
+
+@media (min-width: 480px) {
+  .section-cta .btn {
+    width: auto;
+    min-width: 14rem;
+  }
+}
