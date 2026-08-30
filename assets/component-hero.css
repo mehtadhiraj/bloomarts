@@ -94,24 +94,39 @@
     /* Above .hero__motifs — see the z-index note there. */
     z-index: 1;
     display: flex;
-    align-items: flex-end;
+    /* Centred, not bottom-aligned. The copy sat low enough that the button
+       nearly touched the fold. */
+    align-items: center;
     padding-block: var(--space-xl);
     color: var(--brand-cream);
 
     /* The scrim exists to make the text legible over an image nobody has
        seen yet.
 
-       The strongest stop sits where the text is (the bottom) and defaults
-       to 0.72. That number is not arbitrary: composited over a WORST-CASE
-       pure white photograph, brown at 0.75 yields a background luminance
-       that still gives cream text about 5.4:1. A lighter scrim (0.62 was
-       the first attempt) drops to roughly 4.4:1 over white and fails.
-       Merchants can raise it further but not below the floor. */
+       Full strength has to cover wherever the text is, and defaults to 0.75.
+       That number is not arbitrary: composited over a WORST-CASE pure white
+       photograph, brown at 0.75 yields a background luminance that still
+       gives cream text about 5.4:1. A lighter scrim (0.62 was the first
+       attempt) drops to roughly 4.4:1 over white and fails. Merchants can
+       raise it further but not below the floor.
+
+       The band moved with the copy. It used to peak at the bottom because
+       that is where the text was; centring the text without moving the band
+       would have left the heading sitting on the weak middle of the
+       gradient, at roughly 0.55 strength — under the floor over a light
+       photograph.
+
+       Full strength now spans 20%-80%. The centred copy occupies roughly
+       29%-71% of the hero, so that is the text band plus a margin either
+       side for longer copy, and no wider — beyond it the scrim eases off so
+       the photograph is still a photograph at the top and bottom rather than
+       a flat wash. */
     background: linear-gradient(
       to top,
-      color-mix(in srgb, var(--brand-brown) calc(var(--hero-overlay, 75) * 1%), transparent) 0%,
-      color-mix(in srgb, var(--brand-brown) calc(var(--hero-overlay, 75) * 0.55%), transparent) 42%,
-      transparent 78%
+      color-mix(in srgb, var(--brand-brown) calc(var(--hero-overlay, 75) * 0.5%), transparent) 0%,
+      color-mix(in srgb, var(--brand-brown) calc(var(--hero-overlay, 75) * 1%), transparent) 20%,
+      color-mix(in srgb, var(--brand-brown) calc(var(--hero-overlay, 75) * 1%), transparent) 80%,
+      color-mix(in srgb, var(--brand-brown) calc(var(--hero-overlay, 75) * 0.35%), transparent) 100%
     );
   }
 
