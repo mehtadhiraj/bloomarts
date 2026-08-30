@@ -102,7 +102,6 @@
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-2xs);
-  max-width: 46ch;
 }
 
 .materials__index {
@@ -121,6 +120,14 @@
   font-size: var(--text-3xl);
   line-height: var(--leading-tight);
   color: var(--brand-cream);
+  /* The 46ch measure that keeps prose readable used to sit on the whole
+     column, so it capped the display title too — "Concrete Art" wrapped while
+     "Clay Art" and "Resin Art" did not, and the three panels stopped looking
+     like the same design. The measure now belongs to the prose alone. */
+  max-width: 100%;
+  /* If a longer title does wrap, break it evenly rather than leaving one
+     word stranded on the last line. */
+  text-wrap: balance;
 }
 
 .materials__script {
@@ -132,6 +139,7 @@
 }
 
 .materials__text {
+  max-width: 46ch;
   margin: 0;
   color: color-mix(in srgb, var(--brand-cream) 90%, transparent);
 }
