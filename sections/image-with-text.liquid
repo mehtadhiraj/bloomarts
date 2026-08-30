@@ -17,6 +17,11 @@
   generic reveals on top of it would mean two systems animating the same
   elements against each other.
 
+  data-inline-svg: if the merchant picks an SVG, global.js swaps the <img> for
+  the SVG markup itself. An SVG inside an <img> is a sealed document — CSS and
+  JS in this page cannot reach a single shape inside it — so inlining is the
+  only way its parts can be animated at all.
+
   No `parallax-media` either: once the band is pinned its image stops moving
   relative to the viewport, so a parallax drift keyed to the image's own
   view() timeline would freeze mid-drift exactly when the section is being
@@ -32,7 +37,7 @@
 
 <section class="section image-text image-text--editorial">
   <div class="image-text__inner image-text__inner--{{ section.settings.layout }}">
-    <div class="image-text__media" data-editorial="media">
+    <div class="image-text__media" data-editorial="media" data-inline-svg>
       {% render 'responsive-image',
          image: section.settings.image,
          sizes: '(min-width: 768px) 62vw, 100vw',

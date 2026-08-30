@@ -571,6 +571,117 @@
   }
 
   /* ------------------------------------------------------------------
+     Inline SVG artwork
+
+     An SVG referenced by <img> is a sealed document: stylesheets and
+     scripts in this page cannot address a single shape inside it, and
+     scripts inside it never run. Animating its parts is therefore not a
+     matter of writing better CSS — the markup has to be in this document.
+     So the file is fetched and the <img> replaced with the SVG itself.
+
+     Only same-origin files, and the markup is stripped before it goes in.
+     Inlining is injecting third-party markup into the page, and an SVG can
+     legally carry <script>, event handlers and external references; as an
+     <img> none of that could ever execute, and that guarantee should not be
+     quietly given up in exchange for an animation.
+     ------------------------------------------------------------------ */
+
+  const SVG_FORBIDDEN_TAGS = ['script', 'foreignObject', 'iframe', 'embed', 'object', 'animate', 'set', 'handler'];
+
+  function sanitiseSvg(svg) {
+    SVG_FORBIDDEN_TAGS.forEach((tag) => {
+      svg.querySelectorAll(tag).forEach((node) => node.remove());
+    });
+
+    svg.querySelectorAll('*').forEach((node) => {
+      Array.from(node.attributes).forEach((attr) => {
+        const name = attr.name.toLowerCase();
+        const value = (attr.value || '').trim().toLowerCase();
+        // Inline handlers, and any reference that could fetch or navigate.
+        if (name.startsWith('on')) node.removeAttribute(attr.name);
+        if ((name === 'href' || name === 'xlink:href') && !value.startsWith('#')) {
+          node.removeAttribute(attr.name);
+        }
+        if (value.startsWith('javascript:')) node.removeAttribute(attr.name);
+      });
+    });
+
+    return svg;
+  }
+
+  async function inlineSvg(img) {
+    const source = img.getAttribute('src') || '';
+    if (!source.split('?')[0].toLowerCase().endsWith('.svg')) return null;
+
+    // Same-origin only. A cross-origin fetch would fail on CORS anyway, but
+    // being explicit keeps the rule visible rather than incidental.
+    const url = new URL(source, window.location.href);
+    if (url.origin !== window.location.origin) return null;
+
+    const response = await fetch(url.href);
+    if (!response.ok) return null;
+
+    const parsed = new DOMParser().parseFromString(await response.text(), 'image/svg+xml');
+    if (parsed.querySelector('parsererror')) return null;
+
+    const svg = parsed.documentElement;
+    if (!svg || svg.tagName.toLowerCase() !== 'svg') return null;
+
+    sanitiseSvg(svg);
+
+    const adopted = document.importNode(svg, true);
+    adopted.setAttribute('class', `${img.className} editorial-art`);
+    // meet, not slice: this is artwork rather than a photograph, and cropping
+    // a drawing to fill a box cuts off the drawing.
+    adopted.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+    adopted.removeAttribute('width');
+    adopted.removeAttribute('height');
+
+    const alt = img.getAttribute('alt');
+    if (alt) {
+      adopted.setAttribute('role', 'img');
+      adopted.setAttribute('aria-label', alt);
+    } else {
+      adopted.setAttribute('aria-hidden', 'true');
+    }
+
+    // Top-level groups are the drawing's own parts. Numbering them is all
+    // the CSS needs to stagger them — no assumption about ids the merchant's
+    // export tool may or may not have written.
+    Array.from(adopted.children)
+      .filter((node) => node.tagName.toLowerCase() === 'g')
+      .forEach((group, index) => group.setAttribute('data-art-part', index + 1));
+
+    img.replaceWith(adopted);
+    return adopted;
+  }
+
+  function setupInlineArt() {
+    document.querySelectorAll('[data-inline-svg] img').forEach((img) => {
+      inlineSvg(img)
+        .then((svg) => {
+          if (!svg) return;
+          if (!('IntersectionObserver' in window)) {
+            svg.classList.add('is-drawn');
+            return;
+          }
+          // Toggled, not added once: the band this sits in sweeps out and
+          // back as you scroll past and return, and a one-shot draw would
+          // play to an empty screen and never again.
+          const observer = new IntersectionObserver(
+            ([entry]) => svg.classList.toggle('is-drawn', entry.isIntersecting),
+            { threshold: 0.25 }
+          );
+          observer.observe(svg);
+        })
+        .catch(() => {
+          /* The <img> is still there and still correct. An animation is not
+             worth a broken image. */
+        });
+    });
+  }
+
+  /* ------------------------------------------------------------------
      Editorial pin readiness
 
      Same gate as the materials pin, for the same reason: the sweep's first
@@ -869,6 +980,7 @@
     run('cart bump', setupCartBump);
     run('materials pin', setupMaterialsPin);
     run('editorial pin', setupEditorialPin);
+    run('inline art', setupInlineArt);
     run('sticky header', setupStickyHeader);
     run('back to top', setupBackToTop);
     run('reels', setupReels);

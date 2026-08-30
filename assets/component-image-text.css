@@ -327,3 +327,95 @@
     }
   }
 }
+
+/* --------------------------------------------------------------------------
+   Inlined SVG artwork
+
+   Once global.js has swapped the <img> for the SVG markup, the drawing's own
+   top-level groups become addressable and can arrive in the order the picture
+   was made in. For the studio artwork those three groups are, in document
+   order, the bee with its brush, the heart, and the leaves — so the bee flies
+   in, the heart appears along the stroke as though the brush had just painted
+   it, and the leaves grow in last.
+
+   transform-box: fill-box is what makes any of this behave. Without it a
+   transform on an SVG group resolves against the whole viewBox, so a
+   "translate 12%" moves by 12% of the canvas and a rotation swings around the
+   canvas corner rather than the shape.
+   -------------------------------------------------------------------------- */
+
+.editorial-art {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.editorial-art [data-art-part] {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* Nothing moves until the artwork is actually on screen, and nothing is
+   hidden unless it can be shown again — if the animation cannot run, every
+   part stays exactly where the illustrator put it. */
+@media (prefers-reduced-motion: no-preference) {
+  html:not(.reduce-motion) .editorial-art.is-drawn [data-art-part="1"] {
+    animation: art-bee-in 900ms var(--ease-out) both, art-bee-hover 4.5s ease-in-out 900ms infinite;
+  }
+
+  html:not(.reduce-motion) .editorial-art.is-drawn [data-art-part="2"] {
+    animation: art-paint-in 700ms var(--ease-out) 520ms both;
+  }
+
+  html:not(.reduce-motion) .editorial-art.is-drawn [data-art-part="3"] {
+    animation: art-leaves-in 700ms var(--ease-out) 1000ms both;
+  }
+}
+
+/* The bee arrives from the lower left, the direction its brush is pointing,
+   and settles with a slight tip — then never quite stops moving. */
+@keyframes art-bee-in {
+  from {
+    opacity: 0;
+    transform: translate(-14%, 8%) rotate(-6deg);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0);
+  }
+}
+
+@keyframes art-bee-hover {
+  0%,
+  100% { transform: translateY(0) rotate(0); }
+  50%  { transform: translateY(-2.5%) rotate(1.2deg); }
+}
+
+/* A wipe from the left, along the brush stroke, so the heart reads as being
+   painted rather than fading up. The insets are negative so the wipe never
+   shaves the edge of the stroke. */
+@keyframes art-paint-in {
+  from { clip-path: inset(-10% 100% -10% -10%); }
+  to   { clip-path: inset(-10% -10% -10% -10%); }
+}
+
+/* Leaves grow from where they meet the stem, bottom right of their own box. */
+@keyframes art-leaves-in {
+  from {
+    opacity: 0;
+    transform: scale(0.7) rotate(-8deg);
+    transform-origin: 90% 90%;
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+    transform-origin: 90% 90%;
+  }
+}
+
+/* The idle hover is the one piece of this that runs forever. On a small or
+   low-powered device that is exactly the sort of thing the motion brake
+   exists to stop. */
+.simplify-motion .editorial-art.is-drawn [data-art-part="1"] {
+  animation: art-bee-in 900ms var(--ease-out) both;
+}

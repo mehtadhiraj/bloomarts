@@ -169,6 +169,37 @@ exercised on every build rather than shipping unrendered.
 
 ## 5. Animation, scroll effects and 3D
 
+**Inlined SVG artwork.** An SVG referenced by `<img>` is a sealed document:
+stylesheets and scripts in the page cannot address a shape inside it, and
+scripts inside it never run. Animating its parts is not a matter of better
+CSS — the markup has to be in this document. So `[data-inline-svg] img` is
+fetched and the `<img>` replaced by the SVG itself.
+
+**Same-origin only, and sanitised on the way in.** Inlining is injecting
+third-party markup: an SVG can legally carry `<script>`, event handlers and
+external references, none of which could ever execute while it was an `<img>`.
+`sanitiseSvg()` strips `script`, `foreignObject`, `iframe`, `embed`, `object`,
+SMIL `animate`/`set`, every `on*` attribute, any `href` that is not a local
+fragment, and any `javascript:` value. That guarantee should not be quietly
+traded away for an animation.
+
+Top-level `<g>` elements are numbered `data-art-part="1..n"` — no assumption
+about ids the merchant's export tool may not have written. For the studio
+artwork those are, in document order, the bee with its brush, the heart, and
+the leaves, so the CSS has the bee fly in from the lower left, the heart wipe
+in along the brush stroke as though just painted, and the leaves grow from
+their stem. The bee keeps a slow idle hover afterwards, which `simplify-motion`
+removes since it is the one thing here that runs forever.
+
+`transform-box: fill-box` is load-bearing: without it a transform on an SVG
+group resolves against the whole viewBox, so a 12% translate moves by 12% of
+the canvas and a rotation swings around the canvas corner.
+
+The class is toggled by IntersectionObserver rather than added once, because
+the band sweeps out and back as you scroll past and return — a one-shot draw
+would play to an empty screen and never again. If the fetch or the parse
+fails, the `<img>` is left exactly as it was.
+
 **Editorial image-with-text.** The studio section is full bleed: no gutters,
 no block padding, image from the centre to the right edge at `z-index: 0`,
 text over it at `z-index: 1`. Contrast does not depend on which photo the
