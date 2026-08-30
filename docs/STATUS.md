@@ -289,6 +289,8 @@ for every visitor, which is a consent question wherever that matters.
 
 | Bug | Effect | Fix |
 |---|---|---|
+| The product gallery passed `ratio: 1.25` to `responsive-image` | That crops on the **CDN**, so the parts of the photograph outside a 4:5 box never reached the browser at all — no CSS could recover them. The image on a product page was silently cropped | Ratio dropped, `object-fit: contain`, and the frame takes the page background so the fitted space reads as page rather than as bars |
+| The product info column was sticky with `max-height` + `overflow-y: auto` | A second scrollbar inside the page. The cap was there because a sticky element taller than the viewport pins and its lower half becomes unreachable, but a nested scroller steals the wheel and hides the buy button behind a scroll nobody expects | The **gallery** sticks instead — bounded height, so it needs no cap — and the info column flows |
 | `setupResponsiveAccordions` deleted by an earlier edit | `ReferenceError` aborted `init()`, killing **all** reveals, cart bump, back-to-top and footer accordions | Restored; `init()` now isolates each step so one failure cannot cascade |
 | `overflow: hidden` on parallax containers | Creates a scroll container, so `view()` bound to a box that never scrolls — every parallax frozen at exactly 50% | `overflow: clip` (clips without a scroll container) |
 | Reveals fired once and never replayed | Scrolling back up and down showed nothing | Reveals now driven by scroll position, so they reverse |

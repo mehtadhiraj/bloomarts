@@ -280,7 +280,10 @@
 
 @media (min-width: 1024px) {
   .product {
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    /* Even columns. The image column used to be the wider of the two, which
+       is why fitting the whole photograph in it left it towering over the
+       buy controls. */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: var(--space-xl);
     align-items: start;
   }

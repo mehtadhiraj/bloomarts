@@ -60,14 +60,31 @@
               assign media_priority = 'auto'
             endif
           -%}
-          {% render 'responsive-image',
-             image: media,
-             ratio: 1.25,
-             sizes: '(min-width: 1024px) 45vw, (min-width: 768px) 50vw, 100vw',
-             loading: media_loading,
-             fetchpriority: media_priority,
-             alt: product.title,
-             class: 'gallery__image' %}
+          {%- comment -%}
+            No ratio: passing one makes the CDN crop the file before it ever
+            reaches the browser, so the shopper never sees the parts of the
+            photograph that were cut. The box is still fixed in CSS, and the
+            image is fitted inside it whole.
+
+            The button is the zoom control and the pan surface both. A real
+            button rather than a click handler on the image, so Enter and
+            Space work and the state is announced.
+          {%- endcomment -%}
+          <button
+            type="button"
+            class="gallery__zoom"
+            data-gallery-zoom
+            aria-pressed="false"
+            aria-label="{{ 'products.gallery.zoom' | t }}"
+          >
+            {% render 'responsive-image',
+               image: media,
+               sizes: '(min-width: 1024px) 45vw, (min-width: 768px) 50vw, 100vw',
+               loading: media_loading,
+               fetchpriority: media_priority,
+               alt: product.title,
+               class: 'gallery__image' %}
+          </button>
         </div>
       {%- endfor -%}
     </div>

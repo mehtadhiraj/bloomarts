@@ -35,14 +35,54 @@
   min-width: 0;
 }
 
+/* The zoom button is the image's frame: it holds the fixed box, and it is
+   what clips the image once it is scaled up. */
+.gallery__zoom {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  /* Page background, not a surface. Fitting a photograph whole into a fixed
+     box always leaves space on one axis, and that space should read as the
+     page rather than as empty bars inside a card. */
+  background-color: var(--color-background);
+  border-radius: var(--radius);
+  overflow: hidden;
+  cursor: zoom-in;
+}
+
+.gallery__zoom.is-zoomed {
+  cursor: zoom-out;
+  /* Panning by drag on a touch screen, rather than scrolling the carousel
+     out from under the zoomed image. */
+  touch-action: none;
+}
+
 .gallery__image {
   width: 100%;
   height: auto;
-  /* Fixed box: the page cannot reflow as each image decodes. */
+  /* Fixed box: the page cannot reflow as each image decodes, and every slide
+     is the same height so moving between them does not jump. */
   aspect-ratio: var(--gallery-ratio, 4 / 5);
-  object-fit: cover;
-  border-radius: var(--radius);
-  background-color: var(--color-border);
+  /* contain, not cover. A crop makes the box tidy at the cost of hiding part
+     of the piece being sold, which is the one thing the photograph is for. */
+  object-fit: contain;
+  display: block;
+
+  /* Panning is instant — transform-origin is not an animatable part of the
+     transform, so cursor tracking never lags behind. Only the scale eases. */
+  transform-origin: var(--zoom-x, 50%) var(--zoom-y, 50%);
+  transition: transform var(--duration-md) var(--ease-out);
+}
+
+.gallery__zoom.is-zoomed .gallery__image {
+  transform: scale(var(--zoom-scale, 2.2));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gallery__image {
+    transition: none;
+  }
 }
 
 /* --------------------------------------------------------------------------

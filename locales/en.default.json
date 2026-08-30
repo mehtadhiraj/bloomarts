@@ -78,6 +78,7 @@
       "choose_options": "Choose options"
     },
     "gallery": {
+      "zoom": "Zoom image",
       "label": "Product gallery",
       "slide_of": "Image {{ current }} of {{ total }}",
       "go_to_image": "Go to image {{ number }}",

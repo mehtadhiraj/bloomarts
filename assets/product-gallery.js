@@ -22,6 +22,10 @@
       this.nextButton = this.querySelector('[data-gallery-next]');
       this.index = 0;
 
+      // Before the single-slide bail-out: a product with one photograph
+      // still gets to have that photograph zoomed.
+      this.setupZoom();
+
       if (this.slides.length <= 1) return;
 
       this.querySelectorAll('[data-gallery-goto]').forEach((button) => {
@@ -47,6 +51,64 @@
 
     disconnectedCallback() {
       if (this.observer) this.observer.disconnect();
+    }
+
+    /* ------------------------------------------------------------------
+       Click to zoom, move to pan.
+
+       The scale and the pan both live in CSS custom properties, so this
+       only ever writes two numbers and lets the compositor do the work —
+       no layout, no per-frame style recalculation of anything else.
+       ------------------------------------------------------------------ */
+
+    setupZoom() {
+      this.querySelectorAll('[data-gallery-zoom]').forEach((frame) => {
+        const clamp = (n) => Math.min(100, Math.max(0, n));
+
+        const panTo = (event) => {
+          const rect = frame.getBoundingClientRect();
+          if (!rect.width || !rect.height) return;
+          const x = ((event.clientX - rect.left) / rect.width) * 100;
+          const y = ((event.clientY - rect.top) / rect.height) * 100;
+          // The origin is the point held still under the cursor, so moving
+          // right reveals what is off to the right — the image tracks the
+          // pointer rather than running away from it.
+          frame.style.setProperty('--zoom-x', `${clamp(x)}%`);
+          frame.style.setProperty('--zoom-y', `${clamp(y)}%`);
+        };
+
+        const zoomOut = () => {
+          if (!frame.classList.contains('is-zoomed')) return;
+          frame.classList.remove('is-zoomed');
+          frame.setAttribute('aria-pressed', 'false');
+          frame.removeEventListener('pointermove', panTo);
+          frame.style.removeProperty('--zoom-x');
+          frame.style.removeProperty('--zoom-y');
+        };
+
+        frame.addEventListener('click', (event) => {
+          if (frame.classList.contains('is-zoomed')) {
+            zoomOut();
+            return;
+          }
+
+          frame.classList.add('is-zoomed');
+          frame.setAttribute('aria-pressed', 'true');
+
+          // detail is 0 when the click came from Enter or Space, where
+          // clientX/clientY are both 0 and would slam the origin into the
+          // top-left corner. Keyboard zoom starts centred.
+          if (event.detail > 0) panTo(event);
+
+          frame.addEventListener('pointermove', panTo);
+        });
+
+        // Leaving the image is the same intent as clicking again.
+        frame.addEventListener('pointerleave', zoomOut);
+        frame.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape') zoomOut();
+        });
+      });
     }
 
     /* Watching the slides is far cheaper than a scroll handler, and it
