@@ -107,7 +107,12 @@
                 </h3>
 
                 {%- if block.settings.text != blank -%}
-                  <p class="materials__text">{{ block.settings.text }}</p>
+                  {%- comment -%}
+                    newline_to_br because the setting is a textarea: a merchant
+                    who presses return expects a line break, and without this
+                    HTML collapses it to a space.
+                  {%- endcomment -%}
+                  <p class="materials__text">{{ block.settings.text | newline_to_br }}</p>
                 {%- endif -%}
 
                 {%- if block.settings.link_label != blank and block.settings.link != blank -%}

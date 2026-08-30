@@ -35,9 +35,9 @@
           "settings": {
             "image": "shopify://shop_images/IMG_5068.png",
             "image_alt": "",
-            "title": "Concrete",
+            "title": "Concrete Art",
             "script_accent": "",
-            "text": "Cast by hand, cured for seven days, then sealed inside and out. It takes pigment unevenly, which is the point.",
+            "text": "Where strength meets creativity, concrete art brings a raw, modern charm to every space.\nThoughtfully shaped and finished, each creation is designed to stand out and last.",
             "link": "shopify://collections/all",
             "link_label": "Shop the pieces",
             "motif": "sprig"
@@ -48,9 +48,9 @@
           "settings": {
             "image": "shopify://shop_images/IMG_5066.png",
             "image_alt": "",
-            "title": "Clay",
-            "script_accent": "thrown",
-            "text": "Speckled stoneware and terracotta, thrown on the wheel and fired twice. The throwing ridges stay.",
+            "title": "Clay Art",
+            "script_accent": "",
+            "text": "Moulded with imagination, clay art adds warmth, character, and an earthy touch to your surroundings.\nEvery piece carries subtle variations that make it beautifully unique.",
             "link": "shopify://collections/all",
             "link_label": "Shop the pieces",
             "motif": "heart"
@@ -61,9 +61,9 @@
           "settings": {
             "image": "shopify://shop_images/IMG_5070.png",
             "image_alt": "",
-            "title": "Resin",
+            "title": "Resin Art",
             "script_accent": "",
-            "text": "Poured in layers over three days. Every piece sets a little differently, so no two match.",
+            "text": "A captivating blend of colour, depth, and shine that transforms ideas into lasting keepsakes.\nEach creation captures beautiful details within a smooth, glossy finish.",
             "link": "shopify://collections/all",
             "link_label": "Shop the pieces",
             "motif": "bee"
