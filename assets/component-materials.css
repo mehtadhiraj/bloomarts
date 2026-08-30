@@ -28,6 +28,9 @@
 
 .materials__viewport {
   overflow-x: auto;
+  /* Explicit: an unset overflow-y computes to auto next to a scrollable
+     axis, not visible. */
+  overflow-y: hidden;
   overscroll-behavior-x: contain;
   -webkit-overflow-scrolling: touch;
   scroll-snap-type: x mandatory;

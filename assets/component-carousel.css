@@ -16,10 +16,27 @@
 
 .carousel {
   overflow-x: auto;
+  /* Explicit, and the whole point. With overflow-y left unset it does NOT
+     compute to visible: one axis being scrollable forces the other to auto.
+     So the row was a vertical scroll container, and anything that overflowed
+     it downward by even a few pixels gave it a real scrollbar that swallowed
+     the page's wheel. The reveal keyframes do exactly that — they translate
+     content down by up to 14px while they are in flight — which is why it
+     only misbehaved while scrolling.
+
+     hidden rather than clip: clip is not a legal pairing with a scrollable
+     axis and computes to hidden anyway. It costs nothing here, because
+     overflow-x: auto had already made this a scroll container. */
+  overflow-y: hidden;
   overscroll-behavior-x: contain;
   -webkit-overflow-scrolling: touch;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
+  /* Headroom for the hover lift and the focus ring, which the clip would
+     otherwise cut off. Cancelled by the negative margin, so the row still
+     sits exactly where the layout puts it. */
+  padding-block: var(--space-2xs);
+  margin-block: calc(var(--space-2xs) * -1);
   /* Padding on the scroll container, not the track — this is what lets the
      first card align to the page gutter while the last can still scroll
      fully into view. */

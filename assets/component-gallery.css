@@ -16,6 +16,10 @@
   display: flex;
   /* The swipe is native scrolling, not a JS-driven transform. */
   overflow-x: auto;
+  /* Explicit: an unset overflow-y computes to auto next to a scrollable
+     axis, not visible, which would let a few pixels of transform turn the
+     gallery into a vertical scroller that eats the page's wheel. */
+  overflow-y: hidden;
   scroll-snap-type: x mandatory;
   /* Keeps a rubber-banded swipe from scrolling the page behind it. */
   overscroll-behavior-x: contain;
