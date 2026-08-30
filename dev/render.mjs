@@ -466,6 +466,19 @@ const pages = [
     }
   },
   {
+    /* The admin-configured path. Without a page exercising it, the metaobject
+       branch would ship having never rendered once. */
+    file: 'product-metafields.html',
+    template: 'product',
+    scope: {
+      ...baseScope,
+      template: { name: 'product' },
+      request: { ...baseScope.request, page_type: 'product' },
+      page_title: data.byHandle['ridge-stoneware-vase'].title,
+      product: data.byHandle['ridge-stoneware-vase']
+    }
+  },
+  {
     file: 'product-simple.html',
     template: 'product',
     scope: {

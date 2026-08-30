@@ -48,7 +48,22 @@
 
       <div class="{% if is_colour %}swatch-list{% else %}option-list{% endif %}">
         {%- for value in option.values -%}
-          {%- assign input_id = 'option-' | append: option_index | append: '-' | append: forloop.index -%}
+          {%- liquid
+            assign input_id = 'option-' | append: option_index | append: '-' | append: forloop.index
+
+            # Shopify's native option swatches: a colour or an image set on
+            # the option value in the admin. Reading them here is what stops
+            # the chip depending on the theme having heard of the colour name
+            # — "Navy" is only beige because a hardcoded palette has no entry
+            # for it. Merchants set these under the product's option values.
+            assign swatch_style = ''
+            if value.swatch.color != blank
+              assign swatch_style = '--swatch-color: ' | append: value.swatch.color | append: '; --swatch-color-2: ' | append: value.swatch.color | append: ';'
+            elsif value.swatch.image != blank
+              assign swatch_src = value.swatch.image | image_url: width: 80
+              assign swatch_style = '--swatch-image: url(' | append: swatch_src | append: ');'
+            endif
+          -%}
           <div class="{% if is_colour %}swatch-list__item{% else %}option-list__item{% endif %}">
             <input
               type="radio"
@@ -65,7 +80,12 @@
               for="{{ input_id }}"
             >
               {%- if is_colour -%}
-                <span class="swatch-list__chip swatch-chip" data-swatch="{{ value | handle }}" aria-hidden="true"></span>
+                <span
+                  class="swatch-list__chip swatch-chip"
+                  data-swatch="{{ value | handle }}"
+                  {% if swatch_style != blank %}style="{{ swatch_style }}"{% endif %}
+                  aria-hidden="true"
+                ></span>
                 <span class="swatch-list__name">{{ value }}</span>
               {%- else -%}
                 {{ value }}

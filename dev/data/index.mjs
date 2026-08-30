@@ -41,6 +41,15 @@ function variant(id, title, price, options, available = true, compareAt = null) 
   };
 }
 
+
+/* Builds one "customization_field" metaobject the way Shopify hands it to
+   Liquid. See docs/CUSTOMIZATION-FIELDS.md for the admin definition. */
+function customizationField(fields) {
+  const entry = {};
+  for (const [key, value] of Object.entries(fields)) entry[key] = { value };
+  return entry;
+}
+
 function product(config) {
   const prices = config.variants.map((v) => v.price);
   const priceMin = Math.min(...prices);
@@ -80,7 +89,11 @@ function product(config) {
     first_available_variant: firstAvailable,
     selected_variant: null,
     selected_or_first_available_variant: firstAvailable,
-    metafields: {},
+    /* Per-product customization is configured in the Shopify admin, so the
+       harness has to be able to stand in for it. A metaobject field is a
+       drop that renders as its value, which is why every value sits under
+       .value here rather than being a bare string. */
+    metafields: config.metafields || {},
     collections: config.collections || []
   };
 }
@@ -122,6 +135,37 @@ const products = [
     id: 1002,
     title: 'Ridge Stoneware Vase',
     handle: 'ridge-stoneware-vase',
+    metafields: {
+      custom: {
+        customization_fields: {
+          value: [
+            customizationField({
+              label: 'Glaze accent',
+              field_type: 'swatch',
+              // Colours carried in the values, so a shade the theme's palette
+              // has never heard of still renders as itself.
+              values: 'Terracotta:#b45f3f, Oatmeal:#d8c9ae, Ink:#22314a',
+              hint: 'Brushed on by hand, so the edge is never quite the same.',
+              required: false
+            }),
+            customizationField({
+              label: 'Rim finish',
+              field_type: 'select',
+              values: 'Raw clay, Glazed, Gilded',
+              placeholder: 'Choose a rim',
+              required: true
+            }),
+            customizationField({
+              label: 'Initials',
+              field_type: 'text',
+              max_length: 3,
+              hint: 'Up to three letters, stamped into the foot.',
+              required: false
+            })
+          ]
+        }
+      }
+    },
     type: 'Vase',
     tags: ['clay', 'vases'],
     collections: ['clay', 'vases'],

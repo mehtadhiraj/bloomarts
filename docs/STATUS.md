@@ -118,6 +118,26 @@ blog/article → structured data + breadcrumbs → page loader → CSS bundling.
 
 ## 4. Product customization
 
+Customization options are **configured in the Shopify admin, per product** —
+see `docs/CUSTOMIZATION-FIELDS.md` for the two definitions to create. A
+product's own field list replaces the theme-editor blocks entirely; a product
+without one falls back to them.
+
+Nothing about an option lives in the theme any more: not the label, not the
+values, not the swatch colours. A swatch value carries its own colour as
+`Terracotta:#b45f3f`, and variant swatches read Shopify's native
+`value.swatch.color` / `value.swatch.image`. The named palette in
+`component-swatches.css` is a fallback for the brand's own shades, not the
+mechanism — which is why an option value like "Navy" with no admin swatch
+rendered as a beige circle.
+
+`snippets/customization-field.liquid` no longer reads `block.settings`. It
+takes a flat set of parameters, and the two callers — the theme-editor block
+and `snippets/product-customization-entry.liquid` for the admin metaobject —
+each flatten their own source onto it. The harness renders
+`product-metafields.html` off a mocked metaobject so the admin path is
+exercised on every build rather than shipping unrendered.
+
 | Piece | Status |
 |---|---|
 | Five input types (swatch, text, textarea, select, file) | ✅ |

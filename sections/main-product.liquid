@@ -22,6 +22,23 @@
   # wherever the merchant has ordered them.
   assign customization_types = 'swatch_property,text_property,textarea_property,select_property,file_property'
   assign customization_seen = false
+
+  # Per-product customization, configured in the Shopify admin rather than in
+  # the theme. A concrete planter and an engraved keepsake do not take the
+  # same options, so a field list defined once in the theme editor is wrong
+  # for every product but one. When a product carries its own list, it wins
+  # outright and the theme-editor blocks are not rendered — a product showing
+  # both its own fields and the theme's defaults would be worse than either.
+  assign metafield_path = section.settings.customization_metafield | default: 'custom.customization_fields'
+  assign metafield_parts = metafield_path | strip | split: '.'
+  assign product_fields = null
+  if metafield_parts.size == 2
+    assign product_fields = product.metafields[metafield_parts[0]][metafield_parts[1]].value
+  endif
+  assign use_product_fields = false
+  if product_fields != blank and product_fields.size > 0
+    assign use_product_fields = true
+  endif
 -%}
 
 <div class="product page-width">
@@ -89,10 +106,46 @@
                   {% render 'brand-motif', motif: 'heart', size: 16, class: 'motif--inline' %}
                   {{ 'products.customization.title' | t }}
                 </h2>
+
+                {%- comment -%}
+                  The admin-defined list is emitted once, at wherever the
+                  merchant put the first customization block, so ordering
+                  relative to price and quantity still comes from the theme
+                  editor.
+                {%- endcomment -%}
+                {%- if use_product_fields -%}
+                  {%- for entry in product_fields -%}
+                    {% render 'product-customization-entry',
+                       entry: entry,
+                       index: forloop.index,
+                       section_id: section.id %}
+                  {%- endfor -%}
+                {%- endif -%}
               {%- endunless -%}
-              <div class="product__block product__customization" {{ block.shopify_attributes }}>
-                {% render 'customization-field', block: block, product: product %}
-              </div>
+
+              {%- unless use_product_fields -%}
+                {%- comment -%}
+                  Precomputed: the render tag takes variables, not filter
+                  expressions. Inlining "'custom-' | append: block.id" here
+                  parses as nothing and every argument arrives nil.
+                {%- endcomment -%}
+                {%- assign block_field_id = 'custom-' | append: block.id -%}
+                <div class="product__block product__customization" {{ block.shopify_attributes }}>
+                  {% render 'customization-field',
+                     field_type: block.type,
+                     field_id: block_field_id,
+                     label: block.settings.label,
+                     property_name: block.settings.property_name,
+                     values: block.settings.values,
+                     hint: block.settings.hint,
+                     required: block.settings.required,
+                     max_length: block.settings.max_length,
+                     placeholder: block.settings.placeholder,
+                     accept: block.settings.accept,
+                     max_size_mb: block.settings.max_size_mb,
+                     shopify_attributes: block.shopify_attributes %}
+                </div>
+              {%- endunless -%}
 
             {%- when 'quantity' -%}
               <div class="product__block product__quantity" {{ block.shopify_attributes }}>
@@ -176,7 +229,15 @@
 {% schema %}
 {
   "name": "Product",
-  "settings": [],
+  "settings": [
+    {
+      "type": "text",
+      "id": "customization_metafield",
+      "label": "Per-product fields",
+      "info": "Namespace and key of the product metafield holding the customization fields. When a product has one, it replaces the blocks below.",
+      "default": "custom.customization_fields"
+    }
+  ],
   "blocks": [
     {
       "type": "title",

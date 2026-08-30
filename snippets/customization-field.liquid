@@ -1,23 +1,43 @@
 {%- comment -%}
-  A single customization input, rendered from a product-template block.
+  A single customization input.
 
   Every field posts as a Shopify line item property, so whatever the
   customer chooses travels with the line through the cart and into the
   order — no app, no metafield plumbing.
+
+  This renders one normalised field. It deliberately does NOT read
+  block.settings: the same field can come from a theme-editor block or from
+  a per-product metaobject in the admin, and the snippet should not know or
+  care which. The caller flattens whichever source it has into these
+  parameters.
 
   All five input types are built for touch first: 44px minimum targets,
   16px text so iOS never zooms on focus, the right virtual keyboard via
   inputmode, and inline validation wired with aria-describedby rather than
   a blocking alert.
 
-  Accepts: block {Object}, product {Object}
+  Accepts:
+    field_type    {String}  swatch_property | text_property |
+                            textarea_property | select_property |
+                            file_property
+    field_id      {String}  Unique id for this field on the page
+    label         {String}  Visible label
+    property_name {String}  Line item property name. Defaults to the label.
+    values        {String}  Comma separated. Swatches also accept
+                            "Name:#hex" per value.
+    hint          {String}  Optional helper text
+    required      {Boolean}
+    max_length    {Number}  Text and textarea
+    placeholder   {String}  Select
+    accept        {String}  File
+    max_size_mb   {Number}  File
+    shopify_attributes {String}  Only set on the theme-editor path
 {%- endcomment -%}
 
 {%- liquid
-  assign field_id = 'custom-' | append: block.id
-  assign label = block.settings.label | default: 'Option'
-  assign property_name = block.settings.property_name | default: label
-  assign is_required = block.settings.required
+  assign label = label | default: 'Option'
+  assign property_name = property_name | default: label
+  assign is_required = required
   assign error_id = field_id | append: '-error'
   assign hint_id = field_id | append: '-hint'
 -%}
@@ -25,22 +45,22 @@
 <div
   class="custom-field"
   data-custom-field
-  data-field-type="{{ block.type }}"
-  {{ block.shopify_attributes }}
+  data-field-type="{{ field_type }}"
+  {{ shopify_attributes }}
 >
-  {%- case block.type -%}
+  {%- case field_type -%}
 
     {%- comment -%} ---------- Colour / finish swatches ---------- {%- endcomment -%}
     {%- when 'swatch_property' -%}
-      {%- assign values = block.settings.values | split: ',' -%}
+      {%- assign value_list = values | split: ',' -%}
       <fieldset class="custom-field__group">
         <legend class="field__label">
           {{ label }}
           {%- if is_required %} <span class="custom-field__required" aria-hidden="true">*</span>{% endif -%}
         </legend>
 
-        {%- if block.settings.hint != blank -%}
-          <p class="field__hint" id="{{ hint_id }}">{{ block.settings.hint }}</p>
+        {%- if hint != blank -%}
+          <p class="field__hint" id="{{ hint_id }}">{{ hint }}</p>
         {%- endif -%}
 
         {%- comment -%}
@@ -49,9 +69,23 @@
           hand; radios arrive with all of it.
         {%- endcomment -%}
         <div class="swatch-list">
-          {%- for value in values -%}
-            {%- assign value_clean = value | strip -%}
-            {%- assign value_id = field_id | append: '-' | append: forloop.index -%}
+          {%- for value in value_list -%}
+            {%- liquid
+              # "Charcoal:#3f3c38" carries its own colour. Without that the
+              # chip falls back to the named brand palette in CSS, and a
+              # colour the palette has never heard of would render blank —
+              # which is what a merchant adding their own shade would hit.
+              assign value_parts = value | split: ':'
+              assign value_clean = value_parts[0] | strip
+              assign value_color = ''
+              if value_parts.size > 1
+                # Trimmed at the first semicolon and escaped: this lands in a
+                # style attribute, and a merchant string should not be able to
+                # open a second declaration.
+                assign value_color = value_parts[1] | strip | split: ';' | first | escape
+              endif
+              assign value_id = field_id | append: '-' | append: forloop.index
+            -%}
             <div class="swatch-list__item">
               <input
                 type="radio"
@@ -60,13 +94,14 @@
                 name="properties[{{ property_name }}]"
                 value="{{ value_clean | escape }}"
                 {% if forloop.first and is_required %}required{% endif %}
-                {% if block.settings.hint != blank %}aria-describedby="{{ hint_id }}"{% endif %}
+                {% if hint != blank %}aria-describedby="{{ hint_id }}"{% endif %}
                 data-custom-input
               >
               <label class="swatch-list__label" for="{{ value_id }}">
                 <span
                   class="swatch-list__chip swatch-chip"
                   data-swatch="{{ value_clean | handle }}"
+                  {% if value_color != blank %}style="--swatch-color: {{ value_color }}; --swatch-color-2: {{ value_color }};"{% endif %}
                   aria-hidden="true"
                 ></span>
                 <span class="swatch-list__name">{{ value_clean }}</span>
@@ -80,7 +115,7 @@
 
     {%- comment -%} ---------- Engraving / short text ---------- {%- endcomment -%}
     {%- when 'text_property' -%}
-      {%- assign max_length = block.settings.max_length | default: 30 -%}
+      {%- assign max_length = max_length | default: 30 -%}
       <div class="field">
         <label class="field__label" for="{{ field_id }}">
           {{ label }}
@@ -93,8 +128,8 @@
             into t would try to translate the merchant string and emit
             "translation missing".
           {%- endcomment -%}
-          {%- if block.settings.hint != blank -%}
-            {{ block.settings.hint }}
+          {%- if hint != blank -%}
+            {{ hint }}
           {%- else -%}
             {{ 'products.customization.engraving_hint' | t: max: max_length }}
           {%- endif -%}
@@ -133,15 +168,15 @@
 
     {%- comment -%} ---------- Gift message / long text ---------- {%- endcomment -%}
     {%- when 'textarea_property' -%}
-      {%- assign max_length = block.settings.max_length | default: 200 -%}
+      {%- assign max_length = max_length | default: 200 -%}
       <div class="field">
         <label class="field__label" for="{{ field_id }}">
           {{ label }}
           {%- if is_required %} <span class="custom-field__required" aria-hidden="true">*</span>{% endif -%}
         </label>
 
-        {%- if block.settings.hint != blank -%}
-          <p class="field__hint" id="{{ hint_id }}">{{ block.settings.hint }}</p>
+        {%- if hint != blank -%}
+          <p class="field__hint" id="{{ hint_id }}">{{ hint }}</p>
         {%- endif -%}
 
         <textarea
@@ -166,15 +201,15 @@
 
     {%- comment -%} ---------- Dropdown ---------- {%- endcomment -%}
     {%- when 'select_property' -%}
-      {%- assign values = block.settings.values | split: ',' -%}
+      {%- assign value_list = values | split: ',' -%}
       <div class="field">
         <label class="field__label" for="{{ field_id }}">
           {{ label }}
           {%- if is_required %} <span class="custom-field__required" aria-hidden="true">*</span>{% endif -%}
         </label>
 
-        {%- if block.settings.hint != blank -%}
-          <p class="field__hint" id="{{ hint_id }}">{{ block.settings.hint }}</p>
+        {%- if hint != blank -%}
+          <p class="field__hint" id="{{ hint_id }}">{{ hint }}</p>
         {%- endif -%}
 
         {%- comment -%}
@@ -190,8 +225,8 @@
           aria-describedby="{{ hint_id }} {{ error_id }}"
           data-custom-input
         >
-          <option value="">{{ block.settings.placeholder | default: 'Choose an option' }}</option>
-          {%- for value in values -%}
+          <option value="">{{ placeholder | default: 'Choose an option' }}</option>
+          {%- for value in value_list -%}
             {%- assign value_clean = value | strip -%}
             <option value="{{ value_clean | escape }}">{{ value_clean }}</option>
           {%- endfor -%}
@@ -202,7 +237,7 @@
 
     {%- comment -%} ---------- File upload ---------- {%- endcomment -%}
     {%- when 'file_property' -%}
-      {%- assign max_mb = block.settings.max_size_mb | default: 5 -%}
+      {%- assign max_mb = max_size_mb | default: 5 -%}
       <div class="field file-field">
         <span class="field__label" id="{{ field_id }}-label">
           {{ label }}
@@ -224,7 +259,7 @@
           class="file-field__input visually-hidden"
           id="{{ field_id }}"
           name="properties[{{ property_name }}]"
-          accept="{{ block.settings.accept | default: 'image/jpeg,image/png,application/pdf' }}"
+          accept="{{ accept | default: 'image/jpeg,image/png,application/pdf' }}"
           {% if is_required %}required{% endif %}
           aria-describedby="{{ hint_id }} {{ field_id }}-status {{ error_id }}"
           data-custom-input

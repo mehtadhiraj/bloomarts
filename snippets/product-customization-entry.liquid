@@ -1,0 +1,68 @@
+{%- comment -%}
+  Maps one admin-defined customization entry onto the field contract.
+
+  This is the whole of the theme's knowledge about how the admin data is
+  shaped. Everything downstream sees the same normalised parameters whether
+  the field came from here or from a theme-editor block, which is the point:
+  the merchant configures per-product options in Shopify, and no option
+  label, value or colour lives in the theme.
+
+  The entry is a metaobject of type "customization_field". See
+  docs/CUSTOMIZATION-FIELDS.md for the definition to create in
+  Settings > Custom data.
+
+  Accepts:
+    entry      {Object}  The metaobject
+    index      {Number}  Position in the list, for a unique field id
+    section_id {String}
+{%- endcomment -%}
+
+{%- liquid
+  # .value throughout, not bare access. A metaobject field is a drop, and a
+  # drop is truthy even when it holds false — reading "required" without it
+  # would make every field mandatory.
+  assign entry_label = entry.label.value
+  assign entry_kind = entry.field_type.value | default: 'text' | downcase | strip
+
+  case entry_kind
+    when 'swatch', 'swatches', 'colour', 'color'
+      assign entry_type = 'swatch_property'
+    when 'select', 'dropdown'
+      assign entry_type = 'select_property'
+    when 'textarea', 'long text', 'message'
+      assign entry_type = 'textarea_property'
+    when 'file', 'upload', 'image'
+      assign entry_type = 'file_property'
+    else
+      assign entry_type = 'text_property'
+  endcase
+
+  # Values can be a comma separated string or a list metafield. Normalising
+  # to a string here means the field snippet only ever parses one shape.
+  assign entry_values = ''
+  assign raw_values = entry.values.value
+  if raw_values.size > 0 and raw_values.first != blank
+    assign entry_values = raw_values | join: ','
+  else
+    assign entry_values = raw_values
+  endif
+
+  assign entry_id = 'custom-' | append: section_id | append: '-' | append: index
+-%}
+
+{%- if entry_label != blank -%}
+  <div class="product__block product__customization">
+    {% render 'customization-field',
+       field_type: entry_type,
+       field_id: entry_id,
+       label: entry_label,
+       property_name: entry.property_name.value,
+       values: entry_values,
+       hint: entry.hint.value,
+       required: entry.required.value,
+       max_length: entry.max_length.value,
+       placeholder: entry.placeholder.value,
+       accept: entry.accept.value,
+       max_size_mb: entry.max_size_mb.value %}
+  </div>
+{%- endif -%}

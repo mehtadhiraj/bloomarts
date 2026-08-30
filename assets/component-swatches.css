@@ -4,9 +4,12 @@
    Shared by product cards and the variant picker so a colour never renders
    differently in the grid than on the product page.
 
-   Values are keyed by the handleised option value. A value with no entry
-   falls back to a neutral chip rather than rendering invisible — an unnamed
-   colour should still be a visible, countable option.
+   The colour comes from the admin wherever the merchant has set one — a
+   native option swatch on a variant, or "Name:#hex" on a customization
+   field — and arrives as an inline --swatch-color. The named entries below
+   are only a fallback for the brand palette, so an unconfigured value still
+   looks like something rather than an empty slot. Adding a colour here is
+   not how a merchant adds a colour.
    ========================================================================== */
 
 [data-swatch] {
@@ -51,4 +54,13 @@
   /* A hairline border keeps pale chips (bone, milk, mist) visible against
      a light surface — otherwise they read as an empty slot. */
   border: 1px solid rgb(31 27 22 / 0.18);
+}
+
+/* An admin swatch image wins over any colour: it is the actual material.
+   :where() is zero-specificity, so this has to come after .swatch-chip to
+   beat the gradient rather than before it. */
+.swatch-chip:where([style*="--swatch-image"]) {
+  background-image: var(--swatch-image);
+  background-size: cover;
+  background-position: center;
 }
