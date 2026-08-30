@@ -187,6 +187,39 @@
   margin-top: var(--space-2xs);
 }
 
+/* --------------------------------------------------------------------------
+   Phone — copy at the top, action at the bottom
+
+   The button sits on the bottom edge of the image rather than floating in the
+   middle of the copy: it is the one thing on the screen to act on, and the
+   bottom of a phone screen is where a thumb already is.
+
+   margin-block-start: auto on the last flex child, rather than absolute
+   positioning — the free space in the column collects there, which pushes the
+   button down and packs the copy to the top in one move.
+
+   This block sits AFTER .hero__actions on purpose. That rule sets its own
+   margin-top, and at equal specificity the later rule wins — placed above it,
+   the auto margin was silently overridden and the button stayed put.
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 767px) {
+  .hero__content {
+    /* stretch, so the inner column is as tall as the hero and there is free
+       space for the auto margin to absorb. */
+    align-items: stretch;
+    /* The hero sits under the floating header, so the copy has to start below
+       it or the eyebrow lands behind the nav. */
+    padding-block: calc(var(--header-height) + var(--space-md))
+                   calc(var(--space-lg) + var(--safe-bottom));
+  }
+
+  .hero__actions {
+    margin-block-start: auto;
+    width: 100%;
+  }
+}
+
 .hero__motifs {
   position: absolute;
   inset: 0;
@@ -291,9 +324,14 @@
   background-color: var(--color-background);
 }
 
+/* relative, not static. These rules exist to cancel the pinned hero's sticky
+   positioning under a motion brake — but the copy is absolutely positioned
+   over the image at every size now, so the hero has to stay its containing
+   block. Setting static let the overlay escape to the viewport, which put the
+   eyebrow behind the header on any phone (simplify-motion applies there). */
 .reduce-motion .hero,
 .simplify-motion .hero {
-  position: static;
+  position: relative;
 }
 
 .reduce-motion .hero__media,
@@ -306,7 +344,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero { position: static; }
+  .hero { position: relative; }
 
   .hero__media,
   .hero__content {

@@ -26,15 +26,22 @@
   box-shadow: 0 -24px 48px rgb(46 36 27 / 0.28);
 }
 
+/* --------------------------------------------------------------------------
+   Below the pin — the panels stack
+
+   These used to be a full-height horizontal snap row on a phone, and that was
+   the wrong gesture in the wrong place. Swiping up is what a shopper does on
+   a page, and swiping up here scrolled straight past the section: clay and
+   resin were never seen. Nothing on screen said "swipe sideways" either —
+   only a 1/3 counter, which reads as a label rather than an instruction.
+
+   Stacked, the ordinary page scroll reveals all three. No hidden content, no
+   competing axis, and the pinned horizontal treatment stays where there is
+   room to signal it — from 1024px up.
+   -------------------------------------------------------------------------- */
+
 .materials__viewport {
-  overflow-x: auto;
-  /* Explicit: an unset overflow-y computes to auto next to a scrollable
-     axis, not visible. */
-  overflow-y: hidden;
-  overscroll-behavior-x: contain;
-  -webkit-overflow-scrolling: touch;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
+  overflow: clip;
 }
 
 .materials__viewport::-webkit-scrollbar {
@@ -42,7 +49,7 @@
 }
 
 .materials__track {
-  display: flex;
+  display: block;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -50,17 +57,19 @@
 
 .materials__panel {
   position: relative;
-  flex: 0 0 100%;
-  scroll-snap-align: center;
-  scroll-snap-stop: always;
+  width: 100%;
   min-width: 0;
   /* A full screen, INCLUDING the strip behind the header.
 
      Subtracting the header height left a band above each panel showing the
      page background, so the transparent header read as a separate grey bar
      instead of merging into whatever panel sits behind it. The header floats
-     over the image; it does not sit above it. */
-  height: 100svh;
+     over the image; it does not sit above it.
+
+     Not quite a full screen while stacked, deliberately: the top of the next
+     panel showing under the fold is what tells a shopper there is more below.
+     The pinned layout at 1024px overrides this with height: 100%. */
+  height: 86svh;
   overflow: clip;
 }
 
