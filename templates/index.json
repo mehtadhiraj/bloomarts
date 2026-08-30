@@ -82,7 +82,8 @@
     "studio": {
       "type": "image-with-text",
       "settings": {
-        "image": "shopify://shop_images/bloom-art-bee-gif.gif",
+        "art_source": "image",
+        "image": "shopify://shop_images/bee-vector-svg.svg",
         "image_alt": "A bee painting a heart with a paintbrush, beside a leaf sprig",
         "eyebrow": "The studio",
         "heading": "Made slowly,",
@@ -92,8 +93,7 @@
         "stat_label": "for concrete to cure before it is sealed",
         "button_label": "See the full collection",
         "button_link": "shopify://collections/all",
-        "layout": "text-first",
-        "art_source": "image"
+        "layout": "text-first"
       }
     },
     "all_products": {
