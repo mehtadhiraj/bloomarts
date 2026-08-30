@@ -91,6 +91,14 @@ swatch set in the admin. The named palette in `assets/component-swatches.css`
 is only a fallback for the brand's own colours — adding entries there is not
 how a merchant adds a colour.
 
+**Which options render as swatches** is decided by the data first: any option
+with a native swatch on one of its values is treated as a colour option, no
+configuration needed. For options with no swatches set yet, the theme falls
+back to matching the option *name* against **Theme settings → Product options →
+Swatch option names** (`colour, color, finish, glaze, colourway, colorway` by
+default). Matching is on substring, so `2nd Colour` and `Glaze colour` both
+count. Everything else renders as a segmented button list.
+
 ---
 
 ## What reaches the order

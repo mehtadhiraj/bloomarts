@@ -342,6 +342,18 @@
     ]
   },
   {
+    "name": "Product options",
+    "settings": [
+      {
+        "type": "text",
+        "id": "swatch_option_names",
+        "label": "Swatch option names",
+        "info": "Options whose name contains any of these render as colour swatches. Comma separated. Only used for options with no swatch set in the admin \u2014 a native swatch always wins.",
+        "default": "colour, color, finish, glaze, colourway, colorway"
+      }
+    ]
+  },
+  {
     "name": "Animation",
     "settings": [
       {

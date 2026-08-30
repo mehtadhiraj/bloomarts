@@ -11,7 +11,14 @@
 
 {%- liquid
   assign selected = product.selected_or_first_available_variant
-  assign colour_options = 'colour,color,finish,glaze,colourway,colorway'
+
+  # Which options render as swatches is decided by the data first: if the
+  # merchant has set a native swatch on any of an option's values in the
+  # admin, it is a colour option and there is nothing to guess. The name list
+  # below is only for options with no swatches configured yet, and it is a
+  # theme setting rather than a constant — a hardcoded list is why an option
+  # called "2nd Colour" rendered as plain buttons.
+  assign swatch_names = settings.swatch_option_names | default: 'colour, color, finish, glaze, colourway, colorway' | downcase | split: ','
 -%}
 
 <variant-picker
@@ -24,9 +31,25 @@
     {%- liquid
       assign option_handle = option.name | downcase
       assign is_colour = false
-      if colour_options contains option_handle
-        assign is_colour = true
-      endif
+
+      for option_value in option.values
+        if option_value.swatch.color != blank or option_value.swatch.image != blank
+          assign is_colour = true
+          break
+        endif
+      endfor
+
+      unless is_colour
+        # Substring, not equality: "2nd Colour" and "Glaze colour" are colour
+        # options too.
+        for swatch_name in swatch_names
+          assign swatch_name_clean = swatch_name | strip
+          if swatch_name_clean != blank and option_handle contains swatch_name_clean
+            assign is_colour = true
+            break
+          endif
+        endfor
+      endunless
       assign option_index = forloop.index
       assign selected_value = selected.options[forloop.index0]
     -%}
