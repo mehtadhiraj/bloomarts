@@ -134,6 +134,37 @@
         {%- endfor -%}
       </ol>
     </div>
+
+    {%- if panel_count > 1 -%}
+      {%- comment -%}
+        The swipe affordance. A full-height panel fills the screen, so there
+        is no edge of a neighbour to suggest a neighbour exists — the dots
+        have to say it instead. Real buttons, not decoration: they are how
+        someone reaches panel three without a swipe gesture at all.
+
+        Hidden once the pinned desktop layout takes over, where scrolling the
+        page moves the panels and a pager would be lying about the control.
+      {%- endcomment -%}
+      <div class="materials__pager" data-materials-pager>
+        <ol class="materials__dots" role="list">
+          {%- for block in panels -%}
+            <li>
+              <button
+                type="button"
+                class="materials__dot"
+                data-materials-goto="{{ forloop.index0 }}"
+                aria-label="{{ block.settings.title | escape }}"
+                {% if forloop.first %}aria-current="true"{% endif %}
+              ></button>
+            </li>
+          {%- endfor -%}
+        </ol>
+        <p class="materials__swipe-hint" data-materials-hint aria-hidden="true">
+          {{ 'sections.materials.swipe' | t }}
+          {% render 'icon', icon: 'arrow-right', size: 14 %}
+        </p>
+      </div>
+    {%- endif -%}
   </section>
 
 {%- endif -%}

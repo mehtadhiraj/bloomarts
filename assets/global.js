@@ -571,6 +571,65 @@
   }
 
   /* ------------------------------------------------------------------
+     Materials swipe row
+
+     A full-height panel fills the screen, so nothing about the layout says
+     there is a panel beside it. This keeps the dots in step with the row,
+     lets them drive it, and retires the hint once the row has been moved.
+
+     The row itself is native scroll-snap — none of this is required for it
+     to work, it only makes the fact that it works discoverable.
+     ------------------------------------------------------------------ */
+
+  function setupMaterialsSwipe() {
+    const viewport = document.querySelector('[data-materials-viewport]');
+    const pager = document.querySelector('[data-materials-pager]');
+    if (!viewport || !pager) return;
+
+    const panels = Array.from(document.querySelectorAll('[data-materials-track] > li'));
+    const dots = Array.from(pager.querySelectorAll('[data-materials-goto]'));
+    if (panels.length < 2 || !dots.length) return;
+
+    dots.forEach((dot) => {
+      dot.addEventListener('click', () => {
+        const index = Number(dot.getAttribute('data-materials-goto'));
+        const panel = panels[index];
+        if (!panel) return;
+        pager.classList.add('is-used');
+        viewport.scrollTo({
+          left: panel.offsetLeft,
+          behavior: document.documentElement.classList.contains('reduce-motion') ? 'instant' : 'smooth'
+        });
+      });
+    });
+
+    // The hint is about the gesture, so any movement of the row retires it —
+    // however it was moved.
+    viewport.addEventListener('scroll', () => pager.classList.add('is-used'), { once: true });
+
+    if (!('IntersectionObserver' in window)) return;
+
+    /* Watching the panels rather than reading scrollLeft: it reports the
+       settled panel instead of every intermediate frame, and it costs nothing
+       while the row is still. */
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const index = panels.indexOf(entry.target);
+          dots.forEach((dot, i) => {
+            if (i === index) dot.setAttribute('aria-current', 'true');
+            else dot.removeAttribute('aria-current');
+          });
+        });
+      },
+      { root: viewport, threshold: 0.6 }
+    );
+
+    panels.forEach((panel) => observer.observe(panel));
+  }
+
+  /* ------------------------------------------------------------------
      Inline SVG artwork
 
      An SVG referenced by <img> is a sealed document: stylesheets and
@@ -1010,6 +1069,7 @@
     run('scroll reveal', () => setupReveal(reduced));
     run('cart bump', setupCartBump);
     run('materials pin', setupMaterialsPin);
+    run('materials swipe', setupMaterialsSwipe);
     run('editorial pin', setupEditorialPin);
     run('inline art', setupInlineArt);
     run('sticky header', setupStickyHeader);

@@ -27,21 +27,26 @@
 }
 
 /* --------------------------------------------------------------------------
-   Below the pin — the panels stack
+   Below the pin — a swipe row, with the affordances to match
 
-   These used to be a full-height horizontal snap row on a phone, and that was
-   the wrong gesture in the wrong place. Swiping up is what a shopper does on
-   a page, and swiping up here scrolled straight past the section: clay and
-   resin were never seen. Nothing on screen said "swipe sideways" either —
-   only a 1/3 counter, which reads as a label rather than an instruction.
-
-   Stacked, the ordinary page scroll reveals all three. No hidden content, no
-   competing axis, and the pinned horizontal treatment stays where there is
-   room to signal it — from 1024px up.
+   A full-height horizontal scroller gives no clue it scrolls: the panel fills
+   the screen, so there is no edge of a neighbour to hint at one. The dots and
+   the one-time nudge below exist to say what the layout cannot.
    -------------------------------------------------------------------------- */
 
 .materials__viewport {
-  overflow: clip;
+  overflow-x: auto;
+  /* Explicit: an unset overflow-y computes to auto next to a scrollable
+     axis, not visible. */
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.materials__viewport::-webkit-scrollbar {
+  display: none;
 }
 
 .materials__viewport::-webkit-scrollbar {
@@ -49,7 +54,7 @@
 }
 
 .materials__track {
-  display: block;
+  display: flex;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -57,19 +62,17 @@
 
 .materials__panel {
   position: relative;
-  width: 100%;
+  flex: 0 0 100%;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
   min-width: 0;
   /* A full screen, INCLUDING the strip behind the header.
 
      Subtracting the header height left a band above each panel showing the
      page background, so the transparent header read as a separate grey bar
      instead of merging into whatever panel sits behind it. The header floats
-     over the image; it does not sit above it.
-
-     Not quite a full screen while stacked, deliberately: the top of the next
-     panel showing under the fold is what tells a shopper there is more below.
-     The pinned layout at 1024px overrides this with height: 100%. */
-  height: 86svh;
+     over the image; it does not sit above it. */
+  height: 100svh;
   overflow: clip;
 }
 
@@ -305,5 +308,106 @@
     animation: none !important;
     transform: none !important;
     opacity: 1 !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Pager — the swipe affordance
+
+   Overlaid on the panel rather than placed under the section, because a
+   control that sits below a full-height panel is a control nobody sees. It
+   rides above the panel's own gradient, where there is guaranteed contrast.
+   -------------------------------------------------------------------------- */
+
+.materials__pager {
+  position: absolute;
+  inset-inline: 0;
+  bottom: calc(var(--space-md) + var(--safe-bottom));
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2xs);
+  pointer-events: none;
+}
+
+.materials__dots {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  pointer-events: auto;
+}
+
+.materials__dot {
+  /* The visible dot is small, but the target is not: a 44px hit area with a
+     10px mark inside it, which is the touch minimum without a row of
+     oversized circles across the artwork. */
+  display: block;
+  width: var(--tap-min);
+  height: var(--tap-min);
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  position: relative;
+}
+
+.materials__dot::after {
+  content: '';
+  position: absolute;
+  inset: 50% auto auto 50%;
+  translate: -50% -50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: color-mix(in srgb, var(--brand-cream) 45%, transparent);
+  transition: background-color var(--duration-sm) var(--ease-out),
+              scale var(--duration-sm) var(--ease-out);
+}
+
+.materials__dot[aria-current="true"]::after {
+  background-color: var(--brand-cream);
+  scale: 1.35;
+}
+
+.materials__swipe-hint {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3xs);
+  margin: 0;
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--brand-cream) 78%, transparent);
+  transition: opacity var(--duration-md) var(--ease-out);
+}
+
+/* The hint has done its job the moment the row is moved, and a permanent
+   instruction is clutter. */
+.materials__pager.is-used .materials__swipe-hint {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html:not(.reduce-motion) .materials__pager:not(.is-used) .materials__swipe-hint svg {
+    animation: materials-nudge 1.8s ease-in-out infinite;
+  }
+}
+
+@keyframes materials-nudge {
+  0%, 60%, 100% { transform: translateX(0); }
+  30%           { transform: translateX(5px); }
+}
+
+/* Once the section pins, the page scroll drives the panels — a pager would be
+   claiming a control it no longer has. */
+@supports (animation-timeline: view()) {
+  @media (min-width: 1024px) {
+    html.materials-ready:not(.reduce-motion):not(.simplify-motion) .materials__pager {
+      display: none;
+    }
   }
 }

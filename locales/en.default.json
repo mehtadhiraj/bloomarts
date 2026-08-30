@@ -182,6 +182,9 @@
   "sections": {
     "instagram": {
       "embed_title": "Instagram reel from @{{ handle }}"
+    },
+    "materials": {
+      "swipe": "Swipe"
     }
   }
 }
