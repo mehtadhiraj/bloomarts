@@ -131,20 +131,6 @@
     </div>
   </section>
 
-  {%- comment -%}
-    Outside the pinned section, not inside it. The section's height is set to
-    one viewport per panel and its viewport is sticky, so a sibling placed
-    within it would land a whole panel from the bottom with dead space under
-    it. Out here the button simply follows the last panel, which is where
-    "below the section" actually means.
-  {%- endcomment -%}
-  {%- if section.settings.button_label != blank and section.settings.button_link != blank -%}
-    <div class="section-cta">
-      <a href="{{ section.settings.button_link }}" class="btn btn--primary">
-        {{ section.settings.button_label }}
-      </a>
-    </div>
-  {%- endif -%}
 {%- endif -%}
 
 {% schema %}
@@ -158,18 +144,6 @@
       "label": "Accessible name",
       "default": "Three materials, one pair of hands",
       "info": "Describes the section to screen readers. Not shown on screen \u2014 each panel carries its own visible title."
-    },
-    {
-      "type": "text",
-      "id": "button_label",
-      "label": "Button label",
-      "info": "Shown below the last panel. Leave empty to hide.",
-      "default": "Shop all"
-    },
-    {
-      "type": "url",
-      "id": "button_link",
-      "label": "Button link"
     }
   ],
   "blocks": [

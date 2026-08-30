@@ -38,8 +38,8 @@
             "title": "Concrete",
             "script_accent": "",
             "text": "Cast by hand, cured for seven days, then sealed inside and out. It takes pigment unevenly, which is the point.",
-            "link": "",
-            "link_label": "Shop concrete",
+            "link": "shopify://collections/all",
+            "link_label": "Shop the pieces",
             "motif": "sprig"
           }
         },
@@ -51,8 +51,8 @@
             "title": "Clay",
             "script_accent": "thrown",
             "text": "Speckled stoneware and terracotta, thrown on the wheel and fired twice. The throwing ridges stay.",
-            "link": "",
-            "link_label": "Shop clay",
+            "link": "shopify://collections/all",
+            "link_label": "Shop the pieces",
             "motif": "heart"
           }
         },
@@ -64,8 +64,8 @@
             "title": "Resin",
             "script_accent": "",
             "text": "Poured in layers over three days. Every piece sets a little differently, so no two match.",
-            "link": "",
-            "link_label": "Shop resin",
+            "link": "shopify://collections/all",
+            "link_label": "Shop the pieces",
             "motif": "bee"
           }
         }
@@ -76,9 +76,7 @@
         "resin"
       ],
       "settings": {
-        "heading": "Three materials, one pair of hands",
-        "button_label": "Shop all",
-        "button_link": "shopify://collections/all"
+        "heading": "Three materials, one pair of hands"
       }
     },
     "studio": {
@@ -87,7 +85,7 @@
         "image_alt": "",
         "heading": "Made slowly,",
         "text": "<p>Bloom Arts is a two-person studio. Concrete cures for seven days before it is sealed, stoneware is fired twice, resin is poured in layers over three days. None of it can be rushed, which is why batches are small and colour shifts a little between pieces.</p>",
-        "button_label": "Shop all",
+        "button_label": "See the full collection",
         "button_link": "shopify://collections/all",
         "layout": "text-first",
         "eyebrow": "The studio",
