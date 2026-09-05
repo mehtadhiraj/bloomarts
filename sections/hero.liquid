@@ -1,105 +1,61 @@
 {{ 'component-hero.css' | asset_url | stylesheet_tag }}
 
-{%- comment -%}
-  Hero with genuinely separate mobile and desktop crops.
+<section class="hero hero--{{ section.settings.height }}" data-header-overlay style="--hero-overlay: {{ section.settings.overlay_opacity }};">
+  <div class="hero__glow" aria-hidden="true"></div>
 
-  A 16:9 desktop banner scaled to 390px leaves the subject a thumbnail and
-  the overlay text unreadable, so the merchant supplies a portrait crop for
-  mobile and the two are switched with a <picture> source rather than by
-  scaling one file.
-{%- endcomment -%}
-
-<section
-  class="hero hero--{{ section.settings.height }}"
-  data-header-overlay
-  style="--hero-overlay: {{ section.settings.overlay_opacity }};"
->
-  {%- comment -%}
-    parallax-media makes this the clipping container for the scroll-linked
-    drift. It supersedes the ambient hero zoom via higher specificity —
-    running both would leave two animations fighting over `transform`.
-  {%- endcomment -%}
-  <div class="hero__media parallax-media">
-    {%- if section.settings.image_desktop != blank -%}
-      {% render 'art-directed-image',
-         image_desktop: section.settings.image_desktop,
-         image_mobile: section.settings.image_mobile,
-         ratio_mobile: 1.2,
-         ratio_desktop: 0.48,
-         breakpoint: '768px',
-         loading: 'eager',
-         fetchpriority: 'high',
-         alt: section.settings.image_alt,
-         class: 'hero__image' %}
-    {%- else -%}
-      <div class="hero__image hero__image--placeholder" aria-hidden="true"></div>
-    {%- endif -%}
-  </div>
-
-  {%- comment -%}
-    Content sits below the image on mobile and over it from 768px. Overlaid
-    text on a phone means either an unreadable contrast ratio or a scrim
-    heavy enough to hide the photograph — stacking avoids the choice
-    entirely.
-  {%- endcomment -%}
-  <div class="hero__content">
-    <div class="page-width hero__content-inner" data-reveal-group>
+  <div class="page-width hero__shell">
+    <div class="hero__content" data-reveal-group>
       {%- if section.settings.subheading != blank -%}
-        <p class="eyebrow hero__subheading" data-reveal="rise-stagger">{{ section.settings.subheading }}</p>
+        <p class="eyebrow hero__subheading" data-reveal="rise-stagger">
+          <span class="hero__eyebrow-mark" aria-hidden="true"></span>{{ section.settings.subheading }}
+        </p>
       {%- endif -%}
-
       {%- if section.settings.heading != blank -%}
         <h1 class="hero__heading" data-reveal="rise-stagger">
-          <span class="hero__heading-line handwrite handwrite--first">{{ section.settings.heading }}</span>
-          {%- comment -%}
-            The script accent is decorative emphasis on a word the heading
-            already contains — it is never the only place a word appears, so
-            losing the font changes nothing semantically.
-          {%- endcomment -%}
-          {%- if section.settings.script_accent != blank -%}
-            <span class="script hero__script handwrite handwrite--second">{{ section.settings.script_accent }}</span>
-          {%- endif -%}
+          <span class="hero__heading-line">{{ section.settings.heading }}</span>
+          {%- if section.settings.script_accent != blank -%}<span class="script hero__script">{{ section.settings.script_accent }}</span>{%- endif -%}
         </h1>
       {%- endif -%}
+      {%- if section.settings.text != blank -%}<p class="hero__text" data-reveal="rise-stagger">{{ section.settings.text }}</p>{%- endif -%}
 
-      {%- if section.settings.text != blank -%}
-        <p class="hero__text" data-reveal="rise-stagger">{{ section.settings.text }}</p>
-      {%- endif -%}
-
-      {%- if section.settings.button_label != blank -%}
-        <div class="hero__actions" data-reveal="rise-stagger">
-          <a
-            href="{{ section.settings.button_link | default: routes.all_products_collection_url }}"
-            class="btn btn--primary hero__button"
-          >
-            {{ section.settings.button_label }}
+      <div class="hero__actions" data-reveal="rise-stagger">
+        {%- if section.settings.button_label != blank -%}
+          <a href="{{ section.settings.button_link | default: routes.all_products_collection_url }}" class="btn btn--primary hero__button">
+            {{ section.settings.button_label }}{% render 'icon', icon: 'arrow-right', size: 17 %}
           </a>
-          {%- if section.settings.button_2_label != blank -%}
-            <a href="{{ section.settings.button_2_link }}" class="btn btn--secondary hero__button">
-              {{ section.settings.button_2_label }}
-            </a>
-          {%- endif -%}
-        </div>
+        {%- endif -%}
+        {%- if section.settings.button_2_label != blank -%}<a href="{{ section.settings.button_2_link }}" class="hero__text-link">{{ section.settings.button_2_label }}</a>{%- endif -%}
+      </div>
+
+      {%- if section.settings.note != blank -%}
+        <p class="hero__note" data-reveal="rise-stagger">{% render 'icon', icon: 'heart', size: 15 %}{{ section.settings.note }}</p>
       {%- endif -%}
+    </div>
+
+    <div class="hero__visual" data-reveal="scale">
+      <div class="hero__media parallax-media">
+        {%- if section.settings.image_desktop != blank -%}
+          {% render 'art-directed-image', image_desktop: section.settings.image_desktop, image_mobile: section.settings.image_mobile, ratio_mobile: 0.82, ratio_desktop: 0.78, breakpoint: '768px', loading: 'eager', fetchpriority: 'high', alt: section.settings.image_alt, class: 'hero__image' %}
+        {%- else -%}
+          <div class="hero__image hero__image--placeholder" aria-hidden="true"></div>
+        {%- endif -%}
+      </div>
+      {%- if section.settings.badge_text != blank -%}
+        <div class="hero__badge" aria-label="{{ section.settings.badge_text }}"><span class="hero__badge-spark" aria-hidden="true">✦</span><span>{{ section.settings.badge_text }}</span></div>
+      {%- endif -%}
+      <p class="hero__caption" aria-hidden="true"><span>Designed with joy</span><span>Made by hand</span></p>
     </div>
   </div>
 
-  {%- comment -%}
-    Identity motifs as quiet page furniture. Decorative only, aria-hidden,
-    and hidden outright below 768px where the viewport cannot spare the
-    room and the GPU cannot spare the work.
-  {%- endcomment -%}
+  <div class="hero__rail" aria-label="What makes Bloom Arts special">
+    <div class="page-width hero__rail-inner"><span>Small-batch</span><span aria-hidden="true">✦</span><span>Made in India</span><span aria-hidden="true">✦</span><span>Perfectly imperfect</span></div>
+  </div>
+
   {%- if section.settings.show_motifs -%}
     <div class="hero__motifs hide-mobile" aria-hidden="true">
-      {%- comment -%}
-        Positioned along the outer edges only. The text column occupies the
-        left half from 768px up, so anything placed there ends up sitting on
-        top of the copy.
-      {%- endcomment -%}
-      {% render 'brand-motif', motif: 'sprig', size: 96, class: 'motif--float', style: 'top: 7%; left: 2%;' %}
-      {% render 'brand-motif', motif: 'bee', size: 64, class: 'motif--float-slow', style: 'top: 14%; right: 6%;' %}
-      {% render 'brand-motif', motif: 'heart', size: 28, class: 'motif--float', style: 'bottom: 26%; right: 16%;' %}
-      {% render 'brand-motif', motif: 'sprig', size: 72, class: 'motif--float-slow', style: 'bottom: 8%; right: 3%; transform: scaleX(-1);' %}
+      {% render 'brand-motif', motif: 'sprig', size: 92, class: 'motif--float', style: 'top: 16%; left: -1%;' %}
+      {% render 'brand-motif', motif: 'bee', size: 58, class: 'motif--float-slow', style: 'top: 15%; right: 2%;' %}
+      {% render 'brand-motif', motif: 'heart', size: 24, class: 'motif--float', style: 'bottom: 18%; left: 46%;' %}
     </div>
   {%- endif -%}
 </section>
@@ -108,115 +64,25 @@
 {
   "name": "Hero",
   "settings": [
-    {
-      "type": "image_picker",
-      "id": "image_desktop",
-      "label": "Desktop image",
-      "info": "Wide crop, at least 2400px across."
-    },
-    {
-      "type": "image_picker",
-      "id": "image_mobile",
-      "label": "Mobile image",
-      "info": "Portrait crop. Falls back to the desktop image, but a dedicated crop reads far better on a phone."
-    },
-    {
-      "type": "text",
-      "id": "image_alt",
-      "label": "Image alt text",
-      "info": "Describes the image for screen readers. Leave blank if it is purely decorative."
-    },
-    {
-      "type": "text",
-      "id": "subheading",
-      "label": "Subheading",
-      "default": "Concrete \u00b7 Clay \u00b7 Resin"
-    },
-    {
-      "type": "text",
-      "id": "heading",
-      "label": "Heading",
-      "default": "Objects with weight to them"
-    },
-    {
-      "type": "textarea",
-      "id": "text",
-      "label": "Text",
-      "default": "Cast, thrown and poured in small batches. No two pieces come out quite the same."
-    },
-    {
-      "type": "text",
-      "id": "script_accent",
-      "label": "Script accent",
-      "info": "A short word set in Great Vibes. Decorative only \u2014 keep it under three words."
-    },
-    {
-      "type": "text",
-      "id": "button_label",
-      "label": "Button label",
-      "default": "Shop the collection"
-    },
-    {
-      "type": "url",
-      "id": "button_link",
-      "label": "Button link"
-    },
-    {
-      "type": "text",
-      "id": "button_2_label",
-      "label": "Secondary button label"
-    },
-    {
-      "type": "url",
-      "id": "button_2_link",
-      "label": "Secondary button link"
-    },
-    {
-      "type": "range",
-      "id": "overlay_opacity",
-      "label": "Image overlay",
-      "info": "Darkens the photograph behind the text on tablet and desktop. Below about 70% the text can fail contrast over a light image.",
-      "min": 40,
-      "max": 90,
-      "step": 5,
-      "unit": "%",
-      "default": 75
-    },
-    {
-      "type": "checkbox",
-      "id": "show_motifs",
-      "label": "Show decorative bee and leaf motifs",
-      "default": true
-    },
-    {
-      "type": "select",
-      "id": "height",
-      "label": "Height",
-      "options": [
-        {
-          "value": "compact",
-          "label": "Compact"
-        },
-        {
-          "value": "standard",
-          "label": "Standard"
-        },
-        {
-          "value": "tall",
-          "label": "Tall"
-        },
-        {
-          "value": "full",
-          "label": "Full screen"
-        }
-      ],
-      "default": "full"
-    }
+    { "type": "image_picker", "id": "image_desktop", "label": "Desktop image", "info": "A portrait or square studio image works best in the editorial frame." },
+    { "type": "image_picker", "id": "image_mobile", "label": "Mobile image", "info": "Optional portrait crop for smaller screens." },
+    { "type": "text", "id": "image_alt", "label": "Image alt text" },
+    { "type": "text", "id": "subheading", "label": "Subheading", "default": "Concrete · Clay · Resin" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Objects made for" },
+    { "type": "text", "id": "script_accent", "label": "Script accent", "default": "happy little corners" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Playful, tactile pieces shaped by hand in concrete, clay and resin. Made slowly, so every one has a character of its own." },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Explore the collection" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    { "type": "text", "id": "button_2_label", "label": "Secondary link label", "default": "Our story" },
+    { "type": "url", "id": "button_2_link", "label": "Secondary link" },
+    { "type": "text", "id": "note", "label": "Studio note", "default": "Thoughtfully made in small batches" },
+    { "type": "text", "id": "badge_text", "label": "Image badge", "default": "Fresh from the studio" },
+    { "type": "range", "id": "overlay_opacity", "label": "Image overlay", "min": 0, "max": 60, "step": 5, "unit": "%", "default": 10 },
+    { "type": "checkbox", "id": "show_motifs", "label": "Show decorative motifs", "default": true },
+    { "type": "select", "id": "height", "label": "Height", "options": [
+      { "value": "compact", "label": "Compact" }, { "value": "standard", "label": "Standard" }, { "value": "tall", "label": "Tall" }, { "value": "full", "label": "Full screen" }
+    ], "default": "full" }
   ],
-  "presets": [
-    {
-      "name": "Hero"
-    }
-  ]
+  "presets": [{ "name": "Hero" }]
 }
 {% endschema %}

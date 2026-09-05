@@ -1,355 +1,72 @@
-/* ==========================================================================
-   Hero
-
-   The copy is overlaid on the image at every size. On a phone that means the
-   hero is one screen rather than a screen of picture followed by a screen of
-   words — and the scrim below is what makes it safe, since it puts a known
-   background behind the text whatever photograph the merchant picks.
-   ========================================================================== */
-
+/* Editorial split hero — dark gallery shell, warm image card and quiet motion. */
 .hero {
   position: relative;
+  isolation: isolate;
+  overflow: clip;
   display: flex;
   flex-direction: column;
-}
-
-.hero__media {
-  position: relative;
-}
-
-.hero__image {
-  width: 100%;
-  /* svh, not vh: with dynamic viewport units the hero would resize as the
-     mobile URL bar collapses, which reads as the page jumping mid-scroll.
-     A fixed height also reserves the box before the image decodes. */
-  height: var(--hero-height, 78svh);
-  object-fit: cover;
-  display: block;
-}
-
-.hero__image--placeholder {
-  background: linear-gradient(160deg, var(--color-border), var(--color-background));
-}
-
-.hero--compact { --hero-height: 62svh; }
-.hero--standard { --hero-height: 78svh; }
-
-/* Full bleed. The transparent header overlaps the hero rather than sitting
-   above it, so 100svh really is one screen — not one screen plus a header. */
-.hero--tall,
-.hero--full { --hero-height: 100svh; }
-
-.hero__content {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  padding-block: var(--space-lg);
+  min-height: max(720px, 100svh);
+  padding-top: calc(var(--header-height) + var(--space-md));
   color: var(--brand-cream);
-
-  /* Same contrast floor as the desktop scrim, and for the same reason: over a
-     worst-case white photograph, brown at 0.75 still gives cream text about
-     5.4:1. Full strength covers the middle, where the copy sits, and eases
-     off at the very top and bottom so the image is still an image. */
-  background: linear-gradient(
-    to top,
-    color-mix(in srgb, var(--brand-brown) calc(var(--hero-overlay, 75) * 0.8%), transparent) 0%,
-    color-mix(in srgb, var(--brand-brown) calc(var(--hero-overlay, 75) * 1%), transparent) 10%,
-    color-mix(in srgb, var(--brand-brown) calc(var(--hero-overlay, 75) * 1%), transparent) 90%,
-    color-mix(in srgb, var(--brand-brown) calc(var(--hero-overlay, 75) * 0.7%), transparent) 100%
-  );
+  background: radial-gradient(circle at 76% 30%, rgb(246 176 40 / 0.13), transparent 28%), radial-gradient(circle at 8% 82%, rgb(155 175 126 / 0.12), transparent 26%), var(--brand-brown);
 }
-
-
-.hero__content-inner {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-2xs);
-}
-
-.hero__subheading {
-  margin: 0;
-}
-
-.hero__heading {
-  margin: 0;
-  font-size: var(--text-3xl);
-  line-height: var(--leading-tight);
-}
-
-.hero__text {
-  margin: 0;
-  max-width: 46ch;
-}
-
-/* After .hero__text, not before it. The copy sits on the scrim at every size
-   now, so muted brown would be unreadable — and an earlier rule would simply
-   have lost to the later one. Cream at 88% keeps the hierarchy without
-   dropping below AA. */
-.hero__subheading,
-.hero__text {
-  color: color-mix(in srgb, var(--brand-cream) 88%, transparent);
-}
-
-.hero__button {
-  margin-top: var(--space-2xs);
-  /* Full width on the narrowest phones; auto once there is room beside it. */
-  width: 100%;
-}
-
+.hero--compact { min-height: 680px; }
+.hero--standard { min-height: max(720px, 88svh); }
+.hero--tall, .hero--full { min-height: max(760px, 100svh); }
+.hero__glow { position: absolute; z-index: -1; width: min(58vw, 760px); aspect-ratio: 1; top: 6%; right: -12%; border: 1px solid rgb(251 246 238 / 0.1); border-radius: 50%; box-shadow: 0 0 0 7vw rgb(251 246 238 / 0.025), 0 0 0 15vw rgb(251 246 238 / 0.018); }
+.hero__shell { flex: 1; display: grid; align-items: center; gap: var(--space-lg); padding-block: var(--space-lg) var(--space-xl); }
+.hero__content { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-sm); }
+.hero__subheading { display: inline-flex; align-items: center; gap: var(--space-2xs); margin: 0; color: color-mix(in srgb, var(--brand-cream) 72%, transparent); }
+.hero__eyebrow-mark { width: 26px; height: 1px; background: var(--brand-amber); }
+.hero__heading { margin: 0; max-width: 12ch; font-size: clamp(3rem, 12vw, 5.2rem); font-weight: 500; line-height: 0.9; letter-spacing: -0.045em; }
+.hero__heading-line { display: block; }
+.hero__script { display: block; width: max-content; max-width: 100%; margin: 0.08em 0 0 0.15em; color: color-mix(in srgb, var(--brand-sage) 72%, var(--brand-cream)); font-size: 0.78em; line-height: 0.9; letter-spacing: 0; transform: rotate(-2deg); }
+.hero__text { max-width: 44ch; margin: var(--space-2xs) 0 0; color: color-mix(in srgb, var(--brand-cream) 78%, transparent); font-size: clamp(1rem, 1.3vw, 1.125rem); }
+.hero__actions { display: flex; flex-direction: column; align-items: stretch; gap: var(--space-sm); width: 100%; margin-top: var(--space-2xs); }
+.hero__button { justify-content: space-between; }
+.hero__button .icon { transition: transform var(--dur-base) var(--ease-out); }
+.hero__text-link { min-height: var(--tap-min); display: inline-flex; align-items: center; justify-content: center; color: var(--brand-cream); font-size: var(--text-sm); text-underline-offset: 0.35em; }
+.hero__note { display: flex; align-items: center; gap: var(--space-2xs); margin: var(--space-2xs) 0 0; color: color-mix(in srgb, var(--brand-cream) 64%, transparent); font-size: var(--text-xs); letter-spacing: 0.04em; }
+.hero__note .icon { color: var(--brand-coral); }
+.hero__visual { position: relative; z-index: 1; width: min(88%, 520px); margin-inline: auto; }
+.hero__media { position: relative; overflow: hidden; aspect-ratio: 0.82; border-radius: clamp(18px, 3vw, 42px) clamp(70px, 10vw, 160px) clamp(18px, 3vw, 42px) clamp(18px, 3vw, 42px); background: color-mix(in srgb, var(--brand-sage) 35%, var(--brand-cream)); box-shadow: 0 28px 80px rgb(0 0 0 / 0.28); }
+.hero__media::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(to top, rgb(46 36 27 / 0.42), transparent 42%); opacity: calc(var(--hero-overlay, 10) / 100); }
+.hero__image { display: block; width: 100%; height: 100%; object-fit: cover; transform: scale(1.025); }
+.hero__image--placeholder { background: linear-gradient(145deg, var(--brand-sage), var(--brand-coral)); }
+.hero__badge { position: absolute; right: -8%; bottom: 13%; width: 112px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; padding: var(--space-sm); border-radius: 50%; background: var(--brand-amber); color: var(--brand-brown); box-shadow: 0 12px 34px rgb(0 0 0 / 0.2); font-size: 0.7rem; font-weight: 600; line-height: 1.25; text-align: center; text-transform: uppercase; letter-spacing: 0.08em; }
+.hero__badge-spark { font-size: 1rem; }
+.hero__caption { display: flex; justify-content: space-between; gap: var(--space-sm); margin: var(--space-xs) var(--space-xs) 0; color: color-mix(in srgb, var(--brand-cream) 58%, transparent); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.13em; }
+.hero__rail { position: relative; z-index: 2; border-top: 1px solid rgb(251 246 238 / 0.13); background: rgb(251 246 238 / 0.035); }
+.hero__rail-inner { min-height: 58px; display: flex; align-items: center; justify-content: center; gap: clamp(0.65rem, 4vw, 3.5rem); color: color-mix(in srgb, var(--brand-cream) 68%, transparent); font-size: clamp(0.66rem, 1vw, 0.78rem); font-weight: 500; text-transform: uppercase; letter-spacing: 0.13em; white-space: nowrap; }
+.hero__rail-inner span:nth-child(4), .hero__rail-inner span:nth-child(5) { display: none; }
+.hero__motifs { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.hero__motifs .motif { opacity: 0.25; }
 @media (min-width: 480px) {
-  .hero__button {
-    width: auto;
-  }
+  .hero__actions { width: auto; flex-direction: row; align-items: center; }
+  .hero__button { min-width: 220px; }
+  .hero__rail-inner span:nth-child(4), .hero__rail-inner span:nth-child(5) { display: inline; }
 }
-
-/* --------------------------------------------------------------------------
-   From tablet — overlay
-   -------------------------------------------------------------------------- */
-
 @media (min-width: 768px) {
-  .hero--compact { --hero-height: 58svh; }
-  .hero--standard { --hero-height: 76svh; }
-  .hero--tall,
-  .hero--full { --hero-height: 100svh; }
-
-  .hero__content {
-    /* Position, overlay and colour are already set for every size. Only the
-       breathing room and the exact scrim shape change here. */
-    padding-block: var(--space-xl);
-
-    /* The scrim exists to make the text legible over an image nobody has
-       seen yet.
-
-       Full strength has to cover wherever the text is, and defaults to 0.75.
-       That number is not arbitrary: composited over a WORST-CASE pure white
-       photograph, brown at 0.75 yields a background luminance that still
-       gives cream text about 5.4:1. A lighter scrim (0.62 was the first
-       attempt) drops to roughly 4.4:1 over white and fails. Merchants can
-       raise it further but not below the floor.
-
-       The band moved with the copy. It used to peak at the bottom because
-       that is where the text was; centring the text without moving the band
-       would have left the heading sitting on the weak middle of the
-       gradient, at roughly 0.55 strength — under the floor over a light
-       photograph.
-
-       Full strength now spans 20%-80%. The centred copy occupies roughly
-       29%-71% of the hero, so that is the text band plus a margin either
-       side for longer copy, and no wider — beyond it the scrim eases off so
-       the photograph is still a photograph at the top and bottom rather than
-       a flat wash. */
-    background: linear-gradient(
-      to top,
-      color-mix(in srgb, var(--brand-brown) calc(var(--hero-overlay, 75) * 0.5%), transparent) 0%,
-      color-mix(in srgb, var(--brand-brown) calc(var(--hero-overlay, 75) * 1%), transparent) 20%,
-      color-mix(in srgb, var(--brand-brown) calc(var(--hero-overlay, 75) * 1%), transparent) 80%,
-      color-mix(in srgb, var(--brand-brown) calc(var(--hero-overlay, 75) * 0.35%), transparent) 100%
-    );
-  }
-
-  .hero__content-inner {
-    gap: var(--space-xs);
-  }
-
-  .hero__subheading,
-  .hero__text {
-    /* Muted brown would vanish against the scrim; cream at 88% keeps the
-       hierarchy without dropping below AA. */
-    color: color-mix(in srgb, var(--brand-cream) 88%, transparent);
-  }
-
-  .hero__heading {
-    font-size: var(--text-4xl);
-    max-width: 18ch;
-  }
+  .hero { padding-top: calc(var(--header-height) + var(--space-sm)); }
+  .hero__shell { grid-template-columns: minmax(0, 0.92fr) minmax(340px, 0.72fr); gap: clamp(3rem, 8vw, 9rem); padding-block: clamp(2.5rem, 5vh, 5rem); }
+  .hero__heading { max-width: 10.5ch; font-size: clamp(4.4rem, 7.4vw, 7.5rem); }
+  .hero__visual { width: min(100%, 560px); }
+  .hero__badge { width: 132px; right: -9%; }
+  .hero__rail-inner { min-height: 66px; }
 }
-
-
-/* --------------------------------------------------------------------------
-   Script accent, actions and motifs
-   -------------------------------------------------------------------------- */
-
-.hero__script {
-  /* Sits on its own line so the descenders of Great Vibes never collide
-     with the Lora line above. */
-  display: block;
-  margin-top: -0.1em;
+@media (min-width: 1200px) {
+  .hero__shell { grid-template-columns: minmax(0, 1fr) minmax(400px, 0.7fr); }
+  .hero__content { padding-inline-start: clamp(0px, 2vw, 32px); }
 }
-
-.hero__actions {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2xs);
-  width: 100%;
-  margin-top: var(--space-2xs);
+@media (hover: hover) and (pointer: fine) {
+  .hero__button:hover .icon { transform: translateX(4px); }
+  .hero__text-link:hover { color: var(--brand-amber); }
 }
-
-/* --------------------------------------------------------------------------
-   Phone — copy at the top, action at the bottom
-
-   The button sits on the bottom edge of the image rather than floating in the
-   middle of the copy: it is the one thing on the screen to act on, and the
-   bottom of a phone screen is where a thumb already is.
-
-   margin-block-start: auto on the last flex child, rather than absolute
-   positioning — the free space in the column collects there, which pushes the
-   button down and packs the copy to the top in one move.
-
-   This block sits AFTER .hero__actions on purpose. That rule sets its own
-   margin-top, and at equal specificity the later rule wins — placed above it,
-   the auto margin was silently overridden and the button stayed put.
-   -------------------------------------------------------------------------- */
-
-@media (max-width: 767px) {
-  .hero__content {
-    /* stretch, so the inner column is as tall as the hero and there is free
-       space for the auto margin to absorb. */
-    align-items: stretch;
-    /* The hero sits under the floating header, so the copy has to start below
-       it or the eyebrow lands behind the nav. */
-    padding-block: calc(var(--header-height) + var(--space-md))
-                   calc(var(--space-lg) + var(--safe-bottom));
-  }
-
-  .hero__actions {
-    margin-block-start: auto;
-    width: 100%;
-  }
+@media (prefers-reduced-motion: no-preference) {
+  [data-hero-motion="true"]:not(.reduce-motion):not(.simplify-motion) .hero__badge { animation: hero-badge-float 5s var(--ease) infinite alternate; }
+  [data-hero-motion="true"]:not(.reduce-motion):not(.simplify-motion) .hero__glow { animation: hero-glow-breathe 9s var(--ease) infinite alternate; }
 }
-
-.hero__motifs {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  overflow: hidden;
-  /* Behind the copy. The motif layer comes after .hero__content in the DOM,
-     so without this it paints on top and a heart lands in the middle of a
-     sentence. */
-  z-index: 0;
-}
-
-.hero__motifs .motif {
-  /* Slightly stronger than the global default: over the dark scrim the
-     motifs otherwise wash out to nearly nothing. */
-  opacity: 0.62;
-}
-
-@media (min-width: 480px) {
-  .hero__actions {
-    flex-direction: row;
-    align-items: center;
-    width: auto;
-  }
-}
-
-@media (min-width: 768px) {
-  /* Olive is far too dark against the scrim, and mid-tone sage only reaches
-     about 2.6:1 — under the 3:1 large-text floor. A pale sage-cream keeps
-     the accent in the brand family and clears it comfortably. */
-  .hero__content .hero__script {
-    color: color-mix(in srgb, var(--brand-sage) 40%, var(--brand-cream));
-  }
-
-  .hero__actions {
-    margin-top: var(--space-sm);
-  }
-}
-
-
-/* ==========================================================================
-   Hero recede
-
-   The hero pins while the next section scrolls up over it, and quietly
-   drops back — scaling down, dimming and rounding off — so the incoming
-   section reads as a layer arriving on top rather than the page simply
-   scrolling.
-
-   Only transform and opacity are animated, so this stays on the compositor.
-   ========================================================================== */
-
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    /* The wrapper is included for the same reason as the header: on Shopify
-       a sticky element inside its .shopify-section wrapper cannot travel,
-       because the wrapper is only as tall as the section. */
-    html:not(.reduce-motion):not(.simplify-motion) body.template-index .shopify-section:has(> .hero),
-    html:not(.reduce-motion):not(.simplify-motion) body.template-index .hero {
-      position: sticky;
-      top: 0;
-      /* A stacking context at level 0. Sections after it are given
-         position: relative below so they paint in the positioned phase and
-         therefore above this — a static sibling would paint underneath. */
-      z-index: 0;
-    }
-
-    /* No scroll-driven animation on the hero itself.
-
-       Two earlier attempts failed for instructive reasons, recorded so they
-       are not retried:
-
-       1. `animation-range: exit ...` on the hero. A sticky element's box
-          stays pinned, so its own view() timeline never advances — the
-          animation sat frozen at 0%.
-
-       2. A named timeline on the following section, pulled into scope with
-          timeline-scope. That worked structurally but silently overwrote
-          .materials' own `--materials-pin` timeline — view-timeline-name is
-          a single property, so the later declaration won and the three
-          panel animations stopped. It also left the hero stuck at the
-          animation's end state (dimmed and scaled down) whenever the
-          timeline was inactive, which includes the top of the page.
-
-       The layering alone carries the effect: the hero pins, and the next
-       section rises over it with a soft edge. No animation needed, and
-       nothing to leave in a broken state. */
-  }
-}
-
-/* Everything after the hero must paint above it. */
-.materials,
-.image-text,
-.featured,
-.instagram,
-.footer {
-  position: relative;
-  z-index: 1;
-}
-
-.image-text,
-.featured,
-.instagram {
-  background-color: var(--color-background);
-}
-
-/* relative, not static. These rules exist to cancel the pinned hero's sticky
-   positioning under a motion brake — but the copy is absolutely positioned
-   over the image at every size now, so the hero has to stay its containing
-   block. Setting static let the overlay escape to the viewport, which put the
-   eyebrow behind the header on any phone (simplify-motion applies there). */
-.reduce-motion .hero,
-.simplify-motion .hero {
-  position: relative;
-}
-
-.reduce-motion .hero__media,
-.reduce-motion .hero__content,
-.simplify-motion .hero__media,
-.simplify-motion .hero__content {
-  animation: none !important;
-  transform: none !important;
-  opacity: 1 !important;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero { position: relative; }
-
-  .hero__media,
-  .hero__content {
-    animation: none !important;
-    transform: none !important;
-    opacity: 1 !important;
-  }
-}
+@keyframes hero-badge-float { from { transform: rotate(-4deg) translateY(0); } to { transform: rotate(3deg) translateY(-10px); } }
+@keyframes hero-glow-breathe { from { transform: scale(0.96); opacity: 0.65; } to { transform: scale(1.05); opacity: 1; } }
+.materials, .image-text, .featured, .instagram, .footer, .craft-strip { position: relative; z-index: 1; }
+@media (prefers-reduced-motion: reduce) { .hero__badge, .hero__glow, .hero__image { animation: none !important; transform: none !important; } }

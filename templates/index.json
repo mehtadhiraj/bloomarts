@@ -14,17 +14,50 @@
       "settings": {
         "image_desktop": "shopify://shop_images/art-work-assembly-flyer.png",
         "image_alt": "",
-        "subheading": "Concrete · Clay · Resin",
-        "heading": "Little creations,",
-        "text": "Cast, thrown and poured by hand in small batches. No two pieces come out quite the same.",
-        "script_accent": "big smiles",
-        "button_label": "Shop the collection",
+        "subheading": "Studio-made in India",
+        "heading": "Objects made for",
+        "text": "Playful, tactile pieces shaped by hand in concrete, clay and resin. Made slowly, so every one has a character of its own.",
+        "script_accent": "happy little corners",
+        "button_label": "Explore the collection",
         "button_link": "shopify://collections/all",
-        "button_2_label": "",
-        "button_2_link": "",
-        "overlay_opacity": 75,
+        "button_2_label": "Meet the makers",
+        "button_2_link": "shopify://pages/about",
+        "note": "Thoughtfully made in small batches",
+        "badge_text": "Fresh from the studio",
+        "overlay_opacity": 10,
         "show_motifs": true,
         "height": "full"
+      }
+    },
+    "craft_values": {
+      "type": "craft-strip",
+      "blocks": {
+        "made": {
+          "type": "value",
+          "settings": {
+            "title": "Made by hand",
+            "text": "Shaped, poured and finished in our studio—not pulled from a production line."
+          }
+        },
+        "unique": {
+          "type": "value",
+          "settings": {
+            "title": "One of a kind",
+            "text": "Tiny shifts in colour and texture are part of the story, making every piece unmistakably yours."
+          }
+        },
+        "joy": {
+          "type": "value",
+          "settings": {
+            "title": "Designed for joy",
+            "text": "Useful little objects with enough personality to make an everyday corner feel special."
+          }
+        }
+      },
+      "block_order": ["made", "unique", "joy"],
+      "settings": {
+        "eyebrow": "Why Bloom Arts",
+        "heading": "Artful objects, without the art-gallery attitude."
       }
     },
     "materials": {
@@ -99,8 +132,8 @@
     "all_products": {
       "type": "featured-collection",
       "settings": {
-        "eyebrow": "Everything in stock",
-        "heading": "The full studio",
+        "eyebrow": "Made to make you smile",
+        "heading": "Find your new favourite",
         "collection": "all",
         "link_label": "View all",
         "link": "",
@@ -175,9 +208,10 @@
   },
   "order": [
     "hero",
+    "craft_values",
+    "all_products",
     "materials",
     "studio",
-    "all_products",
     "instagram"
   ]
 }

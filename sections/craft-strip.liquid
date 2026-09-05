@@ -1,0 +1,50 @@
+{{ 'component-craft-strip.css' | asset_url | stylesheet_tag }}
+
+<section class="section craft-strip" aria-labelledby="CraftStrip-{{ section.id }}">
+  <div class="page-width craft-strip__inner">
+    <div class="craft-strip__intro" data-scroll-reveal="blur">
+      {%- if section.settings.eyebrow != blank -%}<p class="eyebrow">{{ section.settings.eyebrow }}</p>{%- endif -%}
+      <h2 id="CraftStrip-{{ section.id }}" class="craft-strip__heading">{{ section.settings.heading }}</h2>
+    </div>
+
+    <ol class="craft-strip__list" data-reveal-group>
+      {%- for block in section.blocks -%}
+        <li class="craft-strip__item" data-reveal="rise-stagger" {{ block.shopify_attributes }}>
+          <span class="craft-strip__number">0{{ forloop.index }}</span>
+          <div>
+            <h3>{{ block.settings.title }}</h3>
+            <p>{{ block.settings.text }}</p>
+          </div>
+          <span class="craft-strip__arrow" aria-hidden="true">↗</span>
+        </li>
+      {%- endfor -%}
+    </ol>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Craft values",
+  "max_blocks": 3,
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Why Bloom Arts" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Artful objects, without the art-gallery attitude." }
+  ],
+  "blocks": [
+    {
+      "type": "value",
+      "name": "Value",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Made by hand" },
+        { "type": "textarea", "id": "text", "label": "Text", "default": "Shaped, poured and finished in our studio—not pulled from a production line." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Craft values",
+      "blocks": [{ "type": "value" }, { "type": "value" }, { "type": "value" }]
+    }
+  ]
+}
+{% endschema %}
