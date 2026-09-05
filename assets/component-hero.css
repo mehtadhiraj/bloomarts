@@ -44,6 +44,11 @@
 .hero__rail-inner { min-height: 58px; display: flex; align-items: center; justify-content: center; gap: clamp(0.65rem, 4vw, 3.5rem); color: var(--brand-brown); font-size: clamp(0.66rem, 1vw, 0.78rem); font-weight: 600; text-transform: uppercase; letter-spacing: 0.13em; white-space: nowrap; }
 .hero__motifs { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
 .hero__motifs .motif { opacity: 0.38; }
+@media (max-width: 767px) {
+  .hero__media,
+  .hero__media > picture { display: block; width: 100%; max-height: none; }
+  .hero__image { width: 100%; height: auto; max-height: none; object-fit: contain; }
+}
 @media (min-width: 480px) {
   .hero__actions { width: auto; flex-direction: row; align-items: center; }
   .hero__button { min-width: 220px; }

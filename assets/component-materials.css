@@ -89,6 +89,17 @@
   display: block;
 }
 
+/* Phones are much taller than the uploaded product artwork. `cover` enlarged
+   the image until it filled that shape and cropped away most of the piece.
+   Keep the full source visible on mobile; the media background and text scrim
+   intentionally fill any remaining space in the viewport-sized panel. */
+@media (max-width: 767px) {
+  .materials__image {
+    object-fit: contain;
+    object-position: center;
+  }
+}
+
 /* --------------------------------------------------------------------------
    Overlaid copy
    -------------------------------------------------------------------------- */
