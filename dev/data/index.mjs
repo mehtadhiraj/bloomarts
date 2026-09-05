@@ -571,9 +571,7 @@ const linklists = {
     title: 'Shop',
     handle: 'footer-shop',
     links: [
-      { title: 'Concrete', url: '/collections/concrete', current: false, links: [] },
-      { title: 'Clay', url: '/collections/clay', current: false, links: [] },
-      { title: 'Resin', url: '/collections/resin', current: false, links: [] },
+      { title: 'Shop all', url: '/collections/all', current: false, links: [] },
       { title: 'Personalised', url: '/collections/personalised', current: false, links: [] }
     ]
   }
