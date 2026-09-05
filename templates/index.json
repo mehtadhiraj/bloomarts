@@ -82,6 +82,7 @@
           "type": "material",
           "settings": {
             "image": "shopify://shop_images/elephant-landscape_aa2dbf90-b93a-408e-8fec-1b3c39e0f5d0.png",
+            "image_mobile": "shopify://shop_images/elephant-mobile_ad3cf93b-7e9d-4412-9368-b28f0f710675.png",
             "image_alt": "Concrete-art-for-gifting-and-home-decor-elephant",
             "title": "Concrete Art",
             "script_accent": "",
