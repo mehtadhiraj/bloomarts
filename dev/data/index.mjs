@@ -553,38 +553,6 @@ const linklists = {
         child_active: false,
         links: []
       },
-      {
-        title: 'Concrete',
-        url: '/collections/concrete',
-        current: false,
-        child_active: false,
-        links: [
-          { title: 'Planters', url: '/collections/planters', current: false, links: [] },
-          { title: 'Tabletop', url: '/collections/tabletop', current: false, links: [] },
-          { title: 'Bath', url: '/collections/bath', current: false, links: [] },
-          { title: 'Entryway', url: '/collections/entryway', current: false, links: [] }
-        ]
-      },
-      {
-        title: 'Clay',
-        url: '/collections/clay',
-        current: false,
-        child_active: false,
-        links: [
-          { title: 'Vases', url: '/collections/vases', current: false, links: [] },
-          { title: 'Mugs', url: '/collections/tabletop', current: false, links: [] }
-        ]
-      },
-      {
-        title: 'Resin',
-        url: '/collections/resin',
-        current: false,
-        child_active: false,
-        links: [
-          { title: 'Trays', url: '/collections/tabletop', current: false, links: [] },
-          { title: 'Desk', url: '/collections/desk', current: false, links: [] }
-        ]
-      },
       { title: 'Personalised', url: '/collections/personalised', current: false, child_active: false, links: [] },
       { title: 'Our studio', url: '/pages/about', current: false, child_active: false, links: [] }
     ]
