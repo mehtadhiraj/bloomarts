@@ -93,6 +93,10 @@
     align-items: start;
   }
 
+  .collection__layout--full {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .collection__sidebar {
     display: block;
     position: sticky;

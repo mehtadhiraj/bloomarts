@@ -11,19 +11,21 @@
   of the filter list in the DOM and only one set of form controls to keep in
   sync.
 
-  Accepts: collection {Object}, results_count {Number}
+  Accepts: collection {Object}, enable_filtering {Boolean}, enable_sorting {Boolean}
 {%- endcomment -%}
 
 {%- liquid
   assign active_count = 0
-  for filter in collection.filters
-    assign active_count = active_count | plus: filter.active_values.size
-    if filter.type == 'price_range'
-      if filter.min_value.value != blank or filter.max_value.value != blank
-        assign active_count = active_count | plus: 1
+  if enable_filtering
+    for filter in collection.filters
+      assign active_count = active_count | plus: filter.active_values.size
+      if filter.type == 'price_range'
+        if filter.min_value.value != blank or filter.max_value.value != blank
+          assign active_count = active_count | plus: 1
+        endif
       endif
-    endif
-  endfor
+    endfor
+  endif
 -%}
 
 <bloom-drawer id="facets-drawer" class="drawer drawer--tall facets" data-facets>
@@ -40,7 +42,15 @@
     <div class="drawer__handle" data-drawer-handle aria-hidden="true"></div>
 
     <div class="drawer__header facets__header">
-      <h2 class="drawer__title" id="facets-title">{{ 'products.facets.filter_and_sort' | t }}</h2>
+      <h2 class="drawer__title" id="facets-title">
+        {%- if enable_filtering and enable_sorting -%}
+          {{ 'products.facets.filter_and_sort' | t }}
+        {%- elsif enable_filtering -%}
+          {{ 'products.facets.title' | t }}
+        {%- else -%}
+          {{ 'products.facets.sort_label' | t }}
+        {%- endif -%}
+      </h2>
       <button class="drawer__close tap-target" type="button" data-drawer-close data-drawer-initial-focus>
         {% render 'icon', icon: 'close' %}
         <span class="visually-hidden">{{ 'general.accessibility.close' | t }}</span>
@@ -59,7 +69,7 @@
     >
       <div class="drawer__body facets__body">
         {%- comment -%} ---------- Sort ---------- {%- endcomment -%}
-        <details class="facets__group" open>
+        {%- if enable_sorting -%}<details class="facets__group" open>
           <summary class="facets__summary">
             <span>{{ 'products.facets.sort_by' | t }}</span>
             {% render 'icon', icon: 'chevron-down', size: 20, class: 'facets__chevron' %}
@@ -84,10 +94,10 @@
               </div>
             {%- endfor -%}
           </fieldset>
-        </details>
+        </details>{%- endif -%}
 
         {%- comment -%} ---------- Filters ---------- {%- endcomment -%}
-        {%- for filter in collection.filters -%}
+        {%- if enable_filtering -%}{%- for filter in collection.filters -%}
           <details class="facets__group" {% if filter.active_values.size > 0 %}open{% endif %}>
             <summary class="facets__summary">
               <span>
@@ -170,7 +180,7 @@
                 </fieldset>
             {%- endcase -%}
           </details>
-        {%- endfor -%}
+        {%- endfor -%}{%- endif -%}
       </div>
 
       {%- comment -%}
@@ -178,9 +188,11 @@
         reach after scrolling a long filter list, and the last thing you do.
       {%- endcomment -%}
       <div class="drawer__footer facets__footer">
-        <a href="{{ collection.url }}" class="btn btn--secondary facets__clear">
-          {{ 'products.facets.clear_all' | t }}
-        </a>
+        {%- if enable_filtering -%}
+          <a href="{{ collection.url }}" class="btn btn--secondary facets__clear">
+            {{ 'products.facets.clear_all' | t }}
+          </a>
+        {%- endif -%}
         <button type="submit" class="btn btn--primary facets__apply">
           {{ 'products.facets.apply' | t }}
         </button>

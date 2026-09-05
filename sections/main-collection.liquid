@@ -7,10 +7,22 @@
 {%- liquid
   assign products_per_page = section.settings.products_per_page | default: 16
 
+  assign show_filtering = false
+  if section.settings.enable_filtering and collection.filters.size > 0
+    assign show_filtering = true
+  endif
+
+  assign show_facets = false
+  if show_filtering or section.settings.enable_sorting
+    assign show_facets = true
+  endif
+
   assign active_count = 0
-  for filter in collection.filters
-    assign active_count = active_count | plus: filter.active_values.size
-  endfor
+  if show_filtering
+    for filter in collection.filters
+      assign active_count = active_count | plus: filter.active_values.size
+    endfor
+  endif
 -%}
 
 <div class="collection page-width">
@@ -29,20 +41,30 @@
     top to change the sort.
   {%- endcomment -%}
   <div class="collection-toolbar">
-    <button
-      type="button"
-      class="collection-toolbar__button collection-toolbar__button--filter"
-      data-drawer-open="facets-drawer"
-      aria-expanded="false"
-      aria-controls="facets-drawer"
-    >
-      {% render 'icon', icon: 'filter', size: 18 %}
-      <span>{{ 'products.facets.filter_and_sort' | t }}</span>
-      {%- if active_count > 0 -%}
-        <span class="collection-toolbar__badge">{{ active_count }}</span>
-        <span class="visually-hidden">{{ 'products.facets.filter_count' | t: count: active_count }}</span>
-      {%- endif -%}
-    </button>
+    {%- if show_facets -%}
+      <button
+        type="button"
+        class="collection-toolbar__button collection-toolbar__button--filter"
+        data-drawer-open="facets-drawer"
+        aria-expanded="false"
+        aria-controls="facets-drawer"
+      >
+        {% render 'icon', icon: 'filter', size: 18 %}
+        <span>
+          {%- if show_filtering and section.settings.enable_sorting -%}
+            {{ 'products.facets.filter_and_sort' | t }}
+          {%- elsif show_filtering -%}
+            {{ 'products.facets.title' | t }}
+          {%- else -%}
+            {{ 'products.facets.sort_label' | t }}
+          {%- endif -%}
+        </span>
+        {%- if active_count > 0 -%}
+          <span class="collection-toolbar__badge">{{ active_count }}</span>
+          <span class="visually-hidden">{{ 'products.facets.filter_count' | t: count: active_count }}</span>
+        {%- endif -%}
+      </button>
+    {%- endif -%}
 
     <p class="collection-toolbar__count" aria-live="polite">
       {{ 'collections.general.products_count' | t: count: collection.products_count }}
@@ -75,10 +97,12 @@
     </ul>
   {%- endif -%}
 
-  <div class="collection__layout">
-    <aside class="collection__sidebar">
-      {% render 'facets', collection: collection %}
-    </aside>
+  <div class="collection__layout{% unless show_facets %} collection__layout--full{% endunless %}">
+    {%- if show_facets -%}
+      <aside class="collection__sidebar">
+        {% render 'facets', collection: collection, enable_filtering: show_filtering, enable_sorting: section.settings.enable_sorting %}
+      </aside>
+    {%- endif -%}
 
     <div class="collection__results" id="collection-results">
       {%- paginate collection.products by products_per_page -%}
@@ -145,6 +169,19 @@
       "max": 48,
       "step": 4,
       "default": 16
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_filtering",
+      "label": "Enable filtering",
+      "info": "Filter types and values are managed in Shopify Search & Discovery.",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sorting",
+      "label": "Enable sorting",
+      "default": true
     }
   ]
 }
