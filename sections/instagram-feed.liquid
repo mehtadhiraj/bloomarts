@@ -3,12 +3,9 @@
 {%- comment -%}
   Instagram / social grid.
 
-  The tiles are fixed-ratio boxes that exist before any content arrives.
-  That is the whole point of this section: an Instagram embed or app block
-  that injects its own markup is the classic cause of a late layout shift on
-  a phone, because it lands after paint and pushes the footer down. Reserving
-  the grid up front means whatever fills it — merchant images now, an app
-  embed later — drops into space that was already accounted for.
+  Live embeds are removed from layout until their iframe has loaded. A slow
+  or blocked Instagram request therefore cannot leave a reel-shaped hole in
+  the page. Uploaded images and Shopify-hosted videos render immediately.
 {%- endcomment -%}
 
 {%- liquid
@@ -18,16 +15,18 @@
   # always renders, otherwise the merchant could never add the first image.
   assign has_media = false
   assign has_embed = false
+  assign has_immediate_media = false
   for block in section.blocks
     if block.type == '@app'
       assign has_media = true
-    endif
-    if block.settings.image != blank or block.settings.video != blank
-      assign has_media = true
+      assign has_immediate_media = true
     endif
     if block.settings.permalink != blank
       assign has_media = true
       assign has_embed = true
+    elsif block.settings.image != blank or block.settings.video != blank
+      assign has_media = true
+      assign has_immediate_media = true
     endif
   endfor
 
@@ -49,7 +48,10 @@
 {%- endif -%}
 
 {%- if has_media or request.design_mode -%}
-<section class="section defer-render instagram">
+<section
+  class="section defer-render instagram{% if has_embed and has_immediate_media == false and request.design_mode == false %} instagram--embeds-only{% endif %}"
+  data-instagram-section
+>
   <div class="page-width">
     <div class="section-head" data-scroll-reveal="blur">
       <div class="section-head__text">
@@ -111,20 +113,25 @@
                 assign tile_class = 'instagram__tile instagram__tile--reel'
               endif
             -%}
-            <li class="{{ tile_class }}" data-reveal="scale" {{ block.shopify_attributes }}>
+            <li
+              class="{{ tile_class }}"
+              data-reveal="scale"
+              {% if embed_path != blank and request.design_mode == false %}data-instagram-pending{% endif %}
+              {{ block.shopify_attributes }}
+            >
               {%- if embed_path != blank -%}
                 {%- comment -%}
-                  Lazy, so six of these do not all fetch on first paint, and
-                  scrolling="no" because the iframe sizes itself to its own
-                  content. Nothing is cropped: the caption and the @bloom.artss
-                  attribution are part of what an embed is allowed to be.
+                  Lazy is the no-JavaScript fallback. The loader promotes the
+                  request after attaching its load listener, while the tile
+                  remains outside layout. Scrolling is disabled because the
+                  iframe sizes itself to its own content.
                 {%- endcomment -%}
                 <iframe
                   class="instagram__embed"
                   src="https://www.instagram.com/{{ embed_path }}/{{ embed_code | url_encode }}/embed/"
                   title="{{ 'sections.instagram.embed_title' | t: handle: settings.social_instagram_handle }}"
                   loading="lazy"
-                  data-embed-preload
+                  data-instagram-embed
                   scrolling="no"
                   frameborder="0"
                   allow="encrypted-media; picture-in-picture; web-share"

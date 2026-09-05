@@ -1,9 +1,9 @@
 /* ==========================================================================
    Instagram grid
 
-   Every tile is a fixed 1:1 box. The height of this section is known before
-   a single image or app block loads, which is what stops a late embed from
-   shoving the footer down.
+   Uploaded media keeps a stable square. Third-party embeds are different:
+   pending frames contribute no layout at all, so a blocked or slow request
+   never creates empty scroll space.
    ========================================================================== */
 
 .instagram__header {
@@ -160,6 +160,14 @@
 .instagram__grid--embed {
   grid-template-columns: minmax(0, 1fr);
   gap: var(--space-sm);
+}
+
+/* JavaScript promotes the iframe request and removes these guards only after
+   the frame reports that it has loaded. With JavaScript unavailable, the
+   normal embed remains visible as a functional fallback. */
+.js .instagram__tile--embed[data-instagram-pending],
+.js .instagram--embeds-only:not(.instagram--has-loaded-media) {
+  display: none;
 }
 
 @media (min-width: 600px) {

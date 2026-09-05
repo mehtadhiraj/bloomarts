@@ -961,39 +961,35 @@
   /* ------------------------------------------------------------------
      Instagram embeds
 
-     Measured on the live store, an embed document takes around eight
-     seconds to arrive, and the app inside it needs longer still. Native
-     lazy loading only starts a few hundred pixels out, which on this page
-     means the reels are still blank when the shopper reaches them.
-
-     So the frames stay lazy in the markup — that is the no-JS behaviour and
-     it is the right default — and this promotes them to eager once the
-     section is roughly two screens away. Far enough ahead to have loaded by
-     the time it is scrolled to, late enough that landing on the homepage
-     does not pull six Instagram pages down with it.
+     A pending third-party frame must not reserve a tall blank tile. Frames
+     start loading immediately, but their tiles — and an embed-only section
+     as a whole — stay outside layout until the load event arrives. Slow or
+     blocked requests therefore add no empty page scroll.
      ------------------------------------------------------------------ */
 
   function setupEmbedPreload() {
-    const frames = document.querySelectorAll('iframe[loading="lazy"][data-embed-preload]');
-    if (!frames.length || !('IntersectionObserver' in window)) return;
+    const frames = document.querySelectorAll('iframe[data-instagram-embed]');
+    if (!frames.length) return;
 
-    // Save-Data means the shopper has asked for less. Six third-party frames
-    // is exactly the sort of thing they meant.
+    // Save-Data means the shopper has asked for less. Keep the embeds fully
+    // collapsed instead of downloading several third-party documents.
     const connection = navigator.connection;
     if (connection && connection.saveData) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          entry.target.loading = 'eager';
-          observer.unobserve(entry.target);
-        });
-      },
-      { rootMargin: '200% 0px' }
-    );
+    frames.forEach((frame) => {
+      const tile = frame.closest('[data-instagram-pending]');
+      const section = frame.closest('[data-instagram-section]');
 
-    frames.forEach((frame) => observer.observe(frame));
+      const reveal = () => {
+        if (tile) tile.removeAttribute('data-instagram-pending');
+        if (section) section.classList.add('instagram--has-loaded-media');
+      };
+
+      frame.addEventListener('load', reveal, { once: true });
+      // Changing the property after the listener is attached also starts
+      // frames that the browser deferred because their section had no size.
+      frame.loading = 'eager';
+    });
   }
 
   /* ------------------------------------------------------------------
