@@ -77,7 +77,7 @@ const staticSections = {
     settings: {
       show_newsletter: true,
       newsletter_heading: 'New pieces, first',
-      newsletter_text: 'Small-batch drops sell out fast. Hear about them before they go live.',
+      newsletter_text: 'Fresh studio pieces and gifting finds land often. Hear about them first.',
       show_payment_icons: true
     },
     blocks: [
@@ -87,7 +87,7 @@ const staticSections = {
         type: 'text',
         settings: {
           heading: 'Our studio',
-          text: '<p>Bloom Arts is a two-person studio working in concrete, clay and resin. Everything is cast, thrown or poured in small batches.</p>'
+          text: '<p>Bloom Arts brings together our own concrete, clay and resin pieces with cheerful gifting finds chosen for quality and charm.</p>'
         }
       }
     ]

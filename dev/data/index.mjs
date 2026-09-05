@@ -579,7 +579,7 @@ const linklists = {
 
 const shop = {
   name: 'Bloom Arts',
-  description: 'Handmade concrete, clay and resin pieces. Little Creations, Big Smiles.',
+  description: 'Studio-made pieces and thoughtfully curated gifts. Little Creations, Big Smiles.',
   url: 'https://bloomarts.example',
   domain: 'bloomarts.example',
   email: 'studio@bloomarts.example',
@@ -614,7 +614,7 @@ const pages = {
     handle: 'about',
     url: '/pages/about',
     content:
-      '<p>Bloom Arts is a two-person studio working in concrete, clay and resin. Everything is cast, thrown or poured in small batches, which is why colour and texture shift a little between pieces.</p><h2>How we work</h2><p>We mix in small volumes so we can keep the pigment consistent within a batch. Concrete is cured for seven days before sealing. Stoneware is fired twice. Resin is poured in layers over three days.</p><p>If you need a piece matched to something you already own, send us a photo through the personalisation form and we will tell you honestly whether we can get close.</p>'
+      '<p>Bloom Arts is a two-person studio creating in concrete, clay and resin, alongside a growing edit of cheerful gifting finds. Our studio collection is cast, thrown or poured in small batches.</p><h2>How we work</h2><p>We mix in small volumes so we can keep the pigment consistent within a batch. Concrete is cured for seven days before sealing. Stoneware is fired twice. Resin is poured in layers over three days.</p><p>If you need a piece matched to something you already own, send us a photo through the personalisation form and we will tell you honestly whether we can get close.</p>'
   }
 };
 

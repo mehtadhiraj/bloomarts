@@ -16,14 +16,14 @@
         "image_alt": "",
         "subheading": "",
         "heading": "Little creations,",
-        "text": "Playful, tactile pieces shaped by hand in concrete, clay and resin. Every piece is thoughtfully designed and carefully finished in our studio.",
+        "text": "Playful objects and thoughtful gifts—from our own studio-made pieces to cheerful finds chosen for the joy they bring.",
         "script_accent": "big smiles",
         "button_label": "Explore the collection",
         "button_link": "shopify://collections/all",
         "button_2_label": "",
         "button_2_link": "",
-        "note": "Thoughtfully made in small batches",
-        "badge_text": "Fresh from the studio",
+        "note": "Made or chosen with care",
+        "badge_text": "A little joy, picked for you",
         "overlay_opacity": 10,
         "show_motifs": true,
         "height": "full"
@@ -35,15 +35,15 @@
         "made": {
           "type": "value",
           "settings": {
-            "title": "Made by hand",
-            "text": "Shaped, poured and finished in our studio—not pulled from a production line."
+            "title": "Made and chosen with care",
+            "text": "Our studio-made pieces sit alongside cheerful finds selected for quality, usefulness and charm."
           }
         },
         "unique": {
           "type": "value",
           "settings": {
             "title": "Carefully finished",
-            "text": "Every surface, edge and detail is refined by hand for a thoughtful, polished result."
+            "text": "We look closely at finish, function and feel so every product earns its place in the collection."
           }
         },
         "joy": {
@@ -121,8 +121,8 @@
         "image_alt": "A bee painting a heart with a paintbrush, beside a leaf sprig",
         "eyebrow": "The studio",
         "heading": "Made slowly,",
-        "script_accent": "on purpose",
-        "text": "<p>Where imagination meets intention, every Bloom Arts piece is thoughtfully shaped and carefully finished.</p><p>Created in small batches, each design receives the time, detail, and care it deserves.</p>",
+        "script_accent": "chosen thoughtfully",
+        "text": "<p>Our concrete, clay and resin pieces are thoughtfully shaped and carefully finished in the Bloom Arts studio.</p><p>Alongside them, we curate gifting finds for their quality, usefulness and smile-making charm.</p>",
         "stat_value": "7 days",
         "stat_label": "for concrete to cure before it is sealed",
         "button_label": "See the full collection",

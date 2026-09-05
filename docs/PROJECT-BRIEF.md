@@ -16,8 +16,8 @@ Implementation status for every line of both briefs lives in
 - **Name:** Bloom Arts
 - **Tagline:** Little Creations, Big Smiles
 - **Instagram:** `bloom.artss`
-- **Products:** handmade concrete, clay and resin homeware, gifts and
-  multipurpose items — many customisable
+- **Products:** studio-made concrete, clay and resin homeware alongside
+  thoughtfully curated gifting products — many customisable
 
 ### Palette (authoritative)
 
@@ -102,7 +102,7 @@ professionally designed; sleek and clean; rich without looking overcrowded,
 heavy or flashy. Refined spacing, strong visual hierarchy, elegant typography,
 high-quality imagery, subtle depth, polished interactions, attractive
 animations and micro-interactions. Fast and accessible despite the richness.
-Premium creative brand, retaining a warm, cheerful, handmade personality.
+Premium creative brand, retaining a warm, cheerful, artful personality.
 Built from scratch — not Dawn — unless explicitly approved otherwise.
 
 ### Visual direction
