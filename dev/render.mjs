@@ -150,10 +150,19 @@ const filledImages = [];
 const bare = process.env.BLOOM_BARE === '1';
 
 function fillImageSettings(schemaSettings, values, context) {
-  if (bare || !Array.isArray(schemaSettings)) return values;
+  if (!Array.isArray(schemaSettings)) return values;
   for (const setting of schemaSettings) {
-    if (setting.type !== "image_picker") continue;
-    if (values[setting.id]) continue;
+    /* Shopify resolves resource-picker URLs before Liquid prints them. The
+       local harness receives the stored shopify:// value directly, so mirror
+       that resolution here and let links exercise the real storefront paths. */
+    if (setting.type === 'url' && typeof values[setting.id] === 'string') {
+      values[setting.id] = values[setting.id]
+        .replace(/^shopify:\/\/collections\//, '/collections/')
+        .replace(/^shopify:\/\/products\//, '/products/')
+        .replace(/^shopify:\/\/pages\//, '/pages/');
+    }
+
+    if (bare || setting.type !== "image_picker" || values[setting.id]) continue;
     const wide = /desktop|banner|wide/.test(setting.id);
     values[setting.id] = mockImage(mockSeed++, wide);
     if (context) filledImages.push(`${context}.${setting.id}`);
@@ -496,8 +505,8 @@ const pages = [
       ...baseScope,
       template: { name: 'collection' },
       request: { ...baseScope.request, page_type: 'collection' },
-      page_title: data.collections.concrete.title,
-      collection: data.collections.concrete
+      page_title: data.collections.all.title,
+      collection: data.collections.all
     }
   },
   {

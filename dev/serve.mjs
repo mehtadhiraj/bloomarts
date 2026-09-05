@@ -17,6 +17,17 @@ const TYPES = {
   '.woff2': 'font/woff2'
 };
 
+/* Shopify storefront URLs do not have file extensions. Route them to the
+   representative harness pages so navigation can be tested end to end. */
+function storefrontFallback(urlPath) {
+  if (/^\/collections(?:\/[^/]+)?\/?$/.test(urlPath)) return 'collection.html';
+  if (/^\/products\/[^/]+\/?$/.test(urlPath)) return 'product.html';
+  if (/^\/pages\/[^/]+\/?$/.test(urlPath)) return 'page.html';
+  if (/^\/cart\/?$/.test(urlPath)) return 'cart.html';
+  if (/^\/search\/?$/.test(urlPath)) return 'search.html';
+  return null;
+}
+
 http
   .createServer((req, res) => {
     // Strip the transform query image_url appends; the placeholder file is
@@ -32,9 +43,14 @@ http
       if (fs.existsSync(withHtml)) {
         file = withHtml;
       } else {
-        res.writeHead(404, { 'Content-Type': 'text/plain' });
-        res.end('Not found');
-        return;
+        const fallback = storefrontFallback(url);
+        if (fallback) {
+          file = path.join(root, fallback);
+        } else {
+          res.writeHead(404, { 'Content-Type': 'text/plain' });
+          res.end('Not found');
+          return;
+        }
       }
     }
 
