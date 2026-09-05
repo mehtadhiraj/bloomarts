@@ -16,7 +16,7 @@
         "image_alt": "",
         "subheading": "",
         "heading": "Little creations,",
-        "text": "Playful, tactile pieces shaped by hand in concrete, clay and resin. Made slowly, so every one has a character of its own.",
+        "text": "Playful, tactile pieces shaped by hand in concrete, clay and resin. Every piece is thoughtfully designed and carefully finished in our studio.",
         "script_accent": "big smiles",
         "button_label": "Explore the collection",
         "button_link": "shopify://collections/all",
@@ -42,8 +42,8 @@
         "unique": {
           "type": "value",
           "settings": {
-            "title": "One of a kind",
-            "text": "Tiny shifts in colour and texture are part of the story, making every piece unmistakably yours."
+            "title": "Carefully finished",
+            "text": "Every surface, edge and detail is refined by hand for a thoughtful, polished result."
           }
         },
         "joy": {
@@ -83,7 +83,7 @@
             "image_alt": "",
             "title": "Clay Art",
             "script_accent": "",
-            "text": "Moulded with imagination, clay art adds warmth, character, and an earthy touch to your surroundings.\nEvery piece carries subtle variations that make it beautifully unique.",
+            "text": "Moulded with imagination, clay art adds warmth, character, and an earthy touch to your surroundings.\nEach creation is carefully shaped and finished to bring lasting warmth to your space.",
             "link": "shopify://collections/all",
             "link_label": "Shop the pieces",
             "motif": "heart"
