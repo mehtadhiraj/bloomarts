@@ -388,117 +388,77 @@
 }
 
 /* --------------------------------------------------------------------------
-   Pager — the swipe affordance
-
-   Overlaid on the panel rather than placed under the section, because a
-   control that sits below a full-height panel is a control nobody sees. It
-   rides above the panel's own gradient, where there is guaranteed contrast.
+   Carousel arrows — overlaid at the left and right edges of the image.
    -------------------------------------------------------------------------- */
 
 .materials__pager {
   position: absolute;
   inset-inline: 0;
-  bottom: calc(var(--space-md) + var(--safe-bottom));
+  top: 50%;
   z-index: 2;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: var(--space-2xs);
+  justify-content: space-between;
+  padding-inline: max(var(--space-xs), env(safe-area-inset-left)) max(var(--space-xs), env(safe-area-inset-right));
+  transform: translateY(-50%);
   pointer-events: none;
 }
 
-.materials__dots {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2xs);
-  margin: 0;
+.materials__arrow {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
   padding: 0;
-  list-style: none;
-  pointer-events: auto;
-}
-
-.materials__dot {
-  /* The visible dot is small, but the target is not: a 44px hit area with a
-     10px mark inside it, which is the touch minimum without a row of
-     oversized circles across the artwork. */
-  display: block;
-  width: var(--tap-min);
-  height: var(--tap-min);
-  padding: 0;
-  border: 0;
-  background: none;
-  cursor: pointer;
-  position: relative;
-}
-
-.materials__dot::after {
-  content: '';
-  position: absolute;
-  inset: 50% auto auto 50%;
-  translate: -50% -50%;
-  width: 10px;
-  height: 10px;
+  border: 1px solid color-mix(in srgb, var(--brand-brown) 16%, transparent);
   border-radius: 50%;
-  background-color: color-mix(in srgb, var(--brand-cream) 45%, transparent);
-  transition: background-color var(--duration-sm) var(--ease-out),
-              scale var(--duration-sm) var(--ease-out);
+  color: var(--brand-brown);
+  background: color-mix(in srgb, var(--brand-cream) 90%, transparent);
+  box-shadow: 0 8px 24px rgb(46 36 27 / 0.18);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: pointer;
+  pointer-events: auto;
+  transition: transform var(--duration-sm) var(--ease-out), opacity var(--duration-sm) var(--ease-out), background-color var(--duration-sm) var(--ease-out);
 }
 
-.materials__dot[aria-current="true"]::after {
-  background-color: var(--brand-cream);
-  scale: 1.35;
+.materials__arrow:disabled {
+  opacity: 0.32;
+  cursor: default;
 }
 
-.materials__swipe-hint {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3xs);
-  margin: 0;
-  font-size: var(--text-xs);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: color-mix(in srgb, var(--brand-cream) 78%, transparent);
-  transition: opacity var(--duration-md) var(--ease-out);
+.materials__arrow:not(:disabled):hover {
+  transform: scale(1.06);
+  background: var(--brand-cream);
 }
 
-/* The hint has done its job the moment the row is moved, and a permanent
-   instruction is clutter. */
-.materials__pager.is-used .materials__swipe-hint {
-  opacity: 0;
+.materials__arrow:focus-visible {
+  outline: 2px solid var(--brand-coral);
+  outline-offset: 3px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  html:not(.reduce-motion) .materials__pager:not(.is-used) .materials__swipe-hint svg {
-    animation: materials-nudge 1.8s ease-in-out infinite;
+.materials__arrow .icon {
+  pointer-events: none;
+}
+
+@media (max-width: 767px) {
+  .materials__pager {
+    top: max(160px, 28svh);
   }
 }
 
-@keyframes materials-nudge {
-  0%, 60%, 100% { transform: translateX(0); }
-  30%           { transform: translateX(5px); }
+@media (prefers-reduced-motion: reduce) {
+  .materials__arrow {
+    transition: none;
+  }
 }
 
-/* Once the section pins, the page scroll drives the panels — a pager would be
-   claiming a control it no longer has. */
+/* Once the section pins, the page scroll drives the panels — arrows would be
+   claiming a control that no longer applies. */
 @supports (animation-timeline: view()) {
   @media (min-width: 1024px) {
     html.materials-ready:not(.reduce-motion):not(.simplify-motion) .materials__pager {
       display: none;
     }
-  }
-}
-
-/* Pager colours follow the pager's base declarations in source order. */
-@media (max-width: 767px) {
-  .materials__dot::after {
-    background-color: color-mix(in srgb, var(--brand-brown) 28%, transparent);
-  }
-
-  .materials__dot[aria-current="true"]::after {
-    background-color: var(--brand-coral);
-  }
-
-  .materials__swipe-hint {
-    color: var(--brand-olive);
   }
 }

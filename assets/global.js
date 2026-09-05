@@ -574,8 +574,8 @@
      Materials swipe row
 
      A full-height panel fills the screen, so nothing about the layout says
-     there is a panel beside it. This keeps the dots in step with the row,
-     lets them drive it, and retires the hint once the row has been moved.
+     there is a panel beside it. Previous and next controls make that movement
+     explicit while the row keeps its native swipe behavior.
 
      The row itself is native scroll-snap — none of this is required for it
      to work, it only makes the fact that it works discoverable.
@@ -587,25 +587,30 @@
     if (!viewport || !pager) return;
 
     const panels = Array.from(document.querySelectorAll('[data-materials-track] > li'));
-    const dots = Array.from(pager.querySelectorAll('[data-materials-goto]'));
-    if (panels.length < 2 || !dots.length) return;
+    const previous = pager.querySelector('[data-materials-previous]');
+    const next = pager.querySelector('[data-materials-next]');
+    if (panels.length < 2 || !previous || !next) return;
 
-    dots.forEach((dot) => {
-      dot.addEventListener('click', () => {
-        const index = Number(dot.getAttribute('data-materials-goto'));
-        const panel = panels[index];
-        if (!panel) return;
-        pager.classList.add('is-used');
-        viewport.scrollTo({
-          left: panel.offsetLeft,
-          behavior: document.documentElement.classList.contains('reduce-motion') ? 'instant' : 'smooth'
-        });
+    let activeIndex = 0;
+    const updateControls = () => {
+      previous.disabled = activeIndex === 0;
+      next.disabled = activeIndex === panels.length - 1;
+    };
+    const goTo = (index) => {
+      const targetIndex = Math.max(0, Math.min(index, panels.length - 1));
+      const panel = panels[targetIndex];
+      if (!panel) return;
+      activeIndex = targetIndex;
+      updateControls();
+      viewport.scrollTo({
+        left: panel.offsetLeft,
+        behavior: document.documentElement.classList.contains('reduce-motion') ? 'instant' : 'smooth'
       });
-    });
+    };
 
-    // The hint is about the gesture, so any movement of the row retires it —
-    // however it was moved.
-    viewport.addEventListener('scroll', () => pager.classList.add('is-used'), { once: true });
+    previous.addEventListener('click', () => goTo(activeIndex - 1));
+    next.addEventListener('click', () => goTo(activeIndex + 1));
+    updateControls();
 
     if (!('IntersectionObserver' in window)) return;
 
@@ -617,10 +622,9 @@
         entries.forEach((entry) => {
           if (!entry.isIntersecting) return;
           const index = panels.indexOf(entry.target);
-          dots.forEach((dot, i) => {
-            if (i === index) dot.setAttribute('aria-current', 'true');
-            else dot.removeAttribute('aria-current');
-          });
+          if (index < 0) return;
+          activeIndex = index;
+          updateControls();
         });
       },
       { root: viewport, threshold: 0.6 }
