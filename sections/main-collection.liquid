@@ -25,12 +25,23 @@
   endif
 -%}
 
-<div class="collection page-width">
+<div class="collection page-width{% if section.settings.playful_layout %} collection--playful{% endif %}">
   {%- if section.settings.show_banner -%}
-    <header class="collection__header" data-scroll-reveal="blur">
+    <header class="collection__header{% if section.settings.playful_layout %} collection__header--playful{% endif %}" data-scroll-reveal="blur">
+      {%- if section.settings.playful_layout -%}
+        <span class="collection__blob collection__blob--one" aria-hidden="true"></span>
+        <span class="collection__blob collection__blob--two" aria-hidden="true"></span>
+        {%- if section.settings.eyebrow != blank -%}<p class="eyebrow collection__eyebrow">{{ section.settings.eyebrow }}</p>{%- endif -%}
+      {%- endif -%}
       <h1 class="collection__title">{{ collection.title }}</h1>
+      {%- if section.settings.playful_layout and section.settings.script_accent != blank -%}
+        <p class="script collection__script">{{ section.settings.script_accent }}</p>
+      {%- endif -%}
       {%- if collection.description != blank -%}
         <div class="rte collection__description text-muted">{{ collection.description }}</div>
+      {%- endif -%}
+      {%- if section.settings.playful_layout -%}
+        <p class="collection__browse-note"><span aria-hidden="true">✦</span> {{ section.settings.browse_note }}</p>
       {%- endif -%}
     </header>
   {%- endif -%}
@@ -107,7 +118,7 @@
     <div class="collection__results" id="collection-results">
       {%- paginate collection.products by products_per_page -%}
         {%- if collection.products.size > 0 -%}
-          <ul class="product-grid" role="list" data-reveal-group>
+          <ul class="product-grid{% if section.settings.playful_layout %} product-grid--playful{% endif %}" role="list" data-reveal-group>
             {%- for product in collection.products -%}
               <li data-reveal="rise-stagger">
                 {%- comment -%}
@@ -176,6 +187,30 @@
       "label": "Enable filtering",
       "info": "Filter types and values are managed in Shopify Search & Discovery.",
       "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "playful_layout",
+      "label": "Use playful product layout",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Collection eyebrow",
+      "default": "The whole happy shelf"
+    },
+    {
+      "type": "text",
+      "id": "script_accent",
+      "label": "Collection heading accent",
+      "default": "Pick what makes you smile"
+    },
+    {
+      "type": "text",
+      "id": "browse_note",
+      "label": "Browse note",
+      "default": "Take your time. The good stuff is worth a scroll."
     },
     {
       "type": "checkbox",

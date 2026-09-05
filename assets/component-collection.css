@@ -19,6 +19,136 @@
   max-width: 60ch;
 }
 
+/* --------------------------------------------------------------------------
+   Playful catalogue — mobile is the primary composition
+   -------------------------------------------------------------------------- */
+
+.collection--playful {
+  padding-top: 0;
+}
+
+.collection__header--playful {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  margin-inline: calc((var(--gutter) + var(--safe-left)) * -1) calc((var(--gutter) + var(--safe-right)) * -1);
+  padding: var(--space-xl) calc(var(--gutter) + var(--safe-right)) var(--space-lg) calc(var(--gutter) + var(--safe-left));
+  border-radius: 0 0 clamp(32px, 12vw, 72px) clamp(32px, 12vw, 72px);
+  background:
+    radial-gradient(circle at 88% 18%, rgb(246 176 40 / 0.42), transparent 30%),
+    radial-gradient(circle at 8% 92%, rgb(230 109 91 / 0.2), transparent 28%),
+    color-mix(in srgb, var(--brand-sage) 18%, var(--brand-cream));
+}
+
+.collection__header--playful .collection__title {
+  position: relative;
+  z-index: 1;
+  max-width: 10ch;
+  margin: var(--space-2xs) 0 0;
+  font-size: clamp(3.25rem, 16vw, 6rem);
+  font-weight: 500;
+  line-height: 0.92;
+  letter-spacing: -0.045em;
+}
+
+.collection__eyebrow {
+  position: relative;
+  z-index: 1;
+  color: var(--brand-olive);
+}
+
+.collection__script {
+  position: relative;
+  z-index: 1;
+  width: max-content;
+  max-width: 100%;
+  margin: 0.05em 0 var(--space-sm) 0.12em;
+  color: var(--brand-coral);
+  font-size: clamp(2.4rem, 11vw, 4.8rem);
+}
+
+.collection__header--playful .collection__description {
+  position: relative;
+  z-index: 1;
+  max-width: 38ch;
+  color: var(--color-text-muted);
+}
+
+.collection__browse-note {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  margin: var(--space-md) 0 0;
+  padding: var(--space-2xs) var(--space-sm);
+  border: 1px solid rgb(46 36 27 / 0.12);
+  border-radius: var(--radius-pill);
+  background: rgb(255 253 249 / 0.68);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  backdrop-filter: blur(8px);
+}
+
+.collection__browse-note span { color: var(--brand-coral); }
+
+.collection__blob {
+  position: absolute;
+  z-index: 0;
+  display: block;
+  border: 1px solid rgb(46 36 27 / 0.08);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.collection__blob--one { width: 190px; aspect-ratio: 1; top: -70px; right: -48px; box-shadow: 0 0 0 34px rgb(246 176 40 / 0.08); }
+.collection__blob--two { width: 84px; aspect-ratio: 1; bottom: 24px; right: 25%; background: rgb(155 175 126 / 0.16); }
+
+.collection--playful .collection-toolbar {
+  margin-inline: calc(var(--space-3xs) * -1);
+  padding-inline: var(--space-3xs);
+  background: color-mix(in srgb, var(--color-background) 90%, transparent);
+  backdrop-filter: blur(12px);
+}
+
+/* A repeated wide card breaks the two-column rhythm into browsable chapters.
+   The pattern depends only on position, never product tags or collection
+   names, so Shopify remains the source of all catalogue meaning. */
+.product-grid--playful {
+  gap: var(--space-md) var(--space-2xs);
+}
+
+.product-grid--playful > li {
+  min-width: 0;
+  padding: var(--space-2xs);
+  border-radius: clamp(14px, 4vw, 24px);
+  background: color-mix(in srgb, var(--brand-sage) 10%, var(--color-surface));
+}
+
+.product-grid--playful > li:nth-child(4n + 2) { background: color-mix(in srgb, var(--brand-amber) 11%, var(--color-surface)); }
+.product-grid--playful > li:nth-child(4n + 3) { background: color-mix(in srgb, var(--brand-coral) 8%, var(--color-surface)); }
+
+.product-grid--playful > li:nth-child(7n + 1) {
+  grid-column: 1 / -1;
+  padding: var(--space-sm);
+}
+
+.product-grid--playful > li:nth-child(7n + 1) .card__media {
+  aspect-ratio: 6 / 5;
+  border-radius: 28px 100px 28px 28px;
+}
+
+.product-grid--playful > li:nth-child(7n + 1) .card__title {
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  line-height: 1.05;
+}
+
+.product-grid--playful > li:nth-child(7n + 3) .card__media { border-radius: 80px 80px 18px 18px; }
+.product-grid--playful > li:nth-child(7n + 5) .card__media { border-radius: 18px 18px 80px 80px; }
+
+.product-grid--playful .card__body { padding: var(--space-3xs) var(--space-3xs) var(--space-2xs); }
+
 .collection__layout {
   display: grid;
   gap: var(--space-md);
@@ -105,4 +235,34 @@
     overflow-y: auto;
     overscroll-behavior: contain;
   }
+}
+
+@media (min-width: 768px) {
+  .collection__header--playful {
+    margin-inline: 0;
+    padding: clamp(3rem, 7vw, 6rem);
+    border-radius: 0 0 72px 72px;
+  }
+
+  .collection__header--playful .collection__title { font-size: clamp(4.5rem, 9vw, 8rem); }
+  .product-grid--playful > li:nth-child(7n + 1) { grid-column: span 2; }
+}
+
+@media (min-width: 1024px) {
+  .product-grid--playful > li:nth-child(7n + 1) { grid-column: span 2; }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .product-grid--playful > li {
+    transition: background-color var(--dur-base) var(--ease), transform var(--dur-base) var(--ease-out);
+  }
+
+  .product-grid--playful > li:hover {
+    background: color-mix(in srgb, var(--brand-amber) 20%, var(--color-surface));
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-grid--playful > li { transition: none !important; transform: none !important; }
 }

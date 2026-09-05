@@ -5,6 +5,10 @@
       "settings": {
         "show_banner": true,
         "products_per_page": 16,
+        "playful_layout": true,
+        "eyebrow": "The whole happy shelf",
+        "script_accent": "Pick what makes you smile",
+        "browse_note": "Take your time. The good stuff is worth a scroll.",
         "enable_filtering": true,
         "enable_sorting": true
       }
