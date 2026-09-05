@@ -41,13 +41,11 @@
 .hero__caption { display: flex; justify-content: space-between; gap: var(--space-sm); margin: var(--space-xs) var(--space-xs) 0; color: var(--color-text-muted); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.13em; }
 .hero__rail { position: relative; z-index: 2; border-top: 1px solid rgb(46 36 27 / 0.08); background: var(--brand-amber); }
 .hero__rail-inner { min-height: 58px; display: flex; align-items: center; justify-content: center; gap: clamp(0.65rem, 4vw, 3.5rem); color: var(--brand-brown); font-size: clamp(0.66rem, 1vw, 0.78rem); font-weight: 600; text-transform: uppercase; letter-spacing: 0.13em; white-space: nowrap; }
-.hero__rail-inner span:nth-child(4), .hero__rail-inner span:nth-child(5) { display: none; }
 .hero__motifs { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
 .hero__motifs .motif { opacity: 0.38; }
 @media (min-width: 480px) {
   .hero__actions { width: auto; flex-direction: row; align-items: center; }
   .hero__button { min-width: 220px; }
-  .hero__rail-inner span:nth-child(4), .hero__rail-inner span:nth-child(5) { display: inline; }
 }
 @media (min-width: 768px) {
   .hero { padding-top: calc(var(--header-height) + var(--space-sm)); }
