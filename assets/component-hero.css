@@ -23,7 +23,7 @@
 .hero__eyebrow-mark { width: 26px; height: 1px; background: var(--brand-amber); }
 .hero__heading { margin: 0; max-width: 12ch; font-size: clamp(3rem, 12vw, 5.2rem); font-weight: 500; line-height: 0.9; letter-spacing: -0.045em; }
 .hero__heading-line { display: block; }
-.hero__script { display: block; width: max-content; max-width: 100%; margin: 0.08em 0 0 0.15em; color: var(--brand-coral); font-size: 0.78em; line-height: 0.9; letter-spacing: 0; transform: rotate(-2deg); }
+.hero__script { display: block; width: max-content; max-width: 100%; margin: 0.08em 0 0 0.15em; color: var(--brand-coral); font-size: 1em; line-height: 0.9; letter-spacing: 0; transform: rotate(-2deg); }
 .hero__text { max-width: 44ch; margin: var(--space-2xs) 0 0; color: var(--color-text-muted); font-size: clamp(1rem, 1.3vw, 1.125rem); }
 .hero__actions { display: flex; flex-direction: column; align-items: stretch; gap: var(--space-sm); width: 100%; margin-top: var(--space-2xs); }
 .hero__button { justify-content: space-between; }
