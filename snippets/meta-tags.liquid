@@ -66,6 +66,13 @@
   <meta name="robots" content="index,follow,max-image-preview:large">
 {%- endif -%}
 
+{%- if settings.seo_google_verification != blank -%}
+  <meta name="google-site-verification" content="{{ settings.seo_google_verification | escape }}">
+{%- endif -%}
+{%- if settings.seo_bing_verification != blank -%}
+  <meta name="msvalidate.01" content="{{ settings.seo_bing_verification | escape }}">
+{%- endif -%}
+
 <meta property="og:site_name" content="{{ shop.name | escape }}">
 <meta property="og:url" content="{{ canonical_url }}">
 <meta property="og:title" content="{{ seo_title | escape }}">

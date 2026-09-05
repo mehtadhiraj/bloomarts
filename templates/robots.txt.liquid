@@ -1,0 +1,14 @@
+{%- comment -%}
+  Preserve Shopify's maintained crawler directives and sitemap declaration.
+  Do not replace these with static rules: Shopify updates the defaults as
+  storefront URL behavior changes.
+{%- endcomment -%}
+{% for group in robots.default_groups %}
+{{- group.user_agent }}
+{%- for rule in group.rules %}
+{{ rule }}
+{%- endfor %}
+{%- if group.sitemap != blank %}
+{{ group.sitemap }}
+{%- endif %}
+{% endfor %}

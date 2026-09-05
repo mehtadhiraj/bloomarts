@@ -65,10 +65,26 @@ for (const file of files) {
   }
 }
 
+const robotsTemplate = fs.readFileSync(path.join(root, 'templates', 'robots.txt.liquid'), 'utf8');
+if (!robotsTemplate.includes('robots.default_groups')) problems.push('robots.txt.liquid: does not preserve Shopify default groups');
+if (!robotsTemplate.includes('group.sitemap')) problems.push('robots.txt.liquid: does not output Shopify sitemap declarations');
+
+const robotsText = fs.readFileSync(path.join(dist, 'robots.txt'), 'utf8');
+if (!/^User-agent:/m.test(robotsText)) problems.push('robots.txt: missing user-agent group');
+if (!/^Disallow: \/cart$/m.test(robotsText)) problems.push('robots.txt: cart is not excluded');
+if (!/^Disallow: \/search$/m.test(robotsText)) problems.push('robots.txt: search is not excluded');
+if (!/^Sitemap: https:\/\/[^\s]+\/sitemap\.xml$/m.test(robotsText)) problems.push('robots.txt: missing absolute sitemap URL');
+
+const sitemap = fs.readFileSync(path.join(dist, 'sitemap.xml'), 'utf8');
+if (!sitemap.includes('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')) problems.push('sitemap.xml: invalid URL set');
+if (!sitemap.includes('/products/strata-resin-tray</loc>')) problems.push('sitemap.xml: missing product URL');
+if (!sitemap.includes('/collections/all</loc>')) problems.push('sitemap.xml: missing collection URL');
+if (sitemap.includes('/cart</loc>') || sitemap.includes('/search</loc>')) problems.push('sitemap.xml: contains a utility URL');
+
 if (problems.length) {
   console.error(`SEO check failed (${problems.length} problem${problems.length === 1 ? '' : 's'}):`);
   problems.forEach((problem) => console.error(`  - ${problem}`));
   process.exit(1);
 }
 
-console.log(`SEO check passed — ${files.length} rendered pages, valid metadata and JSON-LD.`);
+console.log(`SEO check passed — ${files.length} pages plus robots and sitemap fixtures.`);

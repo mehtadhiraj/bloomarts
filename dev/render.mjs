@@ -447,6 +447,46 @@ function copyAssets() {
   console.log(`  ok    assets/  (${fs.readdirSync(source).length} files)`);
 }
 
+/* Shopify owns the production sitemap and supplies the objects used by its
+   robots template. Local equivalents make both crawler endpoints testable
+   without pretending the theme itself controls Shopify's sitemap. */
+async function renderCrawlerFiles() {
+  const robotsSource = preprocess(
+    fs.readFileSync(path.join(themeRoot, 'templates', 'robots.txt.liquid'), 'utf8')
+  );
+  const robotsText = await engine.parseAndRender(robotsSource, {
+    robots: {
+      default_groups: [
+        {
+          user_agent: 'User-agent: *',
+          rules: [
+            'Disallow: /admin',
+            'Disallow: /cart',
+            'Disallow: /checkout',
+            'Disallow: /search',
+            'Disallow: /collections/*+*'
+          ],
+          sitemap: 'Sitemap: https://bloomarts.example/sitemap.xml'
+        }
+      ]
+    }
+  });
+  fs.writeFileSync(path.join(distRoot, 'robots.txt'), `${robotsText.trim()}\n`);
+
+  const indexableUrls = pages
+    .filter((page) => !['cart', 'search', '404'].includes(page.template))
+    .map((page) => page.scope.canonical_url);
+  const sitemap = [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    ...indexableUrls.map((url) => `  <url><loc>${url}</loc></url>`),
+    '</urlset>',
+    ''
+  ].join('\n');
+  fs.writeFileSync(path.join(distRoot, 'sitemap.xml'), sitemap);
+  console.log('  ok    robots.txt + sitemap.xml  (Shopify-shaped local fixtures)');
+}
+
 /* --------------------------------------------------------------------------
    Build
    -------------------------------------------------------------------------- */
@@ -614,6 +654,13 @@ async function build() {
       console.error(`  FAIL  ${page.file}\n        ${error.message}`);
       process.exitCode = 1;
     }
+  }
+
+  try {
+    await renderCrawlerFiles();
+  } catch (error) {
+    console.error(`  FAIL  crawler files\n        ${error.message}`);
+    process.exitCode = 1;
   }
 
   auditOutput();

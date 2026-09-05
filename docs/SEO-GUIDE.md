@@ -100,10 +100,19 @@ information worth ranking.
 - Mobile-first responsive images with intrinsic dimensions and meaningful
   product alt fallbacks.
 - Crawlable HTML links and server-rendered product grids.
+- A `robots.txt.liquid` pass-through that retains Shopify's maintained rules
+  and its fully qualified sitemap declaration.
+- Optional Google Search Console and Bing Webmaster Tools verification codes
+  under the theme's Search engine optimization settings.
 
-Shopify's native `robots.txt` and `sitemap.xml` are intentionally not replaced.
-Shopify states that its default robots file is optimized for SEO and that the
-sitemap is generated and updated automatically.
+Shopify's native sitemap is intentionally not replaced: `sitemap.xml` is a
+platform endpoint, not a theme asset, and Shopify updates it whenever products,
+collections, pages, blog posts or primary product images change. The robots
+template iterates Shopify's default objects instead of copying static rules,
+so future platform updates continue to flow through. If the theme is installed
+by ZIP through Shopify Admin, Shopify does not import `robots.txt.liquid`; use
+the GitHub integration, Shopify CLI, or add the same template in the code
+editor after upload.
 
 ## Research references
 
