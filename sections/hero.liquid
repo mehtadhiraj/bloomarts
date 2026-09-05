@@ -33,9 +33,9 @@
     </div>
 
     <div class="hero__visual" data-reveal="scale">
-      <div class="hero__media parallax-media">
+      <div class="hero__media">
         {%- if section.settings.image_desktop != blank -%}
-          {% render 'art-directed-image', image_desktop: section.settings.image_desktop, image_mobile: section.settings.image_mobile, ratio_mobile: 0.82, ratio_desktop: 0.78, breakpoint: '768px', loading: 'eager', fetchpriority: 'high', alt: section.settings.image_alt, class: 'hero__image' %}
+          {% render 'art-directed-image', image_desktop: section.settings.image_desktop, image_mobile: section.settings.image_mobile, breakpoint: '768px', loading: 'eager', fetchpriority: 'high', alt: section.settings.image_alt, class: 'hero__image' %}
         {%- else -%}
           <div class="hero__image hero__image--placeholder" aria-hidden="true"></div>
         {%- endif -%}

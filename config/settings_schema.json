@@ -471,8 +471,8 @@
       {
         "type": "checkbox",
         "id": "hero_motion",
-        "label": "Slow zoom on hero images",
-        "info": "Disabled below 768px and on low-powered devices regardless of this setting.",
+        "label": "Hero decorative motion",
+        "info": "Gently animates the badge and background decoration while keeping the complete product image visible.",
         "default": true
       },
       {
