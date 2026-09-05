@@ -14,14 +14,14 @@
       "settings": {
         "image_desktop": "shopify://shop_images/art-work-assembly-flyer.png",
         "image_alt": "",
-        "subheading": "Studio-made in India",
+        "subheading": "",
         "heading": "Little creations,",
         "text": "Playful, tactile pieces shaped by hand in concrete, clay and resin. Made slowly, so every one has a character of its own.",
         "script_accent": "big smiles",
         "button_label": "Explore the collection",
         "button_link": "shopify://collections/all",
-        "button_2_label": "Meet the makers",
-        "button_2_link": "shopify://pages/about",
+        "button_2_label": "",
+        "button_2_link": "",
         "note": "Thoughtfully made in small batches",
         "badge_text": "Fresh from the studio",
         "overlay_opacity": 10,
@@ -167,39 +167,12 @@
             "link": "",
             "alt": ""
           }
-        },
-        "p4": {
-          "type": "post",
-          "settings": {
-            "permalink": "https://www.instagram.com/reel/DbqfGRZMQbs/",
-            "link": "",
-            "alt": ""
-          }
-        },
-        "p5": {
-          "type": "post",
-          "settings": {
-            "permalink": "https://www.instagram.com/reel/DboBGcSP9jT/",
-            "link": "",
-            "alt": ""
-          }
-        },
-        "p6": {
-          "type": "post",
-          "settings": {
-            "permalink": "https://www.instagram.com/reel/DbIhlvFvkZ6/",
-            "link": "",
-            "alt": ""
-          }
         }
       },
       "block_order": [
         "p1",
         "p2",
-        "p3",
-        "p4",
-        "p5",
-        "p6"
+        "p3"
       ],
       "settings": {
         "heading": "From the studio",
