@@ -8,18 +8,13 @@
 .craft-strip__intro .eyebrow { color: var(--brand-olive); }
 .craft-strip__heading { margin: 0; font-size: clamp(2.25rem, 7vw, 5.8rem); font-weight: 500; line-height: 0.98; letter-spacing: -0.04em; }
 .craft-strip__list { display: grid; margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--color-border); }
-.craft-strip__item { position: relative; display: grid; grid-template-columns: 38px 1fr auto; gap: var(--space-sm); align-items: start; padding-block: var(--space-md); border-bottom: 1px solid var(--color-border); transition: padding-inline var(--dur-base) var(--ease-out), background-color var(--dur-base) var(--ease); }
+.craft-strip__item { position: relative; display: grid; grid-template-columns: 38px 1fr; gap: var(--space-sm); align-items: start; padding-block: var(--space-md); border-bottom: 1px solid var(--color-border); }
 .craft-strip__number { color: var(--brand-coral); font-family: var(--font-heading); font-size: var(--text-sm); font-variant-numeric: tabular-nums; }
 .craft-strip__item h3 { margin: 0 0 var(--space-3xs); font-size: var(--text-lg); }
 .craft-strip__item p { max-width: 58ch; margin: 0; color: var(--color-text-muted); font-size: var(--text-sm); }
-.craft-strip__arrow { color: var(--brand-olive); font-size: var(--text-xl); line-height: 1; transition: transform var(--dur-base) var(--ease-out); }
 @media (min-width: 900px) {
   .craft-strip__inner { grid-template-columns: minmax(0, 0.8fr) minmax(480px, 1fr); align-items: start; gap: clamp(4rem, 9vw, 10rem); }
   .craft-strip__intro { position: sticky; top: calc(var(--header-height) + var(--space-lg)); }
   .craft-strip__heading { font-size: clamp(3.5rem, 5.2vw, 5.8rem); }
-  .craft-strip__item { grid-template-columns: 48px 1fr auto; padding-block: var(--space-lg); }
-}
-@media (hover: hover) and (pointer: fine) {
-  .craft-strip__item:hover { padding-inline: var(--space-sm); background: color-mix(in srgb, var(--brand-sage) 13%, transparent); }
-  .craft-strip__item:hover .craft-strip__arrow { transform: translate(4px, -4px); }
+  .craft-strip__item { grid-template-columns: 48px 1fr; padding-block: var(--space-lg); }
 }
