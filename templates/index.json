@@ -12,12 +12,12 @@
     "hero": {
       "type": "hero",
       "settings": {
-        "image_desktop": "shopify://shop_images/art-work-assembly-flyer.png",
+        "image_desktop": "shopify://shop_images/website-art-work.png",
         "image_alt": "",
         "subheading": "",
         "heading": "Little creations,",
-        "text": "Discover unique home décor and thoughtful gifts online in India—from our studio-made pieces to cheerful finds chosen for every happy occasion.",
         "script_accent": "big smiles",
+        "text": "Discover unique home décor and thoughtful gifts online in India—from our studio-made pieces to cheerful finds chosen for every happy occasion.",
         "button_label": "Explore the collection",
         "button_link": "shopify://collections/all",
         "button_2_label": "",
@@ -54,10 +54,25 @@
           }
         }
       },
-      "block_order": ["made", "unique", "joy"],
+      "block_order": [
+        "made",
+        "unique",
+        "joy"
+      ],
       "settings": {
         "eyebrow": "Why Bloom Arts",
         "heading": "Artful home décor and gifts, without the art-gallery attitude."
+      }
+    },
+    "all_products": {
+      "type": "featured-collection",
+      "settings": {
+        "eyebrow": "Home décor & gifting",
+        "heading": "Gifts for every happy moment",
+        "collection": "all",
+        "link_label": "View all",
+        "link": "",
+        "products_to_show": 12
       }
     },
     "materials": {
@@ -128,17 +143,6 @@
         "button_label": "See the full collection",
         "button_link": "shopify://collections/all",
         "layout": "text-first"
-      }
-    },
-    "all_products": {
-      "type": "featured-collection",
-      "settings": {
-        "eyebrow": "Home décor & gifting",
-        "heading": "Gifts for every happy moment",
-        "collection": "all",
-        "link_label": "View all",
-        "link": "",
-        "products_to_show": 12
       }
     },
     "instagram": {
