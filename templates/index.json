@@ -110,7 +110,7 @@
           "type": "material",
           "settings": {
             "image": "shopify://shop_images/resin-ganpati-landscape.png",
-            "image_mobile": "shopify://shop_images/resin-ganpati-website_25b5cd32-7b9e-4706-9f25-15e787bfccec.png",
+            "image_mobile": "shopify://shop_images/resin-ganpati-mobile.png",
             "image_alt": "",
             "title": "Resin Art",
             "script_accent": "",
