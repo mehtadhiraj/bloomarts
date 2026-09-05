@@ -287,7 +287,7 @@
 .header--transparent {
   background-color: transparent;
   border-bottom-color: transparent;
-  color: var(--brand-cream);
+  color: var(--brand-brown);
   transition: background-color var(--dur-base) var(--ease),
               border-color var(--dur-base) var(--ease),
               color var(--dur-base) var(--ease),
@@ -305,9 +305,9 @@ body:has(.header--transparent) main {
   margin-top: calc(var(--header-height) * -1);
 }
 
-/* The hero scrim is weakest at the top of the image — exactly where the
-   header sits — so nav text over a pale photograph would fail contrast.
-   This adds a short scrim of its own, purely behind the header. */
+/* The homepage hero is bright, so the transparent header gets a short warm
+   veil rather than a dark photo scrim. It keeps the controls crisp while the
+   header still feels integrated with the opening composition. */
 .header--transparent::before {
   content: "";
   position: absolute;
@@ -315,12 +315,7 @@ body:has(.header--transparent) main {
   top: 0;
   height: calc(100% + var(--space-lg));
   pointer-events: none;
-  background: linear-gradient(
-    to bottom,
-    color-mix(in srgb, var(--brand-brown) 62%, transparent) 0%,
-    color-mix(in srgb, var(--brand-brown) 34%, transparent) 55%,
-    transparent 100%
-  );
+  background: linear-gradient(to bottom, rgb(251 246 238 / 0.92) 0%, rgb(251 246 238 / 0.58) 55%, transparent 100%);
   opacity: 1;
   transition: opacity var(--dur-base) var(--ease);
 }
@@ -333,7 +328,7 @@ body:has(.header--transparent) main {
 .header--transparent .header__logo-text,
 .header--transparent .header__action,
 .header--transparent .header__nav-link {
-  color: var(--brand-cream);
+  color: var(--brand-brown);
 }
 
 /* Once scrolled, the header takes its normal solid colour and behaves like

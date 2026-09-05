@@ -167,6 +167,16 @@
     border-radius: var(--radius);
     box-shadow: var(--shadow-sm);
   }
+
+  .image-text--hide-art-mobile .image-text__media {
+    display: none;
+  }
+
+  .image-text--hide-art-mobile .image-text__content {
+    margin-block: 0;
+    padding-block: var(--space-xl);
+    box-shadow: none;
+  }
 }
 
 /* --------------------------------------------------------------------------
