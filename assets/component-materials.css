@@ -12,8 +12,9 @@
      normally throughout; nothing intercepts the wheel, so this is not
      scroll-jacking.
 
-   Text overlays the image at every size, over a scrim sized the same way as
-   the hero's so cream copy still clears AA on a pale photograph.
+   On mobile, the image and copy are separate stacked regions so the complete
+   artwork can be seen without sacrificing legibility. Desktop retains the
+   full-bleed image and scrim treatment.
    ========================================================================== */
 
 .materials {
@@ -82,22 +83,16 @@
   background-color: color-mix(in srgb, var(--brand-sage) 26%, var(--color-border));
 }
 
+.materials__media > picture {
+  width: 100%;
+  height: 100%;
+}
+
 .materials__image {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-}
-
-/* Phones are much taller than the uploaded product artwork. `cover` enlarged
-   the image until it filled that shape and cropped away most of the piece.
-   Keep the full source visible on mobile; the media background and text scrim
-   intentionally fill any remaining space in the viewport-sized panel. */
-@media (max-width: 767px) {
-  .materials__image {
-    object-fit: contain;
-    object-position: center;
-  }
 }
 
 /* --------------------------------------------------------------------------
@@ -274,6 +269,77 @@
   }
 }
 
+/* Mobile is an editorial card: a consistently sized image stage above a
+   bright copy panel. These rules follow the core full-bleed declarations so
+   the stacked layout wins on phones. All slides remain one viewport tall,
+   while `contain` keeps the complete source visible instead of magnifying it
+   to fill a tall phone screen. */
+@media (max-width: 767px) {
+  .materials__panel {
+    display: grid;
+    grid-template-rows: minmax(320px, 56svh) minmax(0, 1fr);
+    background: var(--brand-cream);
+  }
+
+  .materials__media {
+    position: relative;
+    inset: auto;
+    min-height: 0;
+    background: color-mix(in srgb, var(--brand-sage) 22%, var(--brand-cream));
+  }
+
+  .materials__image {
+    object-fit: contain;
+    object-position: center;
+  }
+
+  .materials__body {
+    position: relative;
+    inset: auto;
+    min-height: 0;
+    align-items: flex-start;
+    padding: var(--space-md) 0 calc(var(--tap-min) + var(--space-lg) + var(--safe-bottom));
+    color: var(--brand-brown);
+    background: var(--brand-cream);
+  }
+
+  .materials__body-inner {
+    gap: var(--space-xs);
+  }
+
+  .materials__index {
+    color: var(--brand-coral);
+  }
+
+  .materials__title {
+    color: var(--brand-brown);
+    font-size: clamp(2rem, 10vw, 3rem);
+  }
+
+  .materials__script {
+    color: var(--brand-coral);
+  }
+
+  .materials__text {
+    color: var(--color-text-muted);
+    font-size: clamp(0.92rem, 4vw, 1.05rem);
+    line-height: 1.55;
+  }
+
+  .materials__link {
+    min-width: min(100%, 230px);
+    justify-content: space-between;
+  }
+
+  .materials__motif {
+    right: calc(var(--gutter) + var(--safe-right));
+    bottom: calc(var(--tap-min) + var(--space-sm) + var(--safe-bottom));
+    color: var(--brand-sage);
+    opacity: 0.22;
+  }
+
+}
+
 @keyframes panel-media-left {
   from { transform: translate3d(-100%, 0, 0); }
   to   { transform: translate3d(0, 0, 0); }
@@ -420,5 +486,20 @@
     html.materials-ready:not(.reduce-motion):not(.simplify-motion) .materials__pager {
       display: none;
     }
+  }
+}
+
+/* Pager colours follow the pager's base declarations in source order. */
+@media (max-width: 767px) {
+  .materials__dot::after {
+    background-color: color-mix(in srgb, var(--brand-brown) 28%, transparent);
+  }
+
+  .materials__dot[aria-current="true"]::after {
+    background-color: var(--brand-coral);
+  }
+
+  .materials__swipe-hint {
+    color: var(--brand-olive);
   }
 }

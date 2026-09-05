@@ -72,6 +72,11 @@
             else
               assign direction = 'from-right'
             endif
+
+            assign image_loading = 'lazy'
+            if forloop.first
+              assign image_loading = 'eager'
+            endif
           -%}
           <li
             class="materials__panel materials__panel--{{ direction }}"
@@ -79,11 +84,12 @@
             {{ block.shopify_attributes }}
           >
             <div class="materials__media">
-              {% render 'responsive-image',
-                 image: block.settings.image,
-                 sizes: '100vw',
+              {% render 'art-directed-image',
+                 image_desktop: block.settings.image,
+                 image_mobile: block.settings.image_mobile,
+                 breakpoint: '768px',
                  alt: block.settings.image_alt,
-                 loading: forloop.first,
+                 loading: image_loading,
                  class: 'materials__image' %}
             </div>
 
@@ -189,7 +195,14 @@
         {
           "type": "image_picker",
           "id": "image",
-          "label": "Image"
+          "label": "Desktop image",
+          "info": "Required default image. Mobile also uses this image when no separate mobile image is selected."
+        },
+        {
+          "type": "image_picker",
+          "id": "image_mobile",
+          "label": "Mobile image",
+          "info": "Optional portrait composition for phones. Leave blank to use the desktop image."
         },
         {
           "type": "text",

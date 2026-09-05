@@ -162,7 +162,15 @@ function fillImageSettings(schemaSettings, values, context) {
         .replace(/^shopify:\/\/pages\//, '/pages/');
     }
 
-    if (bare || setting.type !== "image_picker" || values[setting.id]) continue;
+    /* Optional art-directed mobile sources deliberately fall back to their
+       desktop image on Shopify. Filling them here would hide that behavior
+       behind a fake local image and make the preview less truthful. */
+    if (
+      bare ||
+      setting.type !== "image_picker" ||
+      values[setting.id] ||
+      /mobile/.test(setting.id)
+    ) continue;
     const wide = /desktop|banner|wide/.test(setting.id);
     values[setting.id] = mockImage(mockSeed++, wide);
     if (context) filledImages.push(`${context}.${setting.id}`);
