@@ -16,7 +16,7 @@
         "image_alt": "",
         "subheading": "",
         "heading": "Little creations,",
-        "text": "Playful objects and thoughtful gifts—from our own studio-made pieces to cheerful finds chosen for the joy they bring.",
+        "text": "Discover unique home décor and thoughtful gifts online in India—from our studio-made pieces to cheerful finds chosen for every happy occasion.",
         "script_accent": "big smiles",
         "button_label": "Explore the collection",
         "button_link": "shopify://collections/all",
@@ -57,7 +57,7 @@
       "block_order": ["made", "unique", "joy"],
       "settings": {
         "eyebrow": "Why Bloom Arts",
-        "heading": "Artful objects, without the art-gallery attitude."
+        "heading": "Artful home décor and gifts, without the art-gallery attitude."
       }
     },
     "materials": {
@@ -133,8 +133,8 @@
     "all_products": {
       "type": "featured-collection",
       "settings": {
-        "eyebrow": "Made to make you smile",
-        "heading": "Find your new favourite",
+        "eyebrow": "Home décor & gifting",
+        "heading": "Gifts for every happy moment",
         "collection": "all",
         "link_label": "View all",
         "link": "",

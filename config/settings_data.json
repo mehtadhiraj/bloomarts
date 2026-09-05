@@ -10,6 +10,10 @@
 {
   "current": {
     "tagline": "Little Creations, Big Smiles",
+    "logo": "shopify://shop_images/bloom-art-png-logo.png",
+    "share_image": "shopify://shop_images/art-work-assembly-flyer.png",
+    "seo_home_title": "Unique Gifts & Home Decor Online India | Bloom Arts",
+    "seo_default_description": "Shop unique gifts and home decor online in India. Discover personalised gifts, studio-made pieces and thoughtful finds for every happy occasion.",
     "color_brown": "#2E241B",
     "color_amber": "#F6B028",
     "color_coral": "#E66D5B",

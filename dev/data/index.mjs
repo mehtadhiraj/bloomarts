@@ -422,7 +422,7 @@ const collections = {
 };
 
 collections.all = {
-  ...collection('all', 'All products', 'Everything currently in stock.', ''),
+  ...collection('all', 'All products', 'Unique home décor and thoughtful gifts for birthdays, housewarmings, weddings and every happy occasion.', ''),
   products,
   all_products_count: products.length,
   products_count: products.length

@@ -8,6 +8,7 @@
     "dev": "node dev/render.mjs && node dev/serve.mjs",
     "render": "node dev/render.mjs",
     "serve": "node dev/serve.mjs",
+    "check:seo": "node scripts/check-seo.mjs",
     "package": "node scripts/package-theme.mjs"
   },
   "devDependencies": {

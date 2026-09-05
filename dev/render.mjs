@@ -454,7 +454,7 @@ function copyAssets() {
 const baseScope = {
   request: { locale: { iso_code: 'en', direction: 'ltr' }, page_type: 'index', design_mode: false },
   canonical_url: 'https://bloomarts.example/',
-  page_description: data.shop.description
+  page_description: null
 };
 
 const pages = [
@@ -471,6 +471,7 @@ const pages = [
       template: { name: 'product' },
       request: { ...baseScope.request, page_type: 'product' },
       page_title: data.byHandle['strata-resin-tray'].title,
+      canonical_url: 'https://bloomarts.example/products/strata-resin-tray',
       product: data.byHandle['strata-resin-tray']
     }
   },
@@ -484,6 +485,7 @@ const pages = [
       template: { name: 'product' },
       request: { ...baseScope.request, page_type: 'product' },
       page_title: data.byHandle['ridge-stoneware-vase'].title,
+      canonical_url: 'https://bloomarts.example/products/ridge-stoneware-vase',
       product: data.byHandle['ridge-stoneware-vase']
     }
   },
@@ -495,6 +497,7 @@ const pages = [
       template: { name: 'product' },
       request: { ...baseScope.request, page_type: 'product' },
       page_title: data.byHandle['speckle-stoneware-mug'].title,
+      canonical_url: 'https://bloomarts.example/products/speckle-stoneware-mug',
       product: data.byHandle['speckle-stoneware-mug']
     }
   },
@@ -506,13 +509,14 @@ const pages = [
       template: { name: 'collection' },
       request: { ...baseScope.request, page_type: 'collection' },
       page_title: data.collections.all.title,
+      canonical_url: 'https://bloomarts.example/collections/all',
       collection: data.collections.all
     }
   },
   {
     file: 'cart.html',
     template: 'cart',
-    scope: { ...baseScope, template: { name: 'cart' }, page_title: 'Cart' }
+    scope: { ...baseScope, template: { name: 'cart' }, page_title: 'Cart', canonical_url: 'https://bloomarts.example/cart' }
   },
   {
     file: 'search.html',
@@ -522,6 +526,7 @@ const pages = [
       template: { name: 'search' },
       request: { ...baseScope.request, page_type: 'search' },
       page_title: 'Search',
+      canonical_url: 'https://bloomarts.example/search',
       search: {
         performed: true,
         terms: 'concrete',
@@ -538,13 +543,14 @@ const pages = [
       template: { name: 'page' },
       request: { ...baseScope.request, page_type: 'page' },
       page_title: data.pages.about.title,
+      canonical_url: 'https://bloomarts.example/pages/about',
       page: data.pages.about
     }
   },
   {
     file: '404.html',
     template: '404',
-    scope: { ...baseScope, template: { name: '404' }, page_title: 'Page not found' }
+    scope: { ...baseScope, template: { name: '404' }, page_title: 'Page not found', canonical_url: 'https://bloomarts.example/404' }
   }
 ];
 

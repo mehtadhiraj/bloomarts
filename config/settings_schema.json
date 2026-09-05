@@ -502,6 +502,29 @@
     ]
   },
   {
+    "name": "Search engine optimization",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Shopify's page-level search listing fields take priority. These values provide a useful fallback when a page has not been configured yet."
+      },
+      {
+        "type": "text",
+        "id": "seo_home_title",
+        "label": "Homepage fallback title",
+        "info": "Aim for 60 characters or fewer.",
+        "default": "Unique Gifts & Home Decor Online India | Bloom Arts"
+      },
+      {
+        "type": "textarea",
+        "id": "seo_default_description",
+        "label": "Default meta description",
+        "info": "Used only when a page has no Shopify SEO description. Aim for 160 characters or fewer.",
+        "default": "Shop unique gifts and home decor online in India. Discover personalised gifts, studio-made pieces and thoughtful finds for every happy occasion."
+      }
+    ]
+  },
+  {
     "name": "Social",
     "settings": [
       {
