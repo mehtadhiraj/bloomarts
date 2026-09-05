@@ -13,6 +13,7 @@
       "type": "hero",
       "settings": {
         "image_desktop": "shopify://shop_images/website-art-work.png",
+        "image_mobile": "shopify://shop_images/compressed_-product-assembly-edited.png",
         "image_alt": "",
         "subheading": "",
         "heading": "Little creations,",
@@ -82,7 +83,7 @@
           "type": "material",
           "settings": {
             "image": "shopify://shop_images/elephant-landscape_aa2dbf90-b93a-408e-8fec-1b3c39e0f5d0.png",
-            "image_mobile": "shopify://shop_images/elephant-mobile_ad3cf93b-7e9d-4412-9368-b28f0f710675.png",
+            "image_mobile": "shopify://shop_images/elephant-image_701004f4-05ec-4c77-aaba-306e2739a9f7.png",
             "image_alt": "Concrete-art-for-gifting-and-home-decor-elephant",
             "title": "Concrete Art",
             "script_accent": "",
@@ -96,8 +97,8 @@
           "type": "material",
           "settings": {
             "image": "shopify://shop_images/vase-landscape.png",
-            "image_mobile": "shopify://shop_images/vase-planter.png",
-            "image_alt": "",
+            "image_mobile": "shopify://shop_images/vase-planter_49f86ed5-a061-4ac9-b035-25165464c027.png",
+            "image_alt": "clay-pot-home-decor",
             "title": "Clay Art",
             "script_accent": "",
             "text": "Moulded with imagination, clay art brings warmth and character to every corner.\nCarefully shaped and finished for lasting, earthy charm.",
@@ -110,8 +111,8 @@
           "type": "material",
           "settings": {
             "image": "shopify://shop_images/resin-ganpati-landscape.png",
-            "image_mobile": "shopify://shop_images/resin-ganpati-mobile.png",
-            "image_alt": "",
+            "image_mobile": "shopify://shop_images/resin-ganpati-mobile_3427af0d-5cb1-4451-8928-1d519a8f59ba.png",
+            "image_alt": "resin-stand-gift-personalised-gift",
             "title": "Resin Art",
             "script_accent": "",
             "text": "A captivating blend of colour, depth, and shine that transforms ideas into lasting keepsakes.\nEach creation captures beautiful details within a smooth, glossy finish.",
