@@ -81,7 +81,8 @@
         "concrete": {
           "type": "material",
           "settings": {
-            "image": "shopify://shop_images/elephant-art-mobile.png",
+            "image": "shopify://shop_images/elephant-landscape_aa2dbf90-b93a-408e-8fec-1b3c39e0f5d0.png",
+            "image_mobile": "shopify://shop_images/elephant-image.png",
             "image_alt": "Concrete-art-for-gifting-and-home-decor-elephant",
             "title": "Concrete Art",
             "script_accent": "",
@@ -94,7 +95,8 @@
         "clay": {
           "type": "material",
           "settings": {
-            "image": "shopify://shop_images/IMG_5066.png",
+            "image": "shopify://shop_images/vase-landscape.png",
+            "image_mobile": "shopify://shop_images/vase-planter.png",
             "image_alt": "",
             "title": "Clay Art",
             "script_accent": "",
@@ -107,7 +109,8 @@
         "resin": {
           "type": "material",
           "settings": {
-            "image": "shopify://shop_images/IMG_5070.png",
+            "image": "shopify://shop_images/resin-ganpati-landscape.png",
+            "image_mobile": "shopify://shop_images/resin-ganpati-website_25b5cd32-7b9e-4706-9f25-15e787bfccec.png",
             "image_alt": "",
             "title": "Resin Art",
             "script_accent": "",
