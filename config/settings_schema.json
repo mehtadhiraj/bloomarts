@@ -26,7 +26,7 @@
         "type": "image_picker",
         "id": "favicon",
         "label": "Favicon",
-        "info": "Square, at least 32 x 32 px."
+        "info": "Square, at least 32 x 32 px. Leave empty to use the included Bloom Arts favicon. Select an image to replace it."
       },
       {
         "type": "image_picker",
