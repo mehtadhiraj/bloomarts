@@ -287,9 +287,9 @@
     <script>
       window.BloomartsMoneyFormat = {{ shop.money_format | json }};
       window.BloomartsRoutes = {
-        cart_add: "{{ routes.cart_add_url }}",
-        cart_change: "{{ routes.cart_change_url }}",
-        cart_update: "{{ routes.cart_update_url }}",
+        cart_add: {{ routes.cart_add_url | append: '.js' | json }},
+        cart_change: {{ routes.cart_change_url | append: '.js' | json }},
+        cart_update: {{ routes.cart_update_url | append: '.js' | json }},
         cart: "{{ routes.cart_url }}",
         predictive_search: "{{ routes.predictive_search_url }}"
       };
@@ -310,6 +310,15 @@
         uploadChoose: {{ 'products.customization.upload_choose' | t | json }},
         uploadReplace: {{ 'products.customization.upload_replace' | t | json }}
       };
+      // Liquid translations are HTML-escaped; these strings are used as text.
+      // Decode only entities, without parsing translations as HTML.
+      Object.keys(window.BloomartsStrings).forEach(function (key) {
+        var entities = { '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#39;': "'", '&#039;': "'", '&apos;': "'" };
+        window.BloomartsStrings[key] = window.BloomartsStrings[key].replace(
+          /&(?:amp|lt|gt|quot|apos|#0?39);/g,
+          function (entity) { return entities[entity]; }
+        );
+      });
     </script>
   </body>
 </html>

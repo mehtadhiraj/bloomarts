@@ -71,6 +71,16 @@
     {%- if menu != blank -%}
       <nav class="header__nav" aria-label="{{ 'general.accessibility.menu' | t }}">
         <ul class="header__nav-list" role="list">
+          {%- if settings.collection_browsing -%}
+            <li class="header__nav-item">
+              <details class="header__dropdown">
+                <summary class="header__nav-link tap-target">{{ settings.collection_browse_label | escape }}{% render 'icon', icon: 'chevron-down', size: 16 %}</summary>
+                <ul class="header__dropdown-list" role="list">
+                  {% render 'collection-browse-links', link_class: 'header__dropdown-link' %}
+                </ul>
+              </details>
+            </li>
+          {%- endif -%}
           {%- for link in menu.links -%}
             <li class="header__nav-item">
               {%- if link.links.size > 0 -%}

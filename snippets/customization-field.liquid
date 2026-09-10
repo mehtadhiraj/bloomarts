@@ -130,8 +130,6 @@
           {%- endcomment -%}
           {%- if hint != blank -%}
             {{ hint }}
-          {%- else -%}
-            {{ 'products.customization.engraving_hint' | t: max: max_length }}
           {%- endif -%}
         </p>
 
@@ -248,26 +246,21 @@
           {{ 'products.customization.upload_hint' | t: size: max_mb }}
         </p>
 
-        {%- comment -%}
-          The native control is visually hidden and driven by its own label,
-          which is styled as a proper 44px button. The native widget cannot
-          be sized or labelled reliably across mobile browsers, but keeping
-          the real input means the OS file/camera picker still opens.
-        {%- endcomment -%}
+        <div class="file-field__row">
+          <label class="btn btn--secondary file-field__button" for="{{ field_id }}">
         <input
           type="file"
-          class="file-field__input visually-hidden"
+          class="file-field__input"
           id="{{ field_id }}"
           name="properties[{{ property_name }}]"
           accept="{{ accept | default: 'image/jpeg,image/png,application/pdf' }}"
+          aria-labelledby="{{ field_id }}-label"
           {% if is_required %}required{% endif %}
           aria-describedby="{{ hint_id }} {{ field_id }}-status {{ error_id }}"
           data-custom-input
           data-max-size-mb="{{ max_mb }}"
         >
 
-        <div class="file-field__row">
-          <label class="btn btn--secondary file-field__button" for="{{ field_id }}">
             {% render 'icon', icon: 'upload', size: 18 %}
             <span data-file-button-text>{{ 'products.customization.upload_choose' | t }}</span>
           </label>

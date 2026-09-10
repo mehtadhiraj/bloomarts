@@ -1,0 +1,14 @@
+{%- liquid
+  assign browse_list = settings.browse_collections
+  if browse_list == blank
+    assign browse_list = collections
+  endif
+-%}
+<li><a class="{{ link_class }}" href="{{ routes.all_products_collection_url }}"{% if collection.handle == 'all' %} aria-current="page"{% endif %}>{{ settings.collection_all_label | escape }}</a></li>
+{%- for browse_collection in browse_list -%}
+  {%- unless browse_collection.handle == 'all' -%}
+    {%- if browse_collection.url != blank -%}
+      <li><a class="{{ link_class }}" href="{{ browse_collection.url }}"{% if collection.handle == browse_collection.handle %} aria-current="page"{% endif %}>{{ browse_collection.title | escape }}</a></li>
+    {%- endif -%}
+  {%- endunless -%}
+{%- endfor -%}

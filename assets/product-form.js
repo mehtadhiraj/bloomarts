@@ -375,6 +375,7 @@
       if (!drawer) return;
 
       event.preventDefault();
+      if (this.submitting) return;
       this.hideErrorSummary();
 
       const errors = this.validate();
@@ -383,6 +384,7 @@
         return;
       }
 
+      this.submitting = true;
       this.setLoading(true);
 
       const strings = window.BloomartsStrings || {};
@@ -395,7 +397,7 @@
         body.append('sections', 'cart-drawer,header');
         body.append('sections_url', window.location.pathname);
 
-        const response = await fetch(routes.cart_add || '/cart/add', {
+        const response = await fetch(routes.cart_add || `${window.Shopify?.routes?.root || '/'}cart/add.js`, {
           method: 'POST',
           headers: { Accept: 'application/json' },
           body
@@ -403,7 +405,7 @@
 
         const data = await response.json();
 
-        if (!response.ok) {
+        if (!response.ok || data.status >= 400) {
           // Shopify returns a human-readable description for stock and
           // property errors; prefer it over a generic message.
           throw new Error(data.description || data.message || strings.addToCartError);
@@ -423,6 +425,7 @@
           { input: this.submitButton || this.form, message: error.message || strings.addToCartError }
         ]);
       } finally {
+        this.submitting = false;
         this.setLoading(false);
       }
     }

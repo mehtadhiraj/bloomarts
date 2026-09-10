@@ -3,7 +3,135 @@
 **Read this and [`PROJECT-BRIEF.md`](PROJECT-BRIEF.md) before starting work.**
 Together they hold the full context — no chat history needed.
 
-Last updated: 30 August 2026.
+Last updated: 11 September 2026.
+
+## Default-variant cart follow-up — 11 September 2026
+
+- **Completed locally:** the required hidden variant ID is rendered for
+  single-default-variant products and when the variant-picker block is absent.
+  Multi-variant products with a picker continue to use its selected ID.
+- **Verified:** Liquid assertions cover all four default/multiple-variant and
+  picker-present/absent combinations, including avoiding a duplicate ID.
+- **Pending:** push/deployment and live Shopify cart verification. The store
+  continues serving the old form until these local edits are deployed.
+
+## Shopify-driven catalog audit — 11 September 2026
+
+- **Verified:** collection navigation uses Shopify collection objects (or the
+  merchant-selected collection list). Group headings and memberships use
+  product.collections; no concrete/clay/resin/category names are embedded in
+  the new catalog grouping or navigation. Filter labels, values and query
+  parameters come from collection.filters; sort options from collection.sort_options.
+- **Completed:** boolean filters now use the same dynamic values rendering as
+  list filters; escaped filter parameters/values in HTML attributes.
+- Merchant manages product types on products and enabled filters through
+  Search & Discovery. Sample types/collections in dev/ are local test fixtures
+  only and excluded by the theme ZIP's directory allowlist.
+
+## Product tile styling — 11 September 2026
+
+- **Completed locally:** playful catalog tiles use subtle sage/amber/coral
+  gradients, fine borders, soft shadows, rounded media, pill badges, price
+  dividers and consistent typography. Whole-card links and visible keyboard
+  focus retained; hover treatment remains pointer-gated and reduced-motion
+  rules retained. Existing playful layout toggle controls this styling.
+- **Verified:** 320/390/768/1440px local DOM measurements show no horizontal
+  page overflow or horizontally clipped titles. Render/integrity checks pass.
+- **Pending:** live Shopify visual review with real photography. No new images,
+  JavaScript, customization or cart behavior changes in this styling pass.
+
+## Responsive validation of recent changes — 11 September 2026
+
+- **Completed:** local catalog checked at 320, 375, 390, 414, 768, 1024 and
+  1440px: no horizontal page overflow; collection links at least 44px high;
+  two/three/four product columns at phone/tablet/desktop widths. Mobile menu
+  opens and expands the collection links at 390px.
+- **Customization:** form checked at 320, 390 and 768px without overflow.
+  Upload input was slightly below 44px; increased its button to 48px and
+  verified a 46px native target at 320px. Native chooser event confirmed;
+  empty remove control hidden. Preview collection fixtures now expose objects
+  like Shopify so grouped catalogs and navigation can actually be inspected.
+- **Performance/images/motion:** no new client libraries or animation loops;
+  existing responsive image markup retained, grouped cards lazy-load images.
+  No performance benchmark or full visual/contrast audit performed.
+- **Pending:** physical iPhone/Android and live Shopify validation, including
+  touch file selection/upload, cart persistence and checkout handoff. Prior
+  isolated cart submission checks passed; local preview does not implement
+  Shopify checkout. Changes remain local, not deployed.
+
+## Grouped All products — 11 September 2026
+
+- **Completed locally:** All products renders collection headings, product
+  grids and View collection links. Products in multiple collections appear in
+  each; uncollected products remain in an editable More from Bloom Arts group.
+  Named collection pages retain their normal grid. Group labels are editable
+  in the collection section; membership comes from Shopify product collections.
+- **Validation:** nine-page render, integrity and whitespace checks pass.
+  Liquid fixture verifies single group headings, shared memberships, uncollected
+  products and collection URLs. Grouping uses the current paginated result set,
+  so one collection can continue on subsequent pages; filters and sorting still
+  apply to that result set. No extra network requests or JavaScript added.
+- **Pending:** deployment and live responsive visual validation. Desktop and
+  mobile use the same headings, wrapping links and responsive product grids.
+
+## Collection browsing — 11 September 2026
+
+- **Completed locally:** Collections dropdown in desktop navigation and an
+  expandable group in mobile navigation; wrapping 44px collection links above
+  catalog grids, with active collection styling and All products reset.
+  Theme settings > Collection browsing controls labels, visibility, selection
+  and order; unselected list falls back to storefront collections. Links open
+  native collection pages, preserving Shopify product membership/pagination.
+- **Verified:** nine-page render and integrity checks; isolated Liquid checks
+  for selected collection links, active state and escaped collection titles.
+- **Pending:** live deployment and mobile/desktop interaction verification with
+  store collections. Merchant must create/publish collections and assign their
+  products in Shopify. This is collection navigation, not a multi-select facet;
+  changing collections resets the prior collection's filters.
+
+## Collection spacing — 11 September 2026
+
+- **Completed locally:** removed the desktop sidebar track (260px plus 64px
+  gap on the live catalog). Filters/sorting open from the toolbar in a desktop
+  side drawer; mobile keeps its existing sheet. Consistent square media and
+  uniform card spans replace oversized feature cards and uneven row gaps.
+- **Verified:** local desktop grid and layout both start at x=29.9px, with no
+  horizontal page overflow; toolbar opens the filters drawer. Integrity check,
+  nine-page render and diff whitespace checks pass.
+- **Pending:** Shopify deployment and full mobile viewport validation. Product
+  data/customization, cart, responsive image sources and motion policy unchanged.
+
+## Photo upload interaction — 11 September 2026
+
+- **Completed locally:** native file input covers the Choose file button,
+  preserving direct mouse/touch activation and keyboard focus. Hidden remove
+  control stays hidden until a file is selected. Removed engraving-specific
+  fallback hint from generic text fields; admin-provided hints still render.
+- **Verified:** live photo-frame label click timed out waiting for a chooser;
+  local updated input produced a filechooser event. Added an upload field to
+  the development metaobject fixture. Nine-page render and integrity check pass.
+- **Pending:** Shopify deployment, actual file upload/cart/order verification,
+  and physical mobile-device testing. No customer photo was uploaded in testing.
+
+## Cart failure investigation — 11 September 2026
+
+- **Completed locally:** use explicit locale-aware `.js` cart endpoints;
+  decode HTML entities in translated JavaScript strings without interpreting
+  HTML; prevent duplicate product submissions; refresh the drawer's item count
+  from its own rendered section rather than the header section.
+- **Validation:** repository integrity check, nine-page local render/output
+  audit and JavaScript syntax checks pass. Isolated submission regression check
+  passes for localized routes, duplicate clicks, success events, stock errors
+  and loading reset. Live Flower Vase White / White / Floral added successfully
+  before these edits; the live drawer's stale zero-item label was reproduced.
+- **Root cause fixed locally:** products with only the default variant omitted
+  the required `name="id"` form input because the variant picker is hidden.
+  Added the selected variant ID directly for those products. The vase has a
+  variant picker, explaining the difference reported by the merchant.
+- **Pending:** deploy and verify these changes on Shopify, including mobile
+  touch add/update/remove and actual affected product customization. No layout,
+  navigation, responsive-image or animation changes; no performance benchmark
+  or physical iPhone/Android test performed in this investigation.
 
 | Status | Meaning |
 |---|---|

@@ -1,0 +1,54 @@
+{%- comment -%}
+  Group the current server-paginated result set, so filters, sorting and page
+  counts stay accurate. A product belonging to multiple collections appears
+  in each. Products with no named collection remain visible in a final group.
+{%- endcomment -%}
+{%- liquid
+  assign seen_groups = '|'
+  assign ungrouped_count = 0
+-%}
+{%- for item in products -%}
+  {%- assign named_count = 0 -%}
+  {%- for group in item.collections -%}
+    {%- unless group.handle == 'all' -%}
+      {%- liquid
+        assign named_count = named_count | plus: 1
+        assign group_key = '|' | append: group.handle | append: '|'
+      -%}
+      {%- unless seen_groups contains group_key -%}
+        {%- assign seen_groups = seen_groups | append: group.handle | append: '|' -%}
+        <section class="collection-product-group" aria-labelledby="group-{{ section.id }}-{{ group.handle }}">
+          <div class="collection-product-group__header">
+            <h2 id="group-{{ section.id }}-{{ group.handle }}">{{ group.title | escape }}</h2>
+            <a class="collection-product-group__link" href="{{ group.url }}">{{ section.settings.group_view_label | default: 'View collection' | escape }}<span class="visually-hidden">: {{ group.title | escape }}</span></a>
+          </div>
+          <ul class="product-grid{% if section.settings.playful_layout %} product-grid--playful{% endif %}" role="list">
+            {%- for grouped_product in products -%}
+              {%- assign membership = grouped_product.collections | map: 'handle' -%}
+              {%- if membership contains group.handle -%}
+                <li>{% render 'product-card', product: grouped_product, loading: 'lazy', priority: 'auto', index: forloop.index %}</li>
+              {%- endif -%}
+            {%- endfor -%}
+          </ul>
+        </section>
+      {%- endunless -%}
+    {%- endunless -%}
+  {%- endfor -%}
+  {%- if named_count == 0 -%}{%- assign ungrouped_count = ungrouped_count | plus: 1 -%}{%- endif -%}
+{%- endfor -%}
+{%- if ungrouped_count > 0 -%}
+  <section class="collection-product-group" aria-labelledby="group-{{ section.id }}-other">
+    <div class="collection-product-group__header"><h2 id="group-{{ section.id }}-other">{{ section.settings.ungrouped_label | default: 'More from Bloom Arts' | escape }}</h2></div>
+    <ul class="product-grid{% if section.settings.playful_layout %} product-grid--playful{% endif %}" role="list">
+      {%- for item in products -%}
+        {%- assign named_count = 0 -%}
+        {%- for group in item.collections -%}
+          {%- unless group.handle == 'all' -%}{%- assign named_count = named_count | plus: 1 -%}{%- endunless -%}
+        {%- endfor -%}
+        {%- if named_count == 0 -%}
+          <li>{% render 'product-card', product: item, loading: 'lazy', priority: 'auto', index: forloop.index %}</li>
+        {%- endif -%}
+      {%- endfor -%}
+    </ul>
+  </section>
+{%- endif -%}

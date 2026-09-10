@@ -41,6 +41,16 @@
       {%- if menu != blank -%}
         <nav aria-label="{{ 'general.accessibility.menu' | t }}">
           <ul class="mobile-nav" role="list">
+            {%- if settings.collection_browsing -%}
+              <li class="mobile-nav__item">
+                <details class="mobile-nav__group">
+                  <summary class="mobile-nav__summary"><span>{{ settings.collection_browse_label | escape }}</span>{% render 'icon', icon: 'chevron-down', size: 20, class: 'mobile-nav__chevron' %}</summary>
+                  <ul class="mobile-nav__sublist" role="list">
+                    {% render 'collection-browse-links', link_class: 'mobile-nav__link' %}
+                  </ul>
+                </details>
+              </li>
+            {%- endif -%}
             {%- for link in menu.links -%}
               <li class="mobile-nav__item">
                 {%- if link.links.size > 0 -%}

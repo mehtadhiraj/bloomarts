@@ -273,6 +273,16 @@ async function renderSection(name, config = {}, index = 1) {
    collection and friends are global objects, so a {% render %}-ed snippet
    can read them; LiquidJS isolates local scope, so they must live here for
    snippets like meta-tags to resolve. */
+// Shopify exposes collection objects on products, not the fixture handles.
+for (const product of data.products) {
+  product.collections = product.collections.map((handle) => {
+    const entry = data.collections[handle];
+    return entry ? { handle: entry.handle, title: entry.title, url: entry.url } : null;
+  }).filter(Boolean);
+}
+if (!settings.browse_collections?.length) {
+  settings.browse_collections = Object.values(data.collections);
+}
 const globals = {
   settings,
   shop: data.shop,

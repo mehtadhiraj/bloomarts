@@ -110,7 +110,7 @@
             </summary>
 
             {%- case filter.type -%}
-              {%- when 'list' -%}
+              {%- when 'list', 'boolean' -%}
                 <fieldset class="facets__fieldset">
                   <legend class="visually-hidden">{{ filter.label }}</legend>
                   {%- for value in filter.values -%}
@@ -119,8 +119,8 @@
                         type="checkbox"
                         class="facets__control"
                         id="filter-{{ filter.param_name | handle }}-{{ forloop.index }}"
-                        name="{{ filter.param_name }}"
-                        value="{{ value.value }}"
+                        name="{{ filter.param_name | escape }}"
+                        value="{{ value.value | escape }}"
                         {% if value.active %}checked{% endif %}
                         {% if value.count == 0 and value.active == false %}disabled{% endif %}
                       >

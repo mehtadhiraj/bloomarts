@@ -114,6 +114,9 @@
       if (!sections) return;
 
       if (sections['cart-drawer'] && this.contents) {
+        const freshLabel = this.parse(sections['cart-drawer'], '[data-cart-count-label]');
+        const liveLabel = this.querySelector('[data-cart-count-label]');
+        if (freshLabel && liveLabel) liveLabel.textContent = freshLabel.textContent;
         const fresh = this.parse(sections['cart-drawer'], '[data-cart-contents]');
         if (fresh) {
           this.contents.innerHTML = fresh.innerHTML;
@@ -142,9 +145,6 @@
       const liveText = document.querySelector('[data-cart-count-text]');
       if (freshText && liveText) liveText.textContent = freshText.textContent;
 
-      const freshLabel = doc.querySelector('[data-cart-count-label]');
-      const liveLabel = this.querySelector('[data-cart-count-label]');
-      if (freshLabel && liveLabel) liveLabel.textContent = freshLabel.textContent;
     }
 
     parse(html, selector) {

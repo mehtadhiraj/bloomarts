@@ -161,6 +161,11 @@ const products = [
               max_length: 3,
               hint: 'Up to three letters, stamped into the foot.',
               required: false
+            }),
+            customizationField({
+              label: 'Upload your photo',
+              field_type: 'file',
+              required: false
             })
           ]
         }

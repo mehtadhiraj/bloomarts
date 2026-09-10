@@ -563,4 +563,14 @@
       }
     ]
   }
+,
+  {
+    "name": "Collection browsing",
+    "settings": [
+      { "type": "checkbox", "id": "collection_browsing", "label": "Show collection navigation", "default": true },
+      { "type": "text", "id": "collection_browse_label", "label": "Navigation label", "default": "Collections" },
+      { "type": "text", "id": "collection_all_label", "label": "All products label", "default": "All products" },
+      { "type": "collection_list", "id": "browse_collections", "label": "Collections to display", "info": "Choose collections and their order for the menu and catalog. Leave empty to show available collections.", "limit": 30 }
+    ]
+  }
 ]

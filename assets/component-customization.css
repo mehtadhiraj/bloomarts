@@ -140,6 +140,28 @@
   margin-top: var(--space-2xs);
 }
 
+/* Place the native file control over the visible button. This preserves
+   browser user activation for mouse, touch and keyboard without JS clicks. */
+.file-field__button {
+  position: relative;
+  min-height: 48px;
+  min-width: 0;
+}
+
+.file-field__input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  z-index: 1;
+  cursor: pointer;
+}
+
+.file-field__remove[hidden] {
+  display: none;
+}
+
 .file-field__button {
   /* The label IS the button. Cursor and touch-action have to be set here
      because it is a <label>, not a <button>. */
@@ -148,8 +170,7 @@
   flex: 1 1 auto;
 }
 
-.file-field__input:focus-visible + .file-field__row .file-field__button,
-.file-field__input:focus + .file-field__row .file-field__button {
+.file-field__button:focus-within {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }

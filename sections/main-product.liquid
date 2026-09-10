@@ -16,6 +16,11 @@
 {%- liquid
   assign selected = product.selected_or_first_available_variant
   assign form_id = 'product-form-' | append: section.id
+  assign variant_picker_blocks = section.blocks | where: 'type', 'variant_picker'
+  assign needs_variant_id = false
+  if product.has_only_default_variant or variant_picker_blocks.size == 0
+    assign needs_variant_id = true
+  endif
 
   # Customization blocks render as one merged panel under a single heading.
   # This flag marks the first of them so the heading is emitted once,
@@ -54,6 +59,9 @@
   <div class="product__info">
     <product-form class="product-form">
       {%- form 'product', product, id: form_id, class: 'product-form__form', novalidate: 'novalidate' -%}
+        {%- if needs_variant_id -%}
+          <input type="hidden" name="id" value="{{ selected.id }}">
+        {%- endif -%}
         {%- for block in section.blocks -%}
           {%- case block.type -%}
 

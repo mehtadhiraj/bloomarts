@@ -82,6 +82,15 @@
     </p>
   </div>
 
+  {%- if settings.collection_browsing -%}
+    <nav class="collection-browse" aria-label="{{ settings.collection_browse_label | escape }}">
+      <p class="collection-browse__label">{{ settings.collection_browse_label | escape }}</p>
+      <ul class="collection-browse__list" role="list">
+        {% render 'collection-browse-links', link_class: 'collection-browse__link' %}
+      </ul>
+    </nav>
+  {%- endif -%}
+
   {%- comment -%}
     Active filters as removable chips. Without these, a filtered grid on a
     phone is indistinguishable from a nearly empty catalogue once the sheet
@@ -118,6 +127,9 @@
     <div class="collection__results" id="collection-results">
       {%- paginate collection.products by products_per_page -%}
         {%- if collection.products.size > 0 -%}
+          {%- if collection.handle == 'all' -%}
+            {% render 'collection-product-groups', products: collection.products, section: section %}
+          {%- else -%}
           <ul class="product-grid{% if section.settings.playful_layout %} product-grid--playful{% endif %}" role="list" data-reveal-group>
             {%- for product in collection.products -%}
               <li data-reveal="rise-stagger">
@@ -147,6 +159,7 @@
               </li>
             {%- endfor -%}
           </ul>
+          {%- endif -%}
 
           {% render 'pagination', paginate: paginate %}
         {%- else -%}
@@ -166,6 +179,8 @@
 {
   "name": "Collection",
   "settings": [
+    { "type": "text", "id": "group_view_label", "label": "Collection link label", "default": "View collection" },
+    { "type": "text", "id": "ungrouped_label", "label": "Uncollected products heading", "default": "More from Bloom Arts" },
     {
       "type": "checkbox",
       "id": "show_banner",
