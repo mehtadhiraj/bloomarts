@@ -5,6 +5,16 @@ Together they hold the full context — no chat history needed.
 
 Last updated: 11 September 2026.
 
+## GitHub delivery — 11 September 2026
+
+- **Completed:** approved cart, upload, collection navigation/grouping,
+  responsive layout, restored tile styling and clickable image changes pushed
+  to origin/main through b02103b. Preserved Shopify editor updates, including
+  the favicon, while retaining new collection navigation settings.
+- Final merged integrity check, nine-page render and whitespace check pass.
+- Earlier "local/not deployed" notes are historical: GitHub push is complete.
+  **Pending:** Shopify sync and live storefront/cart/upload verification.
+
 ## Restore initial tiles — 11 September 2026
 
 - **Completed locally:** restored pre-redesign tile styling: square images,
