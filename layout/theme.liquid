@@ -40,8 +40,6 @@
 
     {%- if settings.favicon != blank -%}
       <link rel="icon" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
-    {%- else -%}
-      <link rel="icon" type="image/svg+xml" sizes="any" href="{{ 'favicon.svg' | asset_url }}">
     {%- endif -%}
 
     {%- comment -%} Warm the image CDN before the hero srcset resolves. {%- endcomment -%}
