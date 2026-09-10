@@ -25,7 +25,7 @@
 -%}
 
 <div class="card">
-  <div class="card__media media media--{{ settings.card_image_ratio }}">
+  <a class="card__media card__image-link media media--{{ settings.card_image_ratio }}" href="{{ product.url }}" aria-label="{{ product.title | escape }}">
     {% render 'responsive-image',
        image: product.featured_image,
        ratio: card_ratio,
@@ -59,7 +59,7 @@
         <span class="card__badge card__badge--sale">{{ 'products.product.on_sale' | t }}</span>
       {%- endif -%}
     {%- endunless -%}
-  </div>
+  </a>
 
   <div class="card__body">
     {%- if settings.card_show_vendor and product.vendor != blank -%}
@@ -68,9 +68,8 @@
 
     <h3 class="card__title">
       {%- comment -%}
-        One link wrapping the title, stretched over the whole card by CSS.
-        A single target avoids the overlapping-link pattern that makes cards
-        awkward to tap and noisy for screen readers.
+        The title also links to the product. Its stretched target covers the
+        card body; the image has its own native link above that target.
       {%- endcomment -%}
       <a href="{{ product.url }}" class="card__link">{{ product.title }}</a>
     </h3>

@@ -5,6 +5,38 @@ Together they hold the full context — no chat history needed.
 
 Last updated: 11 September 2026.
 
+## Restore initial tiles — 11 September 2026
+
+- **Completed locally:** restored pre-redesign tile styling: square images,
+  simple inset spacing, original soft backgrounds and heading typography.
+  Removed the added gradient/shadow/border and subsequent modern-card styling.
+  Uniform grid spans, full-width catalog layout, collection grouping, native
+  image links and visible focus remain.
+- **Verified:** nine-page render, integrity check and diff whitespace check
+  pass. The styling experiments recorded below are superseded by this restore.
+- **Pending:** Shopify deployment and live visual confirmation.
+
+## Clickable product images — 11 September 2026
+
+- **Completed locally:** shared product cards render the media as a native
+  link to product.url, layered above the stretched title link. Includes an
+  accessible product-name label and visible keyboard focus; works without JS.
+- **Verified:** rendered catalog, homepage and search card image URLs match
+  their corresponding product-title URLs; render/integrity checks pass.
+- **Pending:** deployment and live mouse/touch navigation verification.
+
+## Modern product tiles revision — 11 September 2026
+
+- **Completed locally:** replaced alternating colour gradients and inset frames
+  with neutral surface cards, edge-to-edge 4:5 media, restrained borders, compact
+  badges, body-font titles and stronger prices. Images use contain to preserve
+  the full uploaded composition. Desktop hover lift is subtle; focus visible.
+- **Verified:** local measurements at 320/390/768/1440px show no horizontal
+  overflow or clipped title/price widths. Inspected mobile screenshot at 390px
+  with fixture images. Render and integrity checks pass.
+- **Pending:** live-photo visual review and deployment. Earlier coloured tile
+  styling below is superseded by this neutral revision.
+
 ## Default-variant cart follow-up — 11 September 2026
 
 - **Completed locally:** the required hidden variant ID is rendered for

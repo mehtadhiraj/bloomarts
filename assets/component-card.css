@@ -25,6 +25,18 @@
   object-fit: cover;
 }
 
+.card__image-link {
+  display: block;
+  z-index: 2;
+  color: inherit;
+  text-decoration: none;
+}
+
+.card__image-link:focus-visible {
+  outline: 2px solid var(--color-text);
+  outline-offset: 3px;
+}
+
 .card__image-alt {
   position: absolute;
   inset: 0;
