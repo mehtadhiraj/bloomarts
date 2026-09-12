@@ -1,4 +1,49 @@
 (() => {
+  if (!customElements.get('occasion-art')) {
+    customElements.define('occasion-art', class extends HTMLElement {
+      connectedCallback() {
+        this.image = this.querySelector('img');
+        if (!this.image) return;
+        this.sample = () => {
+          const source = this.image.currentSrc || this.image.src;
+          if (!this.image.naturalWidth || source === this.source) return;
+          this.source = source;
+          const probe = new Image();
+          probe.crossOrigin = 'anonymous';
+          probe.onload = () => {
+            if (!this.isConnected || this.source !== source) return;
+            try {
+              const canvas = document.createElement('canvas');
+              canvas.width = canvas.height = 16;
+              const context = canvas.getContext('2d', { willReadFrequently: true });
+              if (!context) return;
+              context.drawImage(probe, 0, 0, 16, 16);
+              const pixels = context.getImageData(0, 0, 16, 16).data;
+              const sums = [0, 0, 0];
+              let weight = 0;
+              // Sample the perimeter so the backdrop blends into photo edges.
+              for (let y = 0; y < 16; y++) for (let x = 0; x < 16; x++) {
+                if (x > 1 && x < 14 && y > 1 && y < 14) continue;
+                const offset = (y * 16 + x) * 4;
+                const alpha = pixels[offset + 3] / 255;
+                weight += alpha;
+                sums.forEach((_, c) => { sums[c] += pixels[offset + c] * alpha; });
+              }
+              if (weight) this.style.setProperty('--occasion-image-colour', `rgb(${sums.map(value => Math.round(value / weight)).join(', ')})`);
+            } catch { /* Cross-origin restrictions retain the brand fallback. */ }
+          };
+          probe.onerror = () => {};
+          probe.src = source;
+        };
+        this.image.addEventListener('load', this.sample);
+        this.sample();
+      }
+      disconnectedCallback() {
+        this.image?.removeEventListener('load', this.sample);
+        this.source = null;
+      }
+    });
+  }
   if (customElements.get('occasion-carousel')) return;
   class OccasionCarousel extends HTMLElement {
     connectedCallback() {

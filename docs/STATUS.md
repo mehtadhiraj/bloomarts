@@ -7,6 +7,28 @@ Last updated: 12 September 2026.
 
 ## Occasion carousel — 12 September 2026
 
+- **Image refinement release:** push authorized. Includes contained product
+  framing, edge-colour sampling and faded borders. Local syntax/integrity checks
+  pass; live CDN sampling and mobile visual verification remain pending. If
+  image rendering regresses, disable the section or revert this refinement
+  commit without reverting merchant settings. No database changes.
+
+- **Image-colour backdrop (local):** a 16px canvas samples loaded image edge
+  colours, alpha-weighted, to fill the media area. Brand palette is the fallback
+  for transparent borders, unavailable images or cross-origin restrictions.
+  Product images remain contained, with narrow CSS fades on their actual
+  edges; no blur animation or continuous sampling. Responsive source loads
+  trigger resampling and text colour stays unchanged for readability.
+  Syntax, integrity and nine-page preview render pass. Real Shopify CDN colour
+  sampling and device visual/performance verification remain pending. Not pushed.
+
+- **Product image framing correction (local):** replaced cover cropping with
+  contain fitting. Desktop artwork uses the right half at full panel height;
+  mobile artwork fits within the reserved top area instead of scaling to the
+  combined image-plus-copy height. Brand background fills unused space and
+  edge fades remain. This supersedes the full-slide cover treatment below.
+  Actual merchant image/device visual verification remains pending.
+
 - **Release preparation:** user authorized pushing this carousel work to main.
   Custom integrity, JavaScript syntax, nine-page normal render and whitespace
   checks pass. No database migration. Shopify live sync, editor picker and

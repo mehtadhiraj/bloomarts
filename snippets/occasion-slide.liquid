@@ -20,9 +20,9 @@
           {%- endif -%}
         </div>
         {%- if occasion_image != blank -%}
-          <div class="occasion__media">
+          <occasion-art class="occasion__media">
             {% render 'art-directed-image', image_desktop: occasion_image, image_mobile: slide_settings.mobile_image, alt: slide_settings.image_alt, class: 'occasion__image', loading: 'lazy' %}
-          </div>
+          </occasion-art>
         {%- endif -%}
       </div>
     </div>
