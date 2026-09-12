@@ -31,7 +31,11 @@
   isolation: isolate;
   overflow: clip;
   border-radius: clamp(20px, 3vw, 40px);
-  background: linear-gradient(125deg, color-mix(in srgb, var(--occasion-colour) 72%, var(--brand-cream)), color-mix(in srgb, var(--occasion-colour) 32%, var(--brand-cream)));
+  background:
+    radial-gradient(ellipse at 85% 0%, color-mix(in srgb, var(--occasion-edge-top, var(--occasion-colour)) 25%, transparent), transparent 65%),
+    radial-gradient(ellipse at 100% 65%, color-mix(in srgb, var(--occasion-edge-right, var(--occasion-colour)) 22%, transparent), transparent 65%),
+    radial-gradient(ellipse at 60% 100%, color-mix(in srgb, var(--occasion-edge-bottom, var(--occasion-colour)) 18%, transparent), transparent 65%),
+    linear-gradient(105deg, var(--occasion-surface), color-mix(in srgb, var(--occasion-edge-left, var(--occasion-colour)) 12%, var(--brand-cream)));
   color: var(--brand-brown);
 }
 .occasion__panel--coral { --occasion-colour: var(--brand-coral); }
@@ -41,7 +45,7 @@
    Content sets the height so long merchant copy never gets clipped. */
 .occasion__panel:not(.occasion__panel--text) .occasion__copy {
   padding-top: clamp(220px, 62vw, 360px);
-  background: linear-gradient(to bottom, transparent 0, transparent calc(clamp(220px, 62vw, 360px) - 16px), var(--occasion-surface) clamp(220px, 62vw, 360px));
+  background: none;
 }
 .occasion__eyebrow { margin: 0 0 16px; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
 .occasion__copy h2 { margin: 0; font-size: clamp(2rem, 4.5vw, 4.5rem); line-height: 1.08; overflow-wrap: anywhere; }
@@ -51,28 +55,29 @@
 .occasion__button:hover { background: var(--brand-brown); color: var(--brand-cream); }
 .occasion__button:focus-visible { outline: 2px solid var(--brand-brown); outline-offset: 4px; }
 .occasion__media { position: absolute; inset: 0 0 auto; height: clamp(220px, 62vw, 360px); z-index: 0; min-width: 0; pointer-events: none; }
-.occasion__media { background: var(--occasion-image-colour, var(--occasion-surface)); }
-.occasion__media picture { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; }
+.occasion__media { padding: 20px 24px 12px; box-sizing: border-box; }
+.occasion__media picture { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; filter: drop-shadow(0 12px 14px rgb(49 35 23 / 12%)); }
 .occasion__media .occasion__image {
   display: block; width: auto; height: auto; max-width: 100%; max-height: 100%; object-fit: contain;
+  border-radius: 7% 3% 8% 4% / 4% 8% 3% 7%;
   /* Mask the actual image bounds, including when it is smaller than its area. */
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent), linear-gradient(to bottom, transparent, #000 5%, #000 95%, transparent);
+  -webkit-mask-image: linear-gradient(94deg, transparent, #000 5%, #000 94%, transparent), linear-gradient(177deg, transparent, #000 4%, #000 96%, transparent);
   -webkit-mask-composite: source-in;
-  mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent), linear-gradient(to bottom, transparent, #000 5%, #000 95%, transparent);
+  mask-image: linear-gradient(94deg, transparent, #000 5%, #000 94%, transparent), linear-gradient(177deg, transparent, #000 4%, #000 96%, transparent);
   mask-composite: intersect;
 }
 .occasion__setup { font-size: 0.875rem; margin-top: 24px; }
 @media (min-width: 768px) {
-  .occasion__media { inset: 0 0 0 50%; height: 100%; }
+  .occasion__media { inset: 0 0 0 52%; height: 100%; padding: 28px clamp(20px, 3vw, 48px) 28px 12px; }
   .occasion__panel { min-height: 480px; align-items: center; }
   .occasion__panel:not(.occasion__panel--text) .occasion__copy {
     padding-top: clamp(24px, 5vw, 72px);
-    padding-right: 44%;
+    padding-right: 48%;
     align-self: stretch;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    background: linear-gradient(to right, var(--occasion-surface) 0%, var(--occasion-surface) 46%, transparent 60%);
+    background: linear-gradient(to right, var(--occasion-surface) 0%, color-mix(in srgb, var(--occasion-surface) 75%, transparent) 38%, transparent 75%);
   }
   .occasion__button { width: fit-content; }
 }

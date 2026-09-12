@@ -19,17 +19,28 @@
               if (!context) return;
               context.drawImage(probe, 0, 0, 16, 16);
               const pixels = context.getImageData(0, 0, 16, 16).data;
-              const sums = [0, 0, 0];
-              let weight = 0;
-              // Sample the perimeter so the backdrop blends into photo edges.
-              for (let y = 0; y < 16; y++) for (let x = 0; x < 16; x++) {
-                if (x > 1 && x < 14 && y > 1 && y < 14) continue;
-                const offset = (y * 16 + x) * 4;
-                const alpha = pixels[offset + 3] / 255;
-                weight += alpha;
-                sums.forEach((_, c) => { sums[c] += pixels[offset + c] * alpha; });
+              // Keep each border distinct; never use the centre/dominant colour.
+              const edges = {
+                top: (x, y) => y < 2,
+                bottom: (x, y) => y > 13,
+                left: (x, y) => x < 2,
+                right: (x, y) => x > 13
+              };
+              const panel = this.closest('.occasion__panel');
+              for (const [edge, includes] of Object.entries(edges)) {
+                const sums = [0, 0, 0];
+                let weight = 0;
+                for (let y = 0; y < 16; y++) for (let x = 0; x < 16; x++) {
+                  if (!includes(x, y)) continue;
+                  const offset = (y * 16 + x) * 4;
+                  const alpha = pixels[offset + 3] / 255;
+                  weight += alpha;
+                  sums.forEach((_, c) => { sums[c] += pixels[offset + c] * alpha; });
+                }
+                const property = `--occasion-edge-${edge}`;
+                if (weight) panel?.style.setProperty(property, `rgb(${sums.map(value => Math.round(value / weight)).join(', ')})`);
+                else panel?.style.removeProperty(property);
               }
-              if (weight) this.style.setProperty('--occasion-image-colour', `rgb(${sums.map(value => Math.round(value / weight)).join(', ')})`);
             } catch { /* Cross-origin restrictions retain the brand fallback. */ }
           };
           probe.onerror = () => {};

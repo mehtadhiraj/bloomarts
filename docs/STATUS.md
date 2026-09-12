@@ -7,6 +7,23 @@ Last updated: 12 September 2026.
 
 ## Occasion carousel — 12 September 2026
 
+- **Floating artwork release:** user authorized push to main. JavaScript syntax,
+  custom theme integrity, nine-page render and whitespace checks pass. No
+  migrations. Live Shopify sync and real-image mobile/desktop appearance remain
+  pending. If readability or image framing regresses, disable the section or
+  revert this styling release while retaining merchant settings.
+
+- **Unified floating artwork refinement (local):** removed the solid media
+  background and hard mobile seam. Whole-card pastel gradients use separate
+  top/right/bottom/left perimeter samples, not a dominant or combined colour.
+  Desktop copy colour fades across the card; contained artwork has breathing
+  room, asymmetric rounded feathered edges and a static soft shadow. Mobile
+  retains a reserved image area above copy on the same continuous background.
+  No additional animation; existing touch controls, responsive sources and
+  cart/customization behaviour unchanged. Syntax, integrity and preview render
+  pass; actual-image visual/mobile contrast/performance validation pending.
+  Not pushed.
+
 - **Image refinement release:** push authorized. Includes contained product
   framing, edge-colour sampling and faded borders. Local syntax/integrity checks
   pass; live CDN sampling and mobile visual verification remain pending. If
