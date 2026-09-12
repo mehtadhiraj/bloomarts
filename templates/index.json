@@ -9,18 +9,6 @@
  */
 {
   "sections": {
-    "occasion": {
-      "type": "occasion-feature",
-      "settings": {
-        "enabled": true,
-        "eyebrow": "Little reasons to celebrate",
-        "heading": "Make their day",
-        "accent": "a little brighter.",
-        "text": "<p>Thoughtful pieces for the people and moments that matter. Find a gift that feels just right.</p>",
-        "button_label": "Shop the occasion",
-        "palette": "sunshine"
-      }
-    },
     "hero": {
       "type": "hero",
       "settings": {
@@ -40,6 +28,31 @@
         "overlay_opacity": 10,
         "show_motifs": true,
         "height": "full"
+      }
+    },
+    "occasion": {
+      "type": "occasion-feature",
+      "settings": {
+        "enabled": true,
+        "collection": "hampers",
+        "eyebrow": "Little reasons to celebrate",
+        "heading": "Make their diwali",
+        "accent": "a little brighter.",
+        "text": "<p>Thoughtful pieces for the people and moments that matter. Find a gift that feels just right.</p>",
+        "button_label": "Shop Diwali Hampers",
+        "image_alt": "",
+        "palette": "coral"
+      }
+    },
+    "all_products": {
+      "type": "featured-collection",
+      "settings": {
+        "eyebrow": "Home décor & gifting",
+        "heading": "Gifts for every happy moment",
+        "collection": "all",
+        "link_label": "View all",
+        "link": "",
+        "products_to_show": 12
       }
     },
     "craft_values": {
@@ -75,17 +88,6 @@
       "settings": {
         "eyebrow": "Why Bloom Arts",
         "heading": "Artful home décor and gifts, without the art-gallery attitude."
-      }
-    },
-    "all_products": {
-      "type": "featured-collection",
-      "settings": {
-        "eyebrow": "Home décor & gifting",
-        "heading": "Gifts for every happy moment",
-        "collection": "all",
-        "link_label": "View all",
-        "link": "",
-        "products_to_show": 12
       }
     },
     "materials": {
@@ -203,8 +205,8 @@
   "order": [
     "hero",
     "occasion",
-    "craft_values",
     "all_products",
+    "craft_values",
     "materials",
     "studio",
     "instagram"
