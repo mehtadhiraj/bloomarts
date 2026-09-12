@@ -3,7 +3,75 @@
 **Read this and [`PROJECT-BRIEF.md`](PROJECT-BRIEF.md) before starting work.**
 Together they hold the full context — no chat history needed.
 
-Last updated: 11 September 2026.
+Last updated: 12 September 2026.
+
+## Occasion carousel — 12 September 2026
+
+- **Release preparation:** user authorized pushing this carousel work to main.
+  Custom integrity, JavaScript syntax, nine-page normal render and whitespace
+  checks pass. No database migration. Shopify live sync, editor picker and
+  real-device checks remain pending. If the carousel breaks storefront content
+  or navigation, disable Occasion spotlight in the editor; revert the carousel
+  release commit if needed, preserving subsequent merchant settings changes.
+
+- **Automatic CTA destinations (local):** button link resolves from optional
+  Shopify URL-picker override, then occasion collection, then image product.
+  URL picker permits selecting a different product or collection without typing
+  its URL. Product-only and override-only slides now render without requiring
+  a collection. Applies to the first slide and all blocks; supersedes earlier
+  collection-only behaviour. Shopify editor validation pending deployment.
+
+- **Product image picker (local):** section and each slide now have an
+  "Image from product" Shopify product picker. Its featured image takes
+  precedence over the desktop upload; optional mobile artwork still overrides
+  on mobile. Missing product images retain existing upload/collection fallbacks.
+  CTA destination remains the selected occasion collection. Merchant picker
+  interaction on Shopify remains pending deployment.
+
+- **Latest refinement:** default autoplay delay is now one second (supersedes
+  500ms below). Mobile side arrows have translucent cream backgrounds, no
+  shadow or visible border, and retain 44px targets and focus outlines.
+  Mobile copy has a minimum 32px inline inset to keep it clear of the arrows.
+  Integrity, JavaScript syntax and preview render checks pass; live/device
+  visual validation remains pending. Preview regenerated; not pushed.
+
+- **Latest mobile controls (local):** previous/next arrows positioned at the
+  left/right vertical centre on mobile, with 44px targets. Play/pause now uses
+  icons with changing accessible labels. Default autoplay delay changed to
+  500ms at merchant request (adjustable in 0.5-second steps); interaction pause
+  and reduced-motion safeguards retained. This supersedes the six-second
+  default below. Syntax, integrity and preview render pass; visual checks of
+  this latest controls change remain pending. Local sample preview regenerated.
+
+- **Full-bleed artwork update (local):** images now cover the entire slide,
+  behind the copy, rather than sitting in a constrained half-width image box.
+  Desktop uses a brand-coloured left-to-right fade; mobile uses a vertical fade
+  into the copy area with a full-width CTA. Height remains content-driven so
+  longer text can expand the slide. Cover fitting may crop artwork; separate
+  mobile images remain supported. Render and integrity checks pass; visual
+  verification of this new image treatment on devices remains pending.
+
+- **Completed locally:** existing Occasion spotlight design and section settings
+  retained as the first slide. Add up to eight Occasion slide blocks with their
+  own collection, copy, desktop/mobile artwork and brand palette. Unconfigured
+  slides remain hidden on storefront; editor retains setup guidance.
+- **Completed locally:** automatic sliding (default six seconds, adjustable
+  four–twelve), previous/next, slide count, play/pause and native touch scrolling.
+  Autoplay pauses on interaction, hover, offscreen/background state; reduced
+  motion and theme editing disable automatic rotation. Offscreen slide links
+  are removed from keyboard navigation. Single slides have no carousel controls.
+- **Validation:** two-slide local preview: next and wraparound passed; no page
+  overflow at 320/375/390/414/768/1024/1440px and controls measured 44px tall.
+  Isolated timer checks passed for advance, pause, hover and reduced motion.
+  JavaScript syntax, custom theme integrity checker and nine-page render pass.
+  Normal render restored after fixture testing. Responsive image handling is
+  retained; no cart, navigation or product customization changes. No added
+  animation library; physical-device touch, real artwork and network performance
+  testing remain pending, as does live autoplay verification.
+- **Pending:** deployment and merchant content selection. In the theme editor,
+  open Occasion spotlight, retain the first occasion's settings, then use
+  **Add block → Occasion slide** for each additional occasion. Autoplay and
+  interval are section-level controls. This change has not been pushed.
 
 ## Occasion spotlight — 11 September 2026
 

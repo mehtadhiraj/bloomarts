@@ -202,7 +202,11 @@ function readSection(name) {
 async function renderSection(name, config = {}, index = 1) {
   // Optional preview data only; never assigns a live occasion collection.
   if (name === 'occasion-feature' && process.env.BLOOM_OCCASION_PREVIEW === '1') {
-    config = { ...config, settings: { ...config.settings, collection: data.collections.personalised } };
+    config = {
+      ...config,
+      settings: { ...config.settings, collection: data.collections.personalised },
+      blocks: [{ type: 'occasion', settings: { collection: data.collections.clay, heading: 'Celebrate together', palette: 'coral' } }]
+    };
   }
   const section = readSection(name);
   if (!section) {

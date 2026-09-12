@@ -1,0 +1,29 @@
+{%- liquid
+  assign occasion_collection = slide_settings.collection
+  assign occasion_link = slide_settings.button_link | default: occasion_collection.url | default: slide_settings.image_product.url
+  assign occasion_image = slide_settings.image_product.featured_image | default: slide_settings.image | default: slide_settings.mobile_image | default: occasion_collection.image
+  assign occasion_image = occasion_image | default: occasion_collection.products.first.featured_image
+-%}
+
+  {%- if occasion_link != blank or request.design_mode -%}
+    <div class="occasion__slide" data-occasion-slide {{ editor_attributes }} aria-labelledby="occasion-title-{{ slide_id }}">
+      <div class="occasion__panel occasion__panel--{{ slide_settings.palette }}{% if occasion_image == blank %} occasion__panel--text{% endif %}">
+        <div class="occasion__copy">
+          {%- if slide_settings.eyebrow != blank -%}<p class="occasion__eyebrow">{{ slide_settings.eyebrow | escape }}</p>{%- endif -%}
+          <h2 id="occasion-title-{{ slide_id }}">{{ slide_settings.heading | escape }}</h2>
+          {%- if slide_settings.accent != blank -%}<p class="occasion__accent">{{ slide_settings.accent | escape }}</p>{%- endif -%}
+          {%- if slide_settings.text != blank -%}<div class="occasion__description rte">{{ slide_settings.text }}</div>{%- endif -%}
+          {%- if occasion_link != blank and slide_settings.button_label != blank -%}
+            <a class="btn occasion__button" href="{{ occasion_link | escape }}">{{ slide_settings.button_label | escape }}{% render 'icon', icon: 'arrow-right', size: 20 %}</a>
+          {%- elsif request.design_mode -%}
+            <p class="occasion__setup">Select a collection, an image product, or a button link to show this slide on your storefront.</p>
+          {%- endif -%}
+        </div>
+        {%- if occasion_image != blank -%}
+          <div class="occasion__media">
+            {% render 'art-directed-image', image_desktop: occasion_image, image_mobile: slide_settings.mobile_image, alt: slide_settings.image_alt, class: 'occasion__image', loading: 'lazy' %}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  {%- endif -%}
