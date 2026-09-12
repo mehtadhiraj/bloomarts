@@ -32,7 +32,30 @@
     },
     "occasion": {
       "type": "occasion-feature",
+      "blocks": {
+        "occasion_VktzBq": {
+          "type": "occasion",
+          "settings": {
+            "collection": "resin-art",
+            "eyebrow": "Little reasons to celebrate",
+            "heading": "Welcome the Goddess",
+            "accent": "with Grace",
+            "text": "<p>Celebrate Navratri with beautifully handcrafted resin pooja thalis.</p>",
+            "button_label": "Order Now",
+            "button_link": "shopify://products/resin-pooja-thali",
+            "image_product": "resin-pooja-thali",
+            "image_alt": "",
+            "palette": "sunshine"
+          }
+        }
+      },
+      "block_order": [
+        "occasion_VktzBq"
+      ],
       "settings": {
+        "autoplay": true,
+        "interval": 1.5,
+        "carousel_label": "Occasions to celebrate",
         "enabled": true,
         "collection": "hampers",
         "eyebrow": "Little reasons to celebrate",
@@ -40,7 +63,9 @@
         "accent": "a little brighter.",
         "text": "<p>Thoughtful pieces for the people and moments that matter. Find a gift that feels just right.</p>",
         "button_label": "Shop Diwali Hampers",
-        "image_alt": "",
+        "button_link": "shopify://collections/hampers",
+        "image_product": "rajsi-diwali-hamper",
+        "image_alt": "Diwali hampers",
         "palette": "coral"
       }
     },
