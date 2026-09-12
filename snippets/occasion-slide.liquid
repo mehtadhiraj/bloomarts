@@ -21,9 +21,6 @@
         </div>
         {%- if occasion_image != blank -%}
           <occasion-art class="occasion__media">
-            <div class="occasion__image-wash" aria-hidden="true">
-              {% render 'art-directed-image', image_desktop: occasion_image, image_mobile: slide_settings.mobile_image, class: 'occasion__wash-image', loading: 'lazy' %}
-            </div>
             {% render 'art-directed-image', image_desktop: occasion_image, image_mobile: slide_settings.mobile_image, alt: slide_settings.image_alt, class: 'occasion__image', loading: 'lazy' %}
           </occasion-art>
         {%- endif -%}

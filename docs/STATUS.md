@@ -7,6 +7,19 @@ Last updated: 12 September 2026.
 
 ## Occasion carousel — 12 September 2026
 
+- **Single-background release:** push authorized. Integrity, normal nine-page
+  render and whitespace checks passed. Live Shopify sync and visual QA remain
+  pending. No migrations. Revert this release if background framing obscures
+  product details, preserving merchant settings.
+
+- **Single-background brush treatment (local):** removed the separate photo
+  wash/foreground pairing. One responsive image now uses the former background's
+  cover sizing and centre position, with opaque brush passes and 35%-opacity
+  surrounding detail in the mask. Existing media bounds and section colour
+  gradients stay unchanged on desktop/mobile. No blur filter or duplicate photo.
+  This intentionally retains background cropping rather than the old contained
+  foreground. Actual-image visual verification pending; not pushed.
+
 - **Brush reveal release:** push authorized. Custom integrity, normal nine-page
   render and whitespace checks pass. Shopify sync and actual-image desktop/mobile
   visual QA remain pending. No migration. If the mask obscures product details,

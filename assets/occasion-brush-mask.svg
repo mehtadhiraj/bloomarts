@@ -1,4 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" preserveAspectRatio="none">
+  <rect width="600" height="800" fill="white" opacity="0.35"/>
   <!-- Overlapping opaque brush passes preserve a clear centre; only the
        perimeter has irregular bristle tips. No animated or raster filters. -->
   <g fill="none" stroke="white" stroke-linecap="round">
