@@ -65,8 +65,9 @@
   border-radius: 0;
   /* One photo, using the original background framing. The mask alone varies
      opacity: clear brush passes with faint image detail around them. */
-  -webkit-mask-image: url('occasion-brush-mask.svg');
-  mask-image: url('occasion-brush-mask.svg');
+  -webkit-mask-image: url('occasion-brush-mask.svg?v=soft-surround-2');
+  mask-image: url('occasion-brush-mask.svg?v=soft-surround-2');
+  mask-mode: alpha;
   -webkit-mask-size: 100% 100%;
   mask-size: 100% 100%;
   -webkit-mask-repeat: no-repeat;
@@ -86,7 +87,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    background: linear-gradient(to right, var(--occasion-surface) 0%, var(--occasion-surface) 36%, color-mix(in srgb, var(--occasion-surface) 65%, transparent) 49%, transparent 62%);
+    background: linear-gradient(to right, var(--occasion-surface) 0%, var(--occasion-surface) 36%, color-mix(in srgb, var(--occasion-surface) 45%, transparent) 49%, transparent 62%);
   }
   .occasion__button { width: fit-content; }
 }

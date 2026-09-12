@@ -7,6 +7,17 @@ Last updated: 12 September 2026.
 
 ## Occasion carousel — 12 September 2026
 
+- **Faded-surround release:** push authorized. Custom integrity, normal
+  nine-page render and whitespace checks pass. Live Shopify sync and visual
+  verification remain pending. No migrations; revert this refinement if the
+  stronger surround reduces text readability, preserving merchant settings.
+
+- **Visible faded surround (local):** increased the single photo's mask floor
+  from 35% to 55%, retaining opaque brush strokes. Reduced the desktop colour
+  veil at the transition to reveal more of the same image. Image count, bounds,
+  sizing and crop unchanged. Mask URL revision avoids stale cached mask art.
+  Mobile inherits the more visible surround. Actual-photo visual QA pending.
+
 - **Single-background release:** push authorized. Integrity, normal nine-page
   render and whitespace checks passed. Live Shopify sync and visual QA remain
   pending. No migrations. Revert this release if background framing obscures
