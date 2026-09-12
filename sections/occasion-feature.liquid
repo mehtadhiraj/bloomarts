@@ -1,0 +1,50 @@
+{%- liquid
+  assign occasion_collection = section.settings.collection
+  assign occasion_image = section.settings.image | default: section.settings.mobile_image | default: occasion_collection.image
+  assign occasion_image = occasion_image | default: occasion_collection.products.first.featured_image
+-%}
+{%- if section.settings.enabled -%}
+  {%- if occasion_collection != blank or request.design_mode -%}
+    {{ 'component-occasion.css' | asset_url | stylesheet_tag }}
+    <section class="occasion page-width" aria-labelledby="occasion-title-{{ section.id }}">
+      <div class="occasion__panel occasion__panel--{{ section.settings.palette }}{% if occasion_image == blank %} occasion__panel--text{% endif %}">
+        <div class="occasion__copy">
+          {%- if section.settings.eyebrow != blank -%}<p class="occasion__eyebrow">{{ section.settings.eyebrow | escape }}</p>{%- endif -%}
+          <h2 id="occasion-title-{{ section.id }}">{{ section.settings.heading | escape }}</h2>
+          {%- if section.settings.accent != blank -%}<p class="occasion__accent">{{ section.settings.accent | escape }}</p>{%- endif -%}
+          {%- if section.settings.text != blank -%}<div class="occasion__description rte">{{ section.settings.text }}</div>{%- endif -%}
+          {%- if occasion_collection != blank and section.settings.button_label != blank -%}
+            <a class="btn occasion__button" href="{{ occasion_collection.url }}">{{ section.settings.button_label | escape }}{% render 'icon', icon: 'arrow-right', size: 20 %}</a>
+          {%- elsif request.design_mode -%}
+            <p class="occasion__setup">Select an occasion collection in this section’s settings to show this feature on your storefront.</p>
+          {%- endif -%}
+        </div>
+        {%- if occasion_image != blank -%}
+          <div class="occasion__media">
+            {% render 'art-directed-image', image_desktop: occasion_image, image_mobile: section.settings.mobile_image, alt: section.settings.image_alt, class: 'occasion__image', loading: 'lazy' %}
+          </div>
+        {%- endif -%}
+      </div>
+    </section>
+  {%- endif -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Occasion spotlight",
+  "settings": [
+    { "type": "checkbox", "id": "enabled", "label": "Show occasion spotlight", "default": true },
+    { "type": "collection", "id": "collection", "label": "Occasion collection", "info": "Required to show this section. The button opens this collection's products." },
+    { "type": "text", "id": "eyebrow", "label": "Occasion name", "default": "Little reasons to celebrate" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Make their day" },
+    { "type": "text", "id": "accent", "label": "Handwritten accent", "default": "a little brighter." },
+    { "type": "richtext", "id": "text", "label": "Description", "default": "<p>Thoughtful pieces for the people and moments that matter. Find a gift that feels just right.</p>" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop the occasion" },
+    { "type": "image_picker", "id": "image", "label": "Desktop image", "info": "Falls back to the selected collection image or its first product image." },
+    { "type": "image_picker", "id": "mobile_image", "label": "Mobile image (optional)" },
+    { "type": "text", "id": "image_alt", "label": "Image description" },
+    { "type": "select", "id": "palette", "label": "Bloom Arts colour", "options": [ { "value": "sunshine", "label": "Sunshine amber" }, { "value": "coral", "label": "Celebration coral" }, { "value": "sage", "label": "Soft sage" } ], "default": "sunshine" }
+  ],
+  "presets": [ { "name": "Occasion spotlight" } ]
+}
+{% endschema %}

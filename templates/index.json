@@ -9,6 +9,18 @@
  */
 {
   "sections": {
+    "occasion": {
+      "type": "occasion-feature",
+      "settings": {
+        "enabled": true,
+        "eyebrow": "Little reasons to celebrate",
+        "heading": "Make their day",
+        "accent": "a little brighter.",
+        "text": "<p>Thoughtful pieces for the people and moments that matter. Find a gift that feels just right.</p>",
+        "button_label": "Shop the occasion",
+        "palette": "sunshine"
+      }
+    },
     "hero": {
       "type": "hero",
       "settings": {
@@ -190,6 +202,7 @@
   },
   "order": [
     "hero",
+    "occasion",
     "craft_values",
     "all_products",
     "materials",

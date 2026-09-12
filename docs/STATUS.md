@@ -5,6 +5,27 @@ Together they hold the full context — no chat history needed.
 
 Last updated: 11 September 2026.
 
+## Occasion spotlight — 11 September 2026
+
+- **Completed locally:** new homepage section immediately below hero. Editable
+  occasion name, heading, script accent, rich text, CTA label, Shopify collection,
+  desktop/mobile images and amber/coral/sage palette using global brand colours.
+  Mobile-first stacked layout and full-width CTA; desktop split layout. No
+  new JavaScript or animations. Responsive lazy images use existing picture
+  snippet with reserved media area and contain fitting.
+- **Merchant decision:** choose the occasion/collection later in theme editor.
+  No occasion or collection is hardcoded. Feature stays hidden on storefront
+  until a collection is selected; theme editor shows setup guidance. Enable
+  toggle available; automatic calendar scheduling is not implemented.
+- **Validation:** preview with sample collection confirms correct CTA URL,
+  content fit and button >=48px at 320/375/390/414/768/1024/1440px. This run
+  tested text-only rendering; full image/device visual testing remains pending.
+  Integrity and render checks pass. Existing navigation, customization and cart
+  unchanged. No network-performance benchmark performed.
+- **Pending:** deployment and merchant selection. In Customize > Home page >
+  Occasion spotlight, select the occasion collection and update content/images.
+  Optional local preview: BLOOM_OCCASION_PREVIEW=1 npm run render.
+
 ## GitHub delivery — 11 September 2026
 
 - **Completed:** approved cart, upload, collection navigation/grouping,

@@ -200,6 +200,10 @@ function readSection(name) {
 }
 
 async function renderSection(name, config = {}, index = 1) {
+  // Optional preview data only; never assigns a live occasion collection.
+  if (name === 'occasion-feature' && process.env.BLOOM_OCCASION_PREVIEW === '1') {
+    config = { ...config, settings: { ...config.settings, collection: data.collections.personalised } };
+  }
   const section = readSection(name);
   if (!section) {
     // Missing sections are reported rather than silently skipped — a typo in
