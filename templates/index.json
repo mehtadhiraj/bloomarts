@@ -44,6 +44,17 @@
         "palette": "coral"
       }
     },
+    "all_products": {
+      "type": "featured-collection",
+      "settings": {
+        "eyebrow": "Home décor & gifting",
+        "heading": "Gifts for every happy moment",
+        "collection": "all",
+        "link_label": "View all",
+        "link": "",
+        "products_to_show": 12
+      }
+    },
     "craft_values": {
       "type": "craft-strip",
       "blocks": {
@@ -77,17 +88,6 @@
       "settings": {
         "eyebrow": "Why Bloom Arts",
         "heading": "Artful home décor and gifts, without the art-gallery attitude."
-      }
-    },
-    "all_products": {
-      "type": "featured-collection",
-      "settings": {
-        "eyebrow": "Home décor & gifting",
-        "heading": "Gifts for every happy moment",
-        "collection": "all",
-        "link_label": "View all",
-        "link": "",
-        "products_to_show": 12
       }
     },
     "materials": {
@@ -205,8 +205,8 @@
   "order": [
     "hero",
     "occasion",
-    "craft_values",
     "all_products",
+    "craft_values",
     "materials",
     "studio",
     "instagram"
