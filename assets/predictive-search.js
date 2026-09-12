@@ -119,9 +119,11 @@
 
       const routes = window.BloomartsRoutes || {};
       const base = routes.predictive_search || '/search/suggest';
+      // Include product tags alongside Shopify's default searchable fields.
       const url =
         `${base}.json?q=${encodeURIComponent(term)}` +
-        `&resources[type]=product&resources[limit]=${this.limit}`;
+        `&resources[type]=product&resources[limit]=${this.limit}` +
+        '&resources[options][fields]=title,product_type,variants.title,vendor,tag';
 
       try {
         const response = await fetch(url, { signal: this.controller.signal });
