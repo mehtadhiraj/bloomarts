@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" preserveAspectRatio="none">
+  <!-- Overlapping opaque brush passes preserve a clear centre; only the
+       perimeter has irregular bristle tips. No animated or raster filters. -->
+  <g fill="none" stroke="white" stroke-linecap="round">
+    <path stroke-width="68" d="M76 130L494 50M52 198L540 105M80 257L517 175M41 333L551 235M67 392L530 306M39 468L558 367M79 527L527 441M48 603L547 505M78 662L515 579M58 739L531 646"/>
+    <path stroke-width="13" d="M43 130L535 36M57 163L551 68M20 229L550 127M34 301L570 198M21 364L555 261M27 426L577 321M16 502L558 398M42 565L572 463M25 636L553 534M51 704L553 608M29 779L556 676"/>
+    <path stroke-width="6" d="M65 92L505 8M16 259L579 151M9 391L578 282M15 535L575 427M27 678L576 572M49 795L543 700"/>
+  </g>
+</svg>

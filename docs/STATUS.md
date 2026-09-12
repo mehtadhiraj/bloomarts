@@ -7,6 +7,18 @@ Last updated: 12 September 2026.
 
 ## Occasion carousel — 12 September 2026
 
+- **Brush reveal release:** push authorized. Custom integrity, normal nine-page
+  render and whitespace checks pass. Shopify sync and actual-image desktop/mobile
+  visual QA remain pending. No migration. If the mask obscures product details,
+  revert this release commit while preserving merchant settings.
+
+- **Brush reveal (local):** foreground photo now uses a lightweight SVG mask
+  of overlapping diagonal brush passes with irregular bristle tips, replacing
+  its rectangular feather mask. Centre is opaque/sharp; faded background wash
+  stays unchanged. Desktop copy overlay clears before the centre of the right
+  image. Mask scales with contained photo on mobile without adding motion.
+  Integrity and nine-page render pass; actual-photo visual QA pending. Not pushed.
+
 - **Edge-to-edge release:** push authorized for brighter backgrounds and layered
   photo extension. Syntax, integrity, normal nine-page render and whitespace
   checks passed. Live Shopify sync, real-image appearance and mobile GPU checks

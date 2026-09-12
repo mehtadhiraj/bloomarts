@@ -65,11 +65,14 @@
 .occasion__media .occasion__image {
   display: block; width: auto; height: auto; max-width: 100%; max-height: 100%; object-fit: contain;
   border-radius: 0;
-  /* Mask the actual image bounds, including when it is smaller than its area. */
-  -webkit-mask-image: linear-gradient(94deg, transparent, #000 5%, #000 94%, transparent), linear-gradient(177deg, transparent, #000 4%, #000 96%, transparent);
-  -webkit-mask-composite: source-in;
-  mask-image: linear-gradient(94deg, transparent, #000 5%, #000 94%, transparent), linear-gradient(177deg, transparent, #000 4%, #000 96%, transparent);
-  mask-composite: intersect;
+  /* The photo remains sharp inside overlapping brush passes. The separate
+     wash below retains the surrounding faded photograph. */
+  -webkit-mask-image: url('occasion-brush-mask.svg');
+  mask-image: url('occasion-brush-mask.svg');
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
 }
 .occasion__setup { font-size: 0.875rem; margin-top: 24px; }
 @media (min-width: 768px) {
@@ -85,7 +88,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    background: linear-gradient(to right, var(--occasion-surface) 0%, var(--occasion-surface) 36%, color-mix(in srgb, var(--occasion-surface) 65%, transparent) 49%, transparent 78%);
+    background: linear-gradient(to right, var(--occasion-surface) 0%, var(--occasion-surface) 36%, color-mix(in srgb, var(--occasion-surface) 65%, transparent) 49%, transparent 62%);
   }
   .occasion__button { width: fit-content; }
 }
