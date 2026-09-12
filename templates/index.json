@@ -9,18 +9,6 @@
  */
 {
   "sections": {
-    "occasion": {
-      "type": "occasion-feature",
-      "settings": {
-        "enabled": true,
-        "eyebrow": "Little reasons to celebrate",
-        "heading": "Make their day",
-        "accent": "a little brighter.",
-        "text": "<p>Thoughtful pieces for the people and moments that matter. Find a gift that feels just right.</p>",
-        "button_label": "Shop the occasion",
-        "palette": "sunshine"
-      }
-    },
     "hero": {
       "type": "hero",
       "settings": {
@@ -40,6 +28,20 @@
         "overlay_opacity": 10,
         "show_motifs": true,
         "height": "full"
+      }
+    },
+    "occasion": {
+      "type": "occasion-feature",
+      "settings": {
+        "enabled": true,
+        "collection": "hampers",
+        "eyebrow": "Little reasons to celebrate",
+        "heading": "Make their diwali",
+        "accent": "a little brighter.",
+        "text": "<p>Thoughtful pieces for the people and moments that matter. Find a gift that feels just right.</p>",
+        "button_label": "Shop Diwali Hampers",
+        "image_alt": "",
+        "palette": "coral"
       }
     },
     "craft_values": {
