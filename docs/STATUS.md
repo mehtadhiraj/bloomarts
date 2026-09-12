@@ -7,6 +7,28 @@ Last updated: 12 September 2026.
 
 ## Occasion carousel — 12 September 2026
 
+- **Edge-to-edge release:** push authorized for brighter backgrounds and layered
+  photo extension. Syntax, integrity, normal nine-page render and whitespace
+  checks passed. Live Shopify sync, real-image appearance and mobile GPU checks
+  remain pending. No migrations; disable the section or revert this release if
+  image readability/layout regresses, retaining merchant settings.
+
+- **Layered edge-to-edge photo treatment (local):** decorative responsive photo
+  extension fills the media area with a static soft blur, behind the contained
+  un-cropped main product photo. Desktop media extends from 40% to right edge,
+  with a continuous brand fade above both layers. Mobile retains full-width
+  media and a bottom fade into copy. Decorative layer is aria-hidden; shared
+  source URLs allow browser cache reuse. Actual-image visual and mobile GPU
+  checks pending; syntax, integrity and preview rendering pass. Not pushed.
+
+- **Brightness and image-area refinement (local):** right side now retains a
+  stronger brand-colour base; sampled border tints reduced to 5–7% to prevent
+  dark product photos muddying the background. Removed artwork padding and
+  shadow, expanded desktop media to the full right half, kept contain fitting
+  and feathered edges. Mobile also loses outer image padding. Narrow photos
+  can still leave side space to avoid cropping/distortion. Integrity/render
+  checks pass; real-image visual verification pending. Not pushed.
+
 - **Floating artwork release:** user authorized push to main. JavaScript syntax,
   custom theme integrity, nine-page render and whitespace checks pass. No
   migrations. Live Shopify sync and real-image mobile/desktop appearance remain

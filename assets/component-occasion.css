@@ -32,10 +32,10 @@
   overflow: clip;
   border-radius: clamp(20px, 3vw, 40px);
   background:
-    radial-gradient(ellipse at 85% 0%, color-mix(in srgb, var(--occasion-edge-top, var(--occasion-colour)) 25%, transparent), transparent 65%),
-    radial-gradient(ellipse at 100% 65%, color-mix(in srgb, var(--occasion-edge-right, var(--occasion-colour)) 22%, transparent), transparent 65%),
-    radial-gradient(ellipse at 60% 100%, color-mix(in srgb, var(--occasion-edge-bottom, var(--occasion-colour)) 18%, transparent), transparent 65%),
-    linear-gradient(105deg, var(--occasion-surface), color-mix(in srgb, var(--occasion-edge-left, var(--occasion-colour)) 12%, var(--brand-cream)));
+    radial-gradient(ellipse at 85% 0%, color-mix(in srgb, var(--occasion-edge-top, var(--occasion-colour)) 7%, transparent), transparent 65%),
+    radial-gradient(ellipse at 100% 65%, color-mix(in srgb, var(--occasion-edge-right, var(--occasion-colour)) 6%, transparent), transparent 65%),
+    radial-gradient(ellipse at 60% 100%, color-mix(in srgb, var(--occasion-edge-bottom, var(--occasion-colour)) 5%, transparent), transparent 65%),
+    linear-gradient(105deg, var(--occasion-surface), color-mix(in srgb, var(--occasion-colour) 45%, var(--brand-cream)));
   color: var(--brand-brown);
 }
 .occasion__panel--coral { --occasion-colour: var(--brand-coral); }
@@ -55,11 +55,16 @@
 .occasion__button:hover { background: var(--brand-brown); color: var(--brand-cream); }
 .occasion__button:focus-visible { outline: 2px solid var(--brand-brown); outline-offset: 4px; }
 .occasion__media { position: absolute; inset: 0 0 auto; height: clamp(220px, 62vw, 360px); z-index: 0; min-width: 0; pointer-events: none; }
-.occasion__media { padding: 20px 24px 12px; box-sizing: border-box; }
-.occasion__media picture { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; filter: drop-shadow(0 12px 14px rgb(49 35 23 / 12%)); }
+.occasion__media { padding: 0; box-sizing: border-box; isolation: isolate; overflow: clip;
+  -webkit-mask-image: linear-gradient(to bottom, #000 85%, transparent);
+  mask-image: linear-gradient(to bottom, #000 85%, transparent);
+}
+.occasion__image-wash { position: absolute; inset: 0; z-index: -1; opacity: 0.45; }
+.occasion__image-wash .occasion__wash-image { width: 100%; height: 100%; object-fit: cover; filter: blur(8px); }
+.occasion__media picture { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; }
 .occasion__media .occasion__image {
   display: block; width: auto; height: auto; max-width: 100%; max-height: 100%; object-fit: contain;
-  border-radius: 7% 3% 8% 4% / 4% 8% 3% 7%;
+  border-radius: 0;
   /* Mask the actual image bounds, including when it is smaller than its area. */
   -webkit-mask-image: linear-gradient(94deg, transparent, #000 5%, #000 94%, transparent), linear-gradient(177deg, transparent, #000 4%, #000 96%, transparent);
   -webkit-mask-composite: source-in;
@@ -68,7 +73,10 @@
 }
 .occasion__setup { font-size: 0.875rem; margin-top: 24px; }
 @media (min-width: 768px) {
-  .occasion__media { inset: 0 0 0 52%; height: 100%; padding: 28px clamp(20px, 3vw, 48px) 28px 12px; }
+  .occasion__media { inset: 0 0 0 40%; height: 100%; padding: 0;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 28%);
+    mask-image: linear-gradient(to right, transparent, #000 28%);
+  }
   .occasion__panel { min-height: 480px; align-items: center; }
   .occasion__panel:not(.occasion__panel--text) .occasion__copy {
     padding-top: clamp(24px, 5vw, 72px);
@@ -77,7 +85,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    background: linear-gradient(to right, var(--occasion-surface) 0%, color-mix(in srgb, var(--occasion-surface) 75%, transparent) 38%, transparent 75%);
+    background: linear-gradient(to right, var(--occasion-surface) 0%, var(--occasion-surface) 36%, color-mix(in srgb, var(--occasion-surface) 65%, transparent) 49%, transparent 78%);
   }
   .occasion__button { width: fit-content; }
 }

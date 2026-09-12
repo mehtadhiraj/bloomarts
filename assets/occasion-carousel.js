@@ -2,7 +2,7 @@
   if (!customElements.get('occasion-art')) {
     customElements.define('occasion-art', class extends HTMLElement {
       connectedCallback() {
-        this.image = this.querySelector('img');
+        this.image = this.querySelector('.occasion__image');
         if (!this.image) return;
         this.sample = () => {
           const source = this.image.currentSrc || this.image.src;
