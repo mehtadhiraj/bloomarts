@@ -5,6 +5,82 @@ Together they hold the full context — no chat history needed.
 
 Last updated: 12 September 2026.
 
+## Offer ribbons — 12 September 2026
+
+- **Release preparation:** user authorized push of the complete ribbon feature,
+  closing animation and aligned floating controls. JS syntax, custom integrity,
+  normal nine-page render and whitespace checks passed. No merchant ribbon
+  content is preconfigured; local samples require the preview environment flag.
+  No migrations. Shopify editor/sync, real-device animation and overlap checks
+  remain pending. If overlays interfere with shopping, disable Offer ribbons
+  in the editor or revert this release while preserving merchant settings.
+
+- **Floating controls alignment (local):** offers and back-to-top share a 52px
+  size, right safe-area inset and 12px vertical gap. Both move above visible
+  sticky cart controls using the same measured height; removed the left-side
+  back-to-top exception. Visual/device verification pending.
+
+- **Slower close timing (local):** ribbon gathering now takes 850ms; the full
+  gather/spin/return sequence takes 1600ms, replacing the one-second timing.
+
+- **Gather-and-dock close animation (local):** stronger soft button shadow;
+  on close, ribbons shrink toward the viewport centre while the offers badge
+  spins there, then the badge travels back to bottom-right over a one-second
+  sequence. Uses transform/opacity animations, cancelled on reopen/disconnect.
+  Reduced motion closes immediately. Syntax/integrity/render checks pass;
+  visual timing and real-device testing remain pending. Not pushed.
+
+- **Scalloped offers badge (local):** percentage icon now has a softly wavy
+  seal outline, enlarged to 28px for clarity. Button colour, 52px touch target
+  and cross state unchanged.
+
+- **Offers icon (local):** replaced price-tag artwork with a percentage-in-circle
+  symbol; dark brown/cream styling and cross-icon open state are unchanged.
+
+- **Toggle colour refinement (local):** floating Offers button uses theme dark
+  brown with a cream icon instead of amber, per user preference.
+
+- **Floating icon toggle (local):** one 52px amber/brown bottom-right button
+  shows an offer tag when closed and a cross when open, with editable accessible
+  labels. Removed separate Close offers text button. Safe-area aware and raised
+  by measured sticky-cart height when visible. Back-to-top gets separate space.
+  Syntax, integrity and sample render pass; visual/device QA pending. Not pushed.
+
+- **Ribbon text layout (local):** both corner groups use full-width, centred
+  labels along each strip, with responsive semibold type, balanced wrapping and
+  notch clearance. No duplicated or reversed text. Validation: integrity,
+  sample render and whitespace checks pass; visual/device QA pending.
+
+- **Ribbon styling refinement (local):** entry and exit use 480ms eased corner
+  transitions, with a fading 48% dark page scrim while open. Centre-facing ends
+  are now swallowtail notches (mirrored per corner), with reserved text space
+  and inset keyboard outlines. Reduced motion disables transitions. Syntax,
+  integrity and sample render pass; visual/device QA remains pending.
+
+- **Completed locally:** global static Offer ribbons section; up to five
+  Top-right ribbon blocks and five Bottom-left ribbon blocks, each with editable
+  text and optional Shopify product/collection URL picker. No live defaults or
+  invented offers. Hero markup unchanged. Empty section stays hidden live.
+- **Completed locally:** home-page initial reveal at top, retract on page scroll,
+  centre-space click, close button or Escape; persistent top-right Offers button
+  on storefront pages reopens. Non-home pages start closed. Explicit reopen
+  moves focus to Close; closing restores focus when it was inside the ribbons.
+  Reduced motion bypasses retract animation. Menu/cart/modals retain higher
+  stacking priority than the ribbon overlay.
+- **Mobile adaptation:** 44px controls, safe-area offsets, smaller diagonal
+  groups, bounded scrollable corner lists for long/multiple messages. Button
+  is near the top, away from bottom cart actions. Browser/device overlap checks,
+  touch behaviour, virtual keyboard and orientation validation remain pending.
+- **Validation:** JS syntax, custom integrity, nine-page render and whitespace
+  checks pass. Isolated open/retract/reopen state checks pass. No new images,
+  fonts or animation library; animations use transform/opacity only. Product
+  customization, cart and checkout code unchanged; physical-device performance
+  and end-to-end navigation tests pending.
+- **Setup:** theme editor > Offer ribbons > Add block > Top-right ribbon or
+  Bottom-left ribbon. Local sample preview: `BLOOM_RIBBONS_PREVIEW=1 npm run render`.
+  Samples are harness-only. Discount eligibility still requires Shopify setup.
+- **Pending:** visual/device QA, merchant content, and deployment. Not pushed.
+
 ## Occasion carousel — 12 September 2026
 
 - **Faded-surround release:** push authorized. Custom integrity, normal

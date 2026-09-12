@@ -1,0 +1,58 @@
+{%- if section.settings.enabled and section.blocks.size > 0 -%}
+  {{ 'offer-ribbons.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'offer-ribbons.js' | asset_url }}" defer></script>
+  <offer-ribbons data-auto-open="{% if request.page_type == 'index' %}true{% else %}false{% endif %}" data-editor="{{ request.design_mode }}">
+    <button class="offer-ribbons__launcher" type="button" aria-expanded="false" aria-controls="Offers-{{ section.id }}" aria-label="{{ section.settings.button_label | escape }}" data-open-label="{{ section.settings.button_label | escape }}" data-close-label="{{ section.settings.close_label | escape }}" data-offers-toggle hidden>
+      <svg class="offer-ribbons__tag-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 2.4q1.7-1.8 3.4 0 1 1 2.4.7 2.4-.5 2.8 1.9.2 1.4 1.5 2 2.2 1.1 1.2 3.3-.6 1.3 0 2.6 1 2.2-1.2 3.3-1.3.6-1.5 2-.4 2.4-2.8 1.9-1.4-.3-2.4.7-1.7 1.8-3.4 0-1-1-2.4-.7-2.4.5-2.8-1.9-.2-1.4-1.5-2-2.2-1.1-1.2-3.3.6-1.3 0-2.6-1-2.2 1.2-3.3 1.3-.6 1.5-2 .4-2.4 2.8-1.9 1.4.3 2.4-.7Z"/><path d="m8.5 15.5 7-7"/><circle cx="8.5" cy="8.5" r="1.3"/><circle cx="15.5" cy="15.5" r="1.3"/></svg>
+      <svg class="offer-ribbons__cross-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+    </button>
+    <div id="Offers-{{ section.id }}" class="offer-ribbons__overlay" data-offers-panel hidden role="region" aria-label="{{ section.settings.heading | escape }}">
+      {%- assign corners = 'top,bottom' | split: ',' -%}
+      {%- for corner in corners -%}
+        <div class="offer-ribbons__group offer-ribbons__group--{{ corner }}">
+          {%- for block in section.blocks -%}
+            {%- if block.type == corner and block.settings.text != blank -%}
+              <div class="offer-ribbons__ribbon" {{ block.shopify_attributes }}>
+                {%- if block.settings.link != blank -%}
+                  <a href="{{ block.settings.link | escape }}">{{ block.settings.text | escape }} <span aria-hidden="true">↗</span></a>
+                {%- else -%}
+                  <p>{{ block.settings.text | escape }}</p>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </offer-ribbons>
+{%- elsif request.design_mode -%}
+  <p class="page-width">Offer ribbons: enable this section and add top-right or bottom-left ribbon blocks. Up to five per corner.</p>
+{%- endif -%}
+{% schema %}
+{
+  "name": "Offer ribbons",
+  "max_blocks": 10,
+  "settings": [
+    { "type": "checkbox", "id": "enabled", "label": "Enable offer ribbons", "default": true },
+    { "type": "text", "id": "heading", "label": "Accessible heading", "default": "Offers and announcements" },
+    { "type": "text", "id": "button_label", "label": "Reopen button label", "default": "Offers" },
+    { "type": "text", "id": "close_label", "label": "Close button label", "default": "Close offers" }
+  ],
+  "blocks": [
+    {
+      "type": "top", "name": "Top-right ribbon", "limit": 5,
+      "settings": [
+        { "type": "text", "id": "text", "label": "Ribbon text" },
+        { "type": "url", "id": "link", "label": "Optional link", "info": "Choose a product or collection. Leave blank for a message without a link." }
+      ]
+    },
+    {
+      "type": "bottom", "name": "Bottom-left ribbon", "limit": 5,
+      "settings": [
+        { "type": "text", "id": "text", "label": "Ribbon text" },
+        { "type": "url", "id": "link", "label": "Optional link", "info": "Choose a product or collection. Leave blank for a message without a link." }
+      ]
+    }
+  ]
+}
+{% endschema %}

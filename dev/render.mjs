@@ -200,6 +200,13 @@ function readSection(name) {
 }
 
 async function renderSection(name, config = {}, index = 1) {
+  if (name === 'offer-ribbons' && process.env.BLOOM_RIBBONS_PREVIEW === '1') {
+    config = { settings: {}, blocks: [
+      { type: 'top', settings: { text: 'Explore our latest gifts', link: '/collections/all' } },
+      { type: 'top', settings: { text: 'A little joy, chosen with care' } },
+      { type: 'bottom', settings: { text: 'Make it personal', link: '/collections/personalised' } }
+    ] };
+  }
   // Optional preview data only; never assigns a live occasion collection.
   if (name === 'occasion-feature' && process.env.BLOOM_OCCASION_PREVIEW === '1') {
     config = {
