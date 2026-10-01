@@ -68,6 +68,7 @@
         "blocks": {
           "announcement_tGNV3E": {
             "type": "announcement",
+            "disabled": true,
             "settings": {
               "text": "Little Creations, Big Smiles — free shipping over ₹500",
               "link": "shopify://collections"
@@ -159,7 +160,7 @@
           "heading": "Coupons",
           "copy_label": "Tap to copy",
           "automatic_label": "Automatically applied at checkout",
-          "remaining": "Add [amount] more to unlock free shipping.",
+          "remaining": "Add items worth [amount] more to unlock free shipping.",
           "unlocked": "You have unlocked free shipping! 🎉",
           "success": "Coupon code copied! 🥳",
           "failure": "Could not copy automatically. Please select and copy the code manually.",
