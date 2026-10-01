@@ -11,7 +11,6 @@
       const motion = matchMedia('(prefers-reduced-motion: reduce)');
       this.paused = motion.matches;
       this.launcher.hidden = false;
-      pause.hidden = false;
       this.setAttribute('data-ready', '');
       this.refreshCart = async () => {
         const request = this.cartRequest = (this.cartRequest || 0) + 1;
@@ -31,8 +30,15 @@
       this.updateOffers();
       if (this.querySelector('[data-shipping="true"]')) this.refreshCart();
       this.offerTimer = setInterval(() => this.updateOffers(), 30000);
-      const label = () => { pause.textContent = this.paused ? pause.dataset.play : pause.dataset.stop; };
+      const label = () => {
+        const name = this.paused ? pause.dataset.play : pause.dataset.stop;
+        pause.setAttribute('aria-label', name); pause.title = name;
+        pause.innerHTML = this.paused ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>' : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>';
+      };
       label();
+      this.trackResize = new ResizeObserver(() => { pause.hidden = track.scrollWidth <= track.clientWidth + 2; });
+      this.trackResize.observe(track);
+      this.trackResize.observe(track.querySelector('.coupon-track'));
       on(pause, 'click', () => { this.paused = !this.paused; label(); });
       on(track, 'focusin', () => { this.paused = true; label(); });
       on(track, 'pointerdown', () => { this.paused = true; label(); });
@@ -93,10 +99,11 @@
         try {
           const amount = new Intl.NumberFormat(document.documentElement.lang || 'en-IN', { style: 'currency', currency, maximumFractionDigits: 2 }).format(remaining / 100);
           progress.textContent = remaining ? this.dataset.remaining.replace('[amount]', amount) : this.dataset.unlocked;
+          progress.toggleAttribute('data-unlocked', remaining === 0);
           progress.hidden = false;
         } catch { /* Invalid currency configuration must not promise shipping. */ }
       });
     }
-    disconnectedCallback() { this.abort?.abort(); this.observer?.disconnect(); this.resize?.disconnect(); clearInterval(this.tick); clearInterval(this.offerTimer); clearTimeout(this.cartTimer); clearTimeout(this.noticeTimer); }
+    disconnectedCallback() { this.abort?.abort(); this.observer?.disconnect(); this.resize?.disconnect(); this.trackResize?.disconnect(); clearInterval(this.tick); clearInterval(this.offerTimer); clearTimeout(this.cartTimer); clearTimeout(this.noticeTimer); }
   });
 })();
