@@ -65,6 +65,18 @@
     "sections": {
       "announcement-bar": {
         "type": "announcement-bar",
+        "blocks": {
+          "announcement_tGNV3E": {
+            "type": "announcement",
+            "settings": {
+              "text": "Little Creations, Big Smiles — free shipping over ₹500",
+              "link": "shopify://collections"
+            }
+          }
+        },
+        "block_order": [
+          "announcement_tGNV3E"
+        ],
         "settings": {}
       },
       "header": {
