@@ -3,7 +3,32 @@
 **Read this and [`PROJECT-BRIEF.md`](PROJECT-BRIEF.md) before starting work.**
 Together they hold the full context — no chat history needed.
 
-Last updated: 12 September 2026.
+Last updated: 1 October 2026.
+
+## Public coupons — 1 October 2026
+
+- **Implemented:** global Public coupons section with manually curated existing
+  codes, descriptions, per-code enable toggle and editable interface labels.
+  No real codes preconfigured. Blank/disabled coupons stay hidden. Does not
+  enumerate private discounts or change checkout, eligibility or pricing.
+- **Desktop/mobile:** top strip scrolls left-to-right with pause, hover/focus/
+  touch interruption and reduced-motion support. Mobile floating bottom-left
+  tile opens a native modal with whole-card Copy actions. Existing Offers control
+  remains separate at bottom-right; coupon tile lifts above the sticky cart bar.
+- **Clipboard:** Clipboard API with legacy fallback; success only after confirmed
+  copy, showing "Coupon code copied! 🥳" in a live status region. Failure asks
+  for manual copying. Native dialog provides Escape/focus handling.
+- **Validation:** JS syntax, custom theme integrity, normal nine-page render
+  and whitespace checks pass. Sample-render flag: BLOOM_COUPONS_PREVIEW=1.
+  Real browser clipboard, physical-device layout, live Shopify/editor and
+  performance validation remain pending. No changes to images, fonts, navigation,
+  product customization or cart logic; no checkout coupon list.
+- **Merchant setup:** theme editor > Public coupons > Add Public coupon; enter
+  exact Shopify code and offer conditions. Disable expired codes manually.
+  Enable Shopify's checkout discount field separately. Publishing a coupon
+  card does not create or activate a discount.
+- **Release:** user requested main. Rollback: disable Public coupons in the
+  editor if it interferes with shopping, or revert this release. No migrations.
 
 ## Offer ribbons — 12 September 2026
 

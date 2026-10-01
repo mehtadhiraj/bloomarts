@@ -200,6 +200,11 @@ function readSection(name) {
 }
 
 async function renderSection(name, config = {}, index = 1) {
+  if (name === 'public-coupons' && process.env.BLOOM_COUPONS_PREVIEW === '1') {
+    config = { settings: {}, blocks: [
+      { type: 'coupon', settings: { enabled: true, code: 'PREVIEW-ONLY', description: 'Local preview only — not a valid discount' } }
+    ] };
+  }
   if (name === 'offer-ribbons' && process.env.BLOOM_RIBBONS_PREVIEW === '1') {
     config = { settings: {}, blocks: [
       { type: 'top', settings: { text: 'Explore our latest gifts', link: '/collections/all' } },
