@@ -9,9 +9,6 @@
  */
 {
   "current": {
-    "collection_browsing": true,
-    "collection_browse_label": "Collections",
-    "collection_all_label": "All products",
     "logo": "shopify://shop_images/bloom-art-png-logo.png",
     "favicon": "shopify://shop_images/heartfavicon.png",
     "share_image": "shopify://shop_images/art-work-assembly-flyer.png",
@@ -62,6 +59,9 @@
     "social_instagram": "https://www.instagram.com/bloom.artss/",
     "social_facebook": "",
     "social_pinterest": "",
+    "collection_browsing": true,
+    "collection_browse_label": "Collections",
+    "collection_all_label": "All products",
     "sections": {
       "announcement-bar": {
         "type": "announcement-bar",
@@ -91,6 +91,35 @@
       "cart-drawer": {
         "type": "cart-drawer",
         "settings": {}
+      },
+      "offer-ribbons": {
+        "type": "offer-ribbons",
+        "blocks": {
+          "bottom_ALPFpt": {
+            "type": "bottom",
+            "settings": {
+              "text": "Welcome the Goddess with Grace this Navratri.",
+              "link": "shopify://products/resin-pooja-thali"
+            }
+          },
+          "top_7iqYKi": {
+            "type": "top",
+            "settings": {
+              "text": "Make their diwali a little brighter.",
+              "link": "shopify://collections/hampers"
+            }
+          }
+        },
+        "block_order": [
+          "bottom_ALPFpt",
+          "top_7iqYKi"
+        ],
+        "settings": {
+          "enabled": true,
+          "heading": "Offers and announcements",
+          "button_label": "Offers",
+          "close_label": "Close offers"
+        }
       }
     },
     "content_for_index": []
