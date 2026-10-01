@@ -7,6 +7,18 @@ Last updated: 1 October 2026.
 
 ## Public coupons — 1 October 2026
 
+- Automatic offers now support optional minimum spend, currency and start/end
+  timestamps. Enable free-shipping progress only for whole-cart automatic offers
+  matching the configured Shopify rules. Uses Ajax cart `total_price`; nonempty
+  carts below the minimum show remaining spend, otherwise “You have unlocked free
+  shipping! 🎉”. Future/invalid dates, currency mismatches and empty carts suppress
+  progress. Shopify remains authoritative for final eligibility. Settings do not
+  sync from Shopify Discounts. Expired automatic offers hide client-side.
+- Validation: JavaScript syntax, repository theme checker, all 9 local renders,
+  diff whitespace and 11 isolated progress checks passed. Live Shopify eligibility
+  and desktop/mobile visual checks remain pending. Rollback: disable this section
+  in the theme editor or revert this feature commit.
+
 - **Implemented:** global Public coupons section with manually curated existing
   codes, descriptions, per-code enable toggle and editable interface labels.
   No real codes preconfigured. Blank/disabled coupons stay hidden. Does not

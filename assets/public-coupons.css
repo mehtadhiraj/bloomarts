@@ -6,6 +6,10 @@ public-coupons { display: block; }
 .coupon-bar .coupon-card { width: clamp(220px, 28vw, 360px); }
 .coupon-card strong { letter-spacing: .04em; user-select: text; }
 .coupon-card small { text-decoration: underline; }
+.coupon-card[data-offer] { cursor: default; }
+.coupon-card[data-offer] small, .coupon-card .coupon-conditions { text-decoration: none; }
+.coupon-card[hidden], [data-shipping-progress][hidden] { display: none; }
+[data-shipping-progress] { font-weight: 600; }
 .coupon-pause, .coupon-launcher, .coupon-dialog button[data-close] { min-width: 44px; min-height: 44px; font: inherit; cursor: pointer; }
 .coupon-pause { margin: 8px; border: 0; background: var(--brand-brown); color: var(--brand-cream); border-radius: 8px; padding: 8px; }
 .coupon-launcher { display: none; }

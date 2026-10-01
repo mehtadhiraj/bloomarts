@@ -1,0 +1,5 @@
+<small class="coupon-conditions">
+  {%- if offer.minimum != blank -%}<span>Min. {{ offer.currency | escape }} {{ offer.minimum }}</span>{%- endif -%}
+  {%- if offer.starts != blank -%} <span> · Starts {{ offer.starts | date: '%d %b %Y' | escape }}</span>{%- endif -%}
+  {%- if offer.ends != blank -%} <span> · Ends {{ offer.ends | date: '%d %b %Y' | escape }}</span>{%- endif -%}
+</small>

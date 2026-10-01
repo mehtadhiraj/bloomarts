@@ -13,6 +13,24 @@
       this.launcher.hidden = false;
       pause.hidden = false;
       this.setAttribute('data-ready', '');
+      this.refreshCart = async () => {
+        const request = this.cartRequest = (this.cartRequest || 0) + 1;
+        try {
+          const response = await fetch(`${window.Shopify?.routes?.root || '/'}cart.js`, { signal: this.abort.signal });
+          if (!response.ok) throw new Error('Cart unavailable');
+          const cart = await response.json();
+          if (request !== this.cartRequest || !this.isConnected) return;
+          this.cart = cart; this.updateOffers();
+        } catch { if (request === this.cartRequest) { this.cart = null; this.updateOffers(); } }
+      };
+      const queueCart = () => { if (!this.querySelector('[data-shipping="true"]')) return; clearTimeout(this.cartTimer); this.cartTimer = setTimeout(this.refreshCart, 150); };
+      on(document, 'cart:updated', queueCart);
+      on(document, 'cart:rendered', queueCart);
+      on(window, 'pageshow', queueCart);
+      on(document, 'visibilitychange', () => { if (!document.hidden) queueCart(); });
+      this.updateOffers();
+      if (this.querySelector('[data-shipping="true"]')) this.refreshCart();
+      this.offerTimer = setInterval(() => this.updateOffers(), 30000);
       const label = () => { pause.textContent = this.paused ? pause.dataset.play : pause.dataset.stop; };
       label();
       on(pause, 'click', () => { this.paused = !this.paused; label(); });
@@ -58,6 +76,27 @@
         else track.scrollLeft -= 1;
       }, 40);
     }
-    disconnectedCallback() { this.abort?.abort(); this.observer?.disconnect(); this.resize?.disconnect(); clearInterval(this.tick); clearTimeout(this.noticeTimer); }
+    updateOffers() {
+      const now = Date.now();
+      const timestamp = value => !value ? null : (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2})?(?:Z|[+-]\d{2}:\d{2})$/.test(value) ? Date.parse(value) : NaN);
+      this.querySelectorAll('[data-offer]').forEach(card => {
+        const start = timestamp(card.dataset.start), end = timestamp(card.dataset.end);
+        const valid = !Number.isNaN(start) && !Number.isNaN(end) && !(start !== null && end !== null && end < start);
+        const active = valid && (start === null || now >= start) && (end === null || now <= end);
+        card.hidden = valid && end !== null && now > end;
+        const progress = card.querySelector('[data-shipping-progress]');
+        progress.hidden = true;
+        const minimum = Number(card.dataset.minimum);
+        const currency = card.dataset.currency?.trim().toUpperCase();
+        if (!active || card.dataset.shipping !== 'true' || !card.dataset.minimum || !Number.isFinite(minimum) || minimum < 0 || !this.cart?.item_count || !Number.isFinite(this.cart.total_price) || this.cart.currency !== currency) return;
+        const remaining = Math.max(0, Math.round(minimum * 100) - this.cart.total_price);
+        try {
+          const amount = new Intl.NumberFormat(document.documentElement.lang || 'en-IN', { style: 'currency', currency, maximumFractionDigits: 2 }).format(remaining / 100);
+          progress.textContent = remaining ? this.dataset.remaining.replace('[amount]', amount) : this.dataset.unlocked;
+          progress.hidden = false;
+        } catch { /* Invalid currency configuration must not promise shipping. */ }
+      });
+    }
+    disconnectedCallback() { this.abort?.abort(); this.observer?.disconnect(); this.resize?.disconnect(); clearInterval(this.tick); clearInterval(this.offerTimer); clearTimeout(this.cartTimer); clearTimeout(this.noticeTimer); }
   });
 })();
