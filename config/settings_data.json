@@ -120,6 +120,41 @@
           "button_label": "Offers",
           "close_label": "Close offers"
         }
+      },
+      "public-coupons": {
+        "type": "public-coupons",
+        "blocks": {
+          "coupon_xMArgH": {
+            "type": "coupon",
+            "settings": {
+              "enabled": true,
+              "kind": "automatic",
+              "shipping": true,
+              "minimum": 500,
+              "currency": "INR",
+              "starts": "",
+              "ends": "",
+              "code": "",
+              "description": ""
+            }
+          }
+        },
+        "block_order": [
+          "coupon_xMArgH"
+        ],
+        "settings": {
+          "enabled": true,
+          "heading": "Coupons",
+          "copy_label": "Tap to copy",
+          "automatic_label": "Automatically applied at checkout",
+          "remaining": "Add [amount] more to unlock free shipping.",
+          "unlocked": "You have unlocked free shipping! 🎉",
+          "success": "Coupon code copied! 🥳",
+          "failure": "Could not copy automatically. Please select and copy the code manually.",
+          "pause": "Pause offers",
+          "play": "Play offers",
+          "close": "Close coupons"
+        }
       }
     },
     "content_for_index": []
