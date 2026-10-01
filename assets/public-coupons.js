@@ -36,7 +36,18 @@
         pause.innerHTML = this.paused ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>' : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>';
       };
       label();
-      this.trackResize = new ResizeObserver(() => { pause.hidden = track.scrollWidth <= track.clientWidth + 2; });
+      // Give even a single short offer a full viewport of travel on both sides.
+      // No duplicated interactive cards or obsolete marquee element needed.
+      let travelWidth = 0;
+      this.trackResize = new ResizeObserver(() => {
+        const width = track.clientWidth;
+        pause.hidden = motion.matches;
+        track.style.setProperty('--coupon-travel', motion.matches ? '0px' : `${width}px`);
+        if (width && width !== travelWidth) {
+          track.scrollLeft = motion.matches ? 0 : width;
+          travelWidth = width;
+        }
+      });
       this.trackResize.observe(track);
       this.trackResize.observe(track.querySelector('.coupon-track'));
       on(pause, 'click', () => { this.paused = !this.paused; label(); });
@@ -44,7 +55,11 @@
       on(track, 'pointerdown', () => { this.paused = true; label(); });
       on(track, 'mouseenter', () => { this.hovered = true; });
       on(track, 'mouseleave', () => { this.hovered = false; });
-      on(motion, 'change', () => { this.paused = motion.matches; label(); });
+      on(motion, 'change', () => {
+        this.paused = motion.matches; label(); pause.hidden = motion.matches;
+        track.style.setProperty('--coupon-travel', motion.matches ? '0px' : `${track.clientWidth}px`);
+        track.scrollLeft = motion.matches ? 0 : track.clientWidth;
+      });
       on(this.launcher, 'click', () => this.dialog.showModal());
       on(this.querySelector('[data-close]'), 'click', () => this.dialog.close());
       on(this.dialog, 'click', e => { if (e.target === this.dialog) { const r = this.dialog.getBoundingClientRect(); if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) this.dialog.close(); } });

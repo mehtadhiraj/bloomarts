@@ -1,10 +1,11 @@
 public-coupons { display: block; }
 .coupon-bar { display: flex; align-items: center; background: var(--brand-cream); color: var(--brand-brown); border-bottom: 1px solid var(--color-border); }
-.coupon-window { min-width: 0; flex: 1; overflow-x: auto; }
+.coupon-window { min-width: 0; flex: 1; overflow-x: auto; scrollbar-width: none; }
+.coupon-window::-webkit-scrollbar { display: none; }
 .coupon-track { display: flex; gap: 12px; width: max-content; padding: 8px; }
 .coupon-card { min-height: 44px; padding: 10px 16px; display: grid; gap: 4px; text-align: left; background: var(--brand-cream); color: var(--brand-brown); border: 1px dashed var(--brand-brown); border-radius: 12px; cursor: pointer; font: inherit; overflow-wrap: anywhere; }
-.coupon-bar { background: var(--brand-cream); padding: 0 16px; }
-.coupon-track { min-width: 100%; justify-content: center; padding: 10px 0; gap: 24px; }
+.coupon-bar { background: var(--brand-amber); padding: 0 16px; }
+.coupon-track { min-width: 100%; justify-content: center; padding: 10px var(--coupon-travel, 0px); gap: 24px; }
 .coupon-bar .coupon-card { width: auto; max-width: none; flex-shrink: 0; display: flex; flex-wrap: nowrap; white-space: nowrap; align-items: center; justify-content: center; gap: 6px 14px; padding: 4px 16px; min-height: 36px; border: 0; border-radius: 0; background: transparent; font-size: 14px; }
 .coupon-bar .coupon-card + .coupon-card { border-left: 1px solid color-mix(in srgb, var(--brand-brown) 20%, var(--brand-cream)); }
 .coupon-bar .coupon-card strong { letter-spacing: 0; }
