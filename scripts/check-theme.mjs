@@ -365,6 +365,9 @@ for (const f of listFiles('templates', '.json')) {
    default of 72 on a 40-90 range with step 5 removed the homepage from the
    store entirely — every other route worked, and `/` returned 404. */
 function checkRange(file, where, setting, value) {
+  if (setting.type === 'url' && where.includes('default') && value !== undefined && !['/collections', '/collections/all'].includes(value)) {
+    note(file, `${where}: url "${setting.id}" has an unsupported default; set the URL in template settings or use a Liquid fallback`);
+  }
   if (setting.type !== 'range' || value === undefined || value === null) return;
   const { min, max, step, id } = setting;
   if (typeof min !== 'number' || typeof max !== 'number' || typeof step !== 'number') return;
