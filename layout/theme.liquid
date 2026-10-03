@@ -201,6 +201,13 @@
     </style>
 
     {{ 'base.css' | asset_url | stylesheet_tag }}
+    {{ 'quick-purchase.css' | asset_url | stylesheet_tag }}
+    {{ 'component-customization.css' | asset_url | stylesheet_tag }}
+    {{ 'component-quantity.css' | asset_url | stylesheet_tag }}
+    {{ 'component-swatches.css' | asset_url | stylesheet_tag }}
+    <script src="{{ 'quantity-input.js' | asset_url }}" defer></script>
+    <script src="{{ 'product-form.js' | asset_url }}" defer></script>
+    <script src="{{ 'quick-purchase.js' | asset_url }}" defer></script>
     {{ 'animations.css' | asset_url | stylesheet_tag }}
     {{ 'scroll-effects.css' | asset_url | stylesheet_tag }}
 

@@ -107,11 +107,11 @@
       const format = window.Bloomarts && window.Bloomarts.formatMoney;
       if (!format) return;
 
-      document.querySelectorAll('[data-product-price]').forEach((node) => {
+      (this.closest('[data-quick-panel]') || document).querySelectorAll('[data-product-price]').forEach((node) => {
         node.textContent = variant ? format(variant.price) : '';
       });
 
-      document.querySelectorAll('[data-product-compare]').forEach((node) => {
+      (this.closest('[data-quick-panel]') || document).querySelectorAll('[data-product-compare]').forEach((node) => {
         const showCompare = variant && variant.compare_at_price && variant.compare_at_price > variant.price;
         node.textContent = showCompare ? format(variant.compare_at_price) : '';
         node.hidden = !showCompare;
@@ -121,7 +121,7 @@
     updateButton(variant) {
       const strings = window.BloomartsStrings || {};
 
-      document.querySelectorAll('[data-add-to-cart]').forEach((button) => {
+      (this.closest('[data-quick-panel]') || document).querySelectorAll('[data-add-to-cart]').forEach((button) => {
         const text = button.querySelector('[data-add-to-cart-text]') || button;
 
         if (!variant) {
@@ -140,7 +140,7 @@
     /* replaceState, not pushState: choosing a colour is not a navigation,
        and filling the history stack would make Back feel broken. */
     updateUrl(variant) {
-      if (!variant || !window.history || !window.history.replaceState) return;
+      if (this.closest('[data-quick-panel]') || !variant || !window.history || !window.history.replaceState) return;
       const base = this.getAttribute('data-url');
       if (!base) return;
       window.history.replaceState({}, '', `${base}?variant=${variant.id}`);
@@ -148,7 +148,7 @@
 
     updateGallery(variant) {
       if (!variant || !variant.featured_image) return;
-      const gallery = document.querySelector('product-gallery');
+      const gallery = this.closest('[data-quick-panel]') ? null : document.querySelector('product-gallery');
       if (gallery && typeof gallery.showMedia === 'function') {
         gallery.showMedia(variant.featured_image.id);
       }

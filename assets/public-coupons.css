@@ -33,8 +33,8 @@ public-coupons { display: block; }
 .coupon-toast:empty { display: none; }
 public-coupons :focus-visible { outline: 3px solid var(--brand-brown); outline-offset: 3px; }
 @media (max-width: 767px) {
-  public-coupons[data-ready] .coupon-bar { display: none; }
-  .coupon-launcher:not([hidden]) { display: block; position: fixed; left: max(12px, env(safe-area-inset-left, 0px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 16px); z-index: var(--z-sticky-atc); max-width: 45vw; border: 0; border-radius: 16px; padding: 10px 16px; background: var(--brand-brown); color: var(--brand-cream); box-shadow: 0 6px 18px color-mix(in srgb, var(--brand-brown) 20%, transparent); }
+  public-coupons[data-ready] .coupon-bar { display: flex; }
+  .coupon-launcher:not([hidden]) { display: none; }
   body:has(.sticky-atc.is-visible) .coupon-launcher { bottom: calc(var(--public-coupon-cart-height, 80px) + 16px); }
   body:has(public-coupons):has(.sticky-atc.is-visible) .to-top { left: auto; right: max(12px, env(safe-area-inset-right, 0px)); }
   .coupon-dialog { margin: auto auto calc(env(safe-area-inset-bottom, 0px) + 12px); }

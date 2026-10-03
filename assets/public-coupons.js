@@ -25,6 +25,7 @@
       const queueCart = () => { if (!this.querySelector('[data-shipping="true"]')) return; clearTimeout(this.cartTimer); this.cartTimer = setTimeout(this.refreshCart, 150); };
       on(document, 'cart:updated', queueCart);
       on(document, 'cart:rendered', queueCart);
+      on(document, 'shipping:render', () => this.updateOffers());
       on(window, 'pageshow', queueCart);
       on(document, 'visibilitychange', () => { if (!document.hidden) queueCart(); });
       this.updateOffers();
@@ -117,6 +118,12 @@
           progress.toggleAttribute('data-unlocked', remaining === 0);
           progress.hidden = false;
         } catch { /* Invalid currency configuration must not promise shipping. */ }
+      });
+      const activeProgress = Array.from(this.querySelectorAll('[data-shipping-progress]')).find(node => !node.hidden && !node.closest('[hidden]'));
+      document.querySelectorAll('[data-cart-shipping-message]').forEach(node => {
+        node.hidden = !activeProgress;
+        node.textContent = activeProgress?.textContent || '';
+        node.toggleAttribute('data-unlocked', !!activeProgress?.hasAttribute('data-unlocked'));
       });
     }
     disconnectedCallback() { this.abort?.abort(); this.observer?.disconnect(); this.resize?.disconnect(); this.trackResize?.disconnect(); clearInterval(this.tick); clearInterval(this.offerTimer); clearTimeout(this.cartTimer); clearTimeout(this.noticeTimer); }

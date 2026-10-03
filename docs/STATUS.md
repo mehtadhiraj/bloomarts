@@ -5,6 +5,27 @@ Together they hold the full context — no chat history needed.
 
 Last updated: 1 October 2026.
 
+## Product-card quick purchase and mobile offers — 3 October 2026
+
+- Mobile uses the same amber scrolling offer bar as desktop; coupon launcher is
+  hidden. Shipping messages under product buttons and cards reuse the Public
+  coupons section's single remaining/unlocked setting and active-cart calculation.
+- Product cards expose icon add, quantity +/- and edit controls. Options are
+  fetched from the actual product form (including admin-defined custom fields),
+  presented in a left drawer on desktop and bottom sheet on mobile. Unsaved
+  customizations stay as a draft; confirmation validates before adding.
+- Confirmed quick selections use a private line property to target updates.
+  Text edits update the existing line; variant/upload replacements add a distinct
+  replacement then remove the original with rollback on removal failure.
+  State is retained while the card remains mounted, not across page reloads.
+- Checks: syntax, repository theme checker, 9 rendered pages, simulated add/edit/
+  quantity/stock-error/remove checks. Browser verified desktop left drawer,
+  390px mobile bottom sheet and quantity control. Static harness routes products
+  to representative fixtures and has no Shopify cart API: live uploads, cart
+  eligibility and real product-template combinations still require Shopify testing.
+- Rollback by reverting these feature files; no discount rules or
+  checkout pricing changed.
+
 ## Public coupons — 1 October 2026
 
 - Automatic offers now support optional minimum spend, currency and start/end
