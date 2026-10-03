@@ -1,0 +1,10 @@
+.contact-details { margin-top: 24px; }
+.contact-details__intro { max-width: 55ch; margin-bottom: 28px; color: var(--brand-brown); line-height: 1.7; }
+.contact-details__grid { display: grid; gap: 16px; }
+.contact-details__link { display: grid; grid-template-columns: 44px minmax(0, 1fr) 18px; gap: 12px; align-items: center; padding: 20px; border: 1px solid var(--brand-sage); border-radius: 20px; background: var(--brand-cream); color: var(--brand-brown); text-decoration: none; min-height: 104px; }
+.contact-details__icon { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: color-mix(in srgb, var(--brand-sage) 25%, var(--brand-cream)); font-size: 26px; color: var(--brand-brown); }
+.contact-details__link small { display: block; margin-bottom: 4px; }
+.contact-details__link strong { display: block; font-size: clamp(14px, 2vw, 18px); overflow-wrap: anywhere; }
+.contact-details__link:hover { background: color-mix(in srgb, var(--brand-amber) 15%, var(--brand-cream)); }
+.contact-details__link:focus-visible { outline: 3px solid var(--brand-olive); outline-offset: 4px; }
+@media (min-width: 768px) { .contact-details__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

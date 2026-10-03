@@ -1,0 +1,36 @@
+{{ 'contact-details.css' | asset_url | stylesheet_tag }}
+<div class="contact-details">
+  {% if intro != blank %}<p class="contact-details__intro">{{ intro | escape }}</p>{% endif %}
+  <div class="contact-details__grid">
+    {% if email != blank %}
+      <a class="contact-details__link" href="mailto:{{ email | strip | escape }}">
+        <span class="contact-details__icon" aria-hidden="true">✉</span>
+        <span><small>Email us</small><strong>{{ email | escape }}</strong></span>
+        <span aria-hidden="true">↗</span>
+      </a>
+    {% endif %}
+    {% if whatsapp_number != blank %}
+      {% assign whatsapp = whatsapp_number | remove: '+' | remove: ' ' | remove: '-' %}
+      <a class="contact-details__link" href="https://wa.me/{{ whatsapp | escape }}" target="_blank" rel="noopener noreferrer">
+        <span class="contact-details__icon" aria-hidden="true">☏</span>
+        <span><small>Chat on WhatsApp</small><strong>{{ phone_label | default: whatsapp_number | escape }}</strong></span>
+        <span aria-hidden="true">↗</span>
+      </a>
+    {% endif %}
+    {% if instagram_name != blank %}
+      {% assign instagram = instagram_name | remove: '@' | strip %}
+      <a class="contact-details__link" href="https://www.instagram.com/{{ instagram | url_encode }}/" target="_blank" rel="noopener noreferrer">
+        <span class="contact-details__icon">{% render 'icon', icon: 'instagram', size: 26 %}</span>
+        <span><small>Follow our studio</small><strong>@{{ instagram | escape }}</strong></span>
+        <span aria-hidden="true">↗</span>
+      </a>
+    {% endif %}
+    {% if website != blank %}
+      <a class="contact-details__link" href="{{ website | escape }}">
+        <span class="contact-details__icon" aria-hidden="true">◎</span>
+        <span><small>Explore Bloom Arts</small><strong>{{ website_label | default: website | escape }}</strong></span>
+        <span aria-hidden="true">↗</span>
+      </a>
+    {% endif %}
+  </div>
+</div>

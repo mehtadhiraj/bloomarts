@@ -1,6 +1,16 @@
 <div class="section page-width page-width--narrow">
   <h1 class="page__title">{{ page.title }}</h1>
   <div class="rte">{{ page.content }}</div>
+  {% if page.handle == 'contact' or page.handle == 'contact-us' or section.settings.show_contact %}
+    {% render 'contact-details',
+      intro: section.settings.contact_intro,
+      email: section.settings.contact_email,
+      instagram_name: section.settings.contact_instagram,
+      whatsapp_number: section.settings.contact_whatsapp,
+      phone_label: section.settings.contact_phone_label,
+      website: section.settings.contact_website,
+      website_label: section.settings.contact_website_label %}
+  {% endif %}
 </div>
 
 <style>
@@ -13,6 +23,15 @@
 {% schema %}
 {
   "name": "Page",
-  "settings": []
+  "settings": [
+    {"type":"checkbox","id":"show_contact","label":"Show contact details on this page","default":false,"info":"Automatically shown on pages with the handle contact or contact-us."},
+    {"type":"text","id":"contact_intro","label":"Contact introduction","default":"Have a question, a custom creation in mind, or need help with your order? We’d love to hear from you."},
+    {"type":"text","id":"contact_email","label":"Email","default":"bloomarts26@gmail.com"},
+    {"type":"text","id":"contact_instagram","label":"Instagram username","default":"bloom.artss"},
+    {"type":"text","id":"contact_whatsapp","label":"WhatsApp number (with country code)","default":"918356913551"},
+    {"type":"text","id":"contact_phone_label","label":"Displayed WhatsApp number","default":"+91 83569 13551"},
+    {"type":"url","id":"contact_website","label":"Website link","default":"https://bloomarts.in"},
+    {"type":"text","id":"contact_website_label","label":"Website label","default":"bloomarts.in"}
+  ]
 }
 {% endschema %}
