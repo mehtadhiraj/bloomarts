@@ -121,7 +121,7 @@
       });
       const activeProgress = Array.from(this.querySelectorAll('[data-shipping-progress]')).find(node => !node.hidden && !node.closest('[hidden]'));
       document.querySelectorAll('[data-cart-shipping-message]').forEach(node => {
-        node.hidden = !activeProgress;
+        node.hidden = !activeProgress || activeProgress.hasAttribute('data-unlocked');
         node.textContent = activeProgress?.textContent || '';
         node.toggleAttribute('data-unlocked', !!activeProgress?.hasAttribute('data-unlocked'));
       });

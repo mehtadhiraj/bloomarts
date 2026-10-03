@@ -4,6 +4,7 @@ quick-purchase [data-quick-controls] { display: flex; align-items: center; flex-
 quick-purchase button { min-width: 44px; min-height: 44px; border-radius: 24px; border: 1px solid var(--brand-olive); background: var(--brand-cream); color: var(--brand-brown); cursor: pointer; }
 quick-purchase output { min-width: 24px; text-align: center; }
 [data-cart-shipping-message] { font-size: 13px; font-weight: 600; color: var(--brand-brown); border-left: 3px solid var(--brand-coral); padding: 6px 10px; background: color-mix(in srgb, var(--brand-coral) 16%, var(--brand-cream)); }
+.product__buy > [data-cart-shipping-message] { margin-top: 12px; }
 [data-cart-shipping-message][data-unlocked] { border-color: var(--brand-olive); background: color-mix(in srgb, var(--brand-sage) 25%, var(--brand-cream)); }
 .quick-purchase-dialog { width: 100%; max-width: 100%; max-height: 88dvh; height: auto; margin: auto 0 0; padding: 20px; border: 0; border-radius: 24px 24px 0 0; background: var(--brand-cream); color: var(--brand-brown); overflow-y: auto; }
 .quick-purchase-dialog::backdrop { background: color-mix(in srgb, var(--brand-brown) 45%, transparent); }
