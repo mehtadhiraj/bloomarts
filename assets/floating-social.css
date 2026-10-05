@@ -1,7 +1,20 @@
 .floating-social { position: fixed; left: max(12px, env(safe-area-inset-left, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); display: flex; gap: 10px; z-index: 30; }
-.floating-social a { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: var(--brand-brown); color: var(--brand-cream); border: 1px solid color-mix(in srgb, var(--brand-cream) 30%, var(--brand-brown)); box-shadow: 0 4px 16px color-mix(in srgb, var(--brand-brown) 22%, transparent); }
-.floating-social a:first-child { background: var(--brand-olive); color: var(--brand-brown); }
+.floating-social a { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; color: #fff; border: 0; box-shadow: 0 4px 16px #0003; }
+.floating-social a[data-social-whatsapp] { background: #25d366; color: white; }
+.floating-social a[data-social-instagram] { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285aeb 90%); color: #fff; }
+.floating-social__links { display: flex; gap: 10px; }
+.floating-social__toggle { display: none; }
 .floating-social a:focus-visible { outline: 3px solid var(--brand-coral); outline-offset: 4px; }
 body:has(.sticky-atc.is-visible) .floating-social { bottom: calc(var(--floating-social-cart-height, 88px) + 16px + env(safe-area-inset-bottom, 0px)); }
-@media (hover: hover) { .floating-social a:hover { background: var(--brand-amber); color: var(--brand-brown); } }
+@media (hover: hover) { .floating-social a:hover { box-shadow: 0 6px 20px #0004; } }
 @media (min-width: 768px) { .floating-social { left: 24px; bottom: 24px; } .floating-social a { width: 52px; height: 52px; } }
+@media (max-width: 767px) {
+  .floating-social, body:has(.sticky-atc.is-visible) .floating-social { left: auto; right: env(safe-area-inset-right, 0px); top: 50%; bottom: auto; transform: translateY(-50%); align-items: center; gap: 0; transition: transform .32s ease; }
+  .floating-social__links { flex-direction: column; padding: 8px; background: var(--brand-cream); border-radius: 20px 0 0 20px; box-shadow: 0 4px 16px #2e241b26; }
+  .floating-social__toggle { display: grid; place-items: center; width: 28px; height: 48px; padding: 0; border: 0; border-radius: 14px 0 0 14px; background: var(--brand-brown); color: var(--brand-cream); cursor: pointer; }
+  .floating-social__toggle:focus-visible { outline: 3px solid var(--brand-coral); outline-offset: 3px; }
+  .floating-social.is-collapsed, body:has(.sticky-atc.is-visible) .floating-social.is-collapsed { transform: translate(calc(100% - 28px), -50%); }
+  .floating-social.is-collapsed .floating-social__links { visibility: hidden; }
+  .floating-social.is-collapsed .floating-social__toggle svg { transform: rotate(180deg); }
+}
+@media (prefers-reduced-motion: reduce) { .floating-social { transition: none; } }

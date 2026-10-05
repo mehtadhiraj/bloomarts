@@ -5,12 +5,11 @@
     {{ 'floating-social.css' | asset_url | stylesheet_tag }}
     <script src="{{ 'floating-social.js' | asset_url }}" defer></script>
     <floating-social class="floating-social" role="navigation" aria-label="Connect with Bloom Arts">
+      <button class="floating-social__toggle" type="button" aria-expanded="true" aria-controls="SocialLinks-{{ section.id }}" aria-label="Hide social links"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+      <div class="floating-social__links" id="SocialLinks-{{ section.id }}">
       {% if whatsapp_number != blank %}
         <a data-social-whatsapp data-phone="{{ whatsapp_number | escape }}" href="https://wa.me/{{ whatsapp_number | escape }}" target="_blank" rel="noopener noreferrer" aria-label="Chat with Bloom Arts on WhatsApp" title="Chat on WhatsApp">
-          <svg viewBox="0 0 24 24" width="25" height="25" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M20.5 11.6a8.5 8.5 0 0 1-12.6 7.5L3 20.5l1.4-4.8A8.5 8.5 0 1 1 20.5 11.6Z"/>
-            <path d="m8.3 7.1 1.6 2.6-1.1 1.1c.8 1.8 2.1 3.1 3.9 3.9l1.1-1.1 2.6 1.6c-.3 1.5-1.3 2.1-2.7 1.7-3.7-1-6.3-3.6-7.3-7.3-.4-1.4.2-2.4 1.9-2.5Z"/>
-          </svg>
+          <img src="{{ 'whatsapp-logo.svg' | asset_url }}" width="38" height="38" alt="">
         </a>
       {% endif %}
       {% if instagram_url != blank %}
@@ -18,6 +17,7 @@
           {% render 'icon', icon: 'instagram', size: 25 %}
         </a>
       {% endif %}
+      </div>
     </floating-social>
   {% endif %}
 {% endif %}
