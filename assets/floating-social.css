@@ -1,0 +1,7 @@
+.floating-social { position: fixed; left: max(12px, env(safe-area-inset-left, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); display: flex; gap: 10px; z-index: 30; }
+.floating-social a { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: var(--brand-brown); color: var(--brand-cream); border: 1px solid color-mix(in srgb, var(--brand-cream) 30%, var(--brand-brown)); box-shadow: 0 4px 16px color-mix(in srgb, var(--brand-brown) 22%, transparent); }
+.floating-social a:first-child { background: var(--brand-olive); color: var(--brand-brown); }
+.floating-social a:focus-visible { outline: 3px solid var(--brand-coral); outline-offset: 4px; }
+body:has(.sticky-atc.is-visible) .floating-social { bottom: calc(var(--floating-social-cart-height, 88px) + 16px + env(safe-area-inset-bottom, 0px)); }
+@media (hover: hover) { .floating-social a:hover { background: var(--brand-amber); color: var(--brand-brown); } }
+@media (min-width: 768px) { .floating-social { left: 24px; bottom: 24px; } .floating-social a { width: 52px; height: 52px; } }
